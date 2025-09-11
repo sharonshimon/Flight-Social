@@ -1,0 +1,125 @@
+/* Login page styles */
+/* Soft cloud white background for flight theme */
+.login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f5faff; /* soft cloud white */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 1.2s ease;
+  z-index: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.login .card {
+  width: 50%;
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  min-height: 600px;
+  overflow: hidden;
+}
+
+/* Make text more visible on the image */
+.login .card .left {
+  flex: 1;
+  background: 
+    url("https://images.pexels.com/photos/62623/wing-plane-flying-airplane-62623.jpeg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  color: #fff;
+  min-height: 600px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 0 2px #000;
+  position: relative;
+}
+
+.login .card .left > * {
+  position: relative;
+  z-index: 2;
+}
+
+.login .card .left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 1;
+  pointer-events: none;
+}
+
+
+.login .card .left h1 {
+  font-size: 100px;
+  line-height: 100px;
+}
+
+.login .card .left span {
+  font-size: 14px;
+}
+
+.login .card .left button {
+  width: 50%;
+  padding: 10px;
+  border: none;
+  background-color: white;
+  color: #0074D9; /* blue */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login .card .right {
+  flex: 1;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  justify-content: center;
+}
+
+.login .card .right h1 {
+  color: #555;
+}
+
+.login .card .right form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.login .card .right form input {
+  border: none;
+  border-bottom: 1px solid lightgray;
+  padding: 20px 10px;
+}
+
+.login .card .right form button {
+  width: 50%;
+  padding: 10px;
+  border: none;
+  background-color: #0074D9; /* blue */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+body {
+  background: linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%);
+  margin: 0;
+  font-family: Arial, sans-serif;
+}

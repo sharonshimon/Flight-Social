@@ -1,0 +1,110 @@
+/* RightBar styles with a light, flight-inspired theme */
+.rightBar {
+  flex: 2;
+  background: #f5faff;
+  min-height: 100vh;
+  padding-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-left: 1px solid #e0f7fa;
+}
+
+.rightBar .container {
+  width: 90%;
+  background: rgba(255,255,255,0.96);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rightBar .item {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.rightBar .item > span {
+  color: #0074D9;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.rightBar .user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5faff;
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  margin-bottom: 4px;
+}
+
+.rightBar .userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rightBar .userInfo img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.rightBar .userInfo span {
+  font-weight: 500;
+  color: #333;
+  font-size: 1rem;
+}
+
+.rightBar .userInfo .online {
+  width: 10px;
+  height: 10px;
+  background: #4cd137;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin-left: -8px;
+  margin-right: 4px;
+}
+
+.rightBar .buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.rightBar .buttons button {
+  background: #0074D9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rightBar .buttons button:hover {
+  background: #005fa3;
+}
+
+.rightBar .userInfo p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.rightBar .userInfo p span {
+  color: #0074D9;
+  font-weight: 600;
+}
