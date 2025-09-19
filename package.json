@@ -1,5 +1,13 @@
 {
   "dependencies": {
     "mongoose": "^8.18.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "server": "cd server && node src/server.js",
+    "client": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   }
 }

@@ -1,41 +1,121 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+
+// const groupSchema = new mongoose.Schema({
+//     name: {
+//         type: String,
+//         required: [true, 'Group name is mandatory'],
+//         minlength: [3, 'Group name must be at least 3 digits'],
+//         maxlength: [50, 'Group name must be last ther 50 digits'],
+//         trim: true
+//     },
+//     bio: {
+//         type: String,
+//         maxlength: [300, 'Group bio must be less then 300 digits'],
+//         defsult: ''
+//     },
+//     creator: {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: 'User',
+//         required: true
+//     },
+//     admins: [{
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: 'User'
+//     }],
+//     members: [{
+//         user: {
+//             type: mongoose.Schema.type.ObjectId,
+//             ref: 'User'
+//         },
+//         joinedAt: {
+//             type: Date,
+//             default: Date.now
+//         },
+//         role: {
+//             type: String,
+//             enum: ['member', 'admin'],
+//             default: 'member'
+//         }
+//     }],
+//     joinRequests: [{
+//         user: {
+//             type: mongoose.Schema.Types.ObjectId,
+//             ref: 'User'
+//         },
+//         requestedAt: {
+//             type: Date,
+//             default: Date.now
+//         },
+//     }],
+//     privacy: {
+//         type: String,
+//         enum: ['private', 'public'],
+//         required: [true, 'privacy is mandatory'],
+//         default: 'public'
+//     },
+//     category: {
+//         type: String,
+//         enum: ["Adventure", "CityTrip", "Nature", "Luxury", "Backpacking", "FoodAndDrink",
+//             "Cultural", "Family", "Couples", "SoloTravel", "Budget", "Wellness", "RoadTrip"]
+//     },
+//     rules: [{
+//         type: String,
+//         maxlength: [200, 'Rule cannot exceed 200 characters']
+//     }],
+//     coverImageUrl: {
+//         type: String,
+//         default: ''
+//     },
+//     isActive: {
+//         type: Boolean,
+//         default: true
+//     }
+// }
+//     , {
+//         timestamps: true
+//     });
+
+
+
+import mongoose from "mongoose";
 
 const groupSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: [true, 'Group name is mandatory'],
-        minlength: [3,'Group name must be at least 3 digits'],
-        maxlength: [50, 'Group name must be last ther 50 digits'],
+        unique: true, //country name 
+        minlength: [3, 'Group name must be at least 3 characters'],
+        maxlength: [50, 'Group name must be less than 50 characters'],
         trim: true
     },
-    description: {
+    bio: {
         type: String,
-        maxlength: [300, 'Group description must be less then 300 digits'],
-        defsult: ''
+        maxlength: [300, 'Group bio must be less than 300 characters'],
+        default: ''
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref: 'User',
         required: true
     },
     admins: [{
-        type:mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
     members: [{
-        user:{
-        type: mongoose.Schema.type.ObjectId,
-        ref: 'User'
-    },
-    joinedAt: {
-        type: Date,
-        default: Date.now
-    },
-    role: {
-        type: String,
-        enum: ['member', 'admin'],
-        default: 'member'
-    }
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        joinedAt: {
+            type: Date,
+            default: Date.now
+        },
+        role: {
+            type: String,
+            enum: ['member', 'admin'],
+            default: 'member'
+        }
     }],
     joinRequests: [{
         user: {
@@ -45,18 +125,20 @@ const groupSchema = new mongoose.Schema({
         requestedAt: {
             type: Date,
             default: Date.now
-        },
+        }
     }],
     privacy: {
         type: String,
         enum: ['private', 'public'],
-        required: [true, 'privacy is mandatory'],
+        required: [true, 'Privacy is mandatory'],
         default: 'public'
     },
-    category:{
+    category: {
         type: String,
-        enum: ["Adventure", "CityTrip", "Nature", "Luxury", "Backpacking", "FoodAndDrink",
-            "Cultural", "Family", "Couples", "SoloTravel", "Budget", "Wellness", "RoadTrip"]
+        enum: [
+            "Adventure", "CityTrip", "Nature", "Luxury", "Backpacking", "FoodAndDrink",
+            "Cultural", "Family", "Couples", "SoloTravel", "Budget", "Wellness", "RoadTrip"
+        ]
     },
     rules: [{
         type: String,
@@ -70,7 +152,8 @@ const groupSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     }
-}
-, {
-  timestamps: true
+}, {
+    timestamps: true // Automatically manage createdAt and updatedAt fields
 });
+
+export default mongoose.model("Group", groupSchema);
