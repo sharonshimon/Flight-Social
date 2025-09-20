@@ -1,6 +1,6 @@
-/* Login page styles */
+/* Register page styles */
 /* Soft cloud white background for flight theme */
-.login {
+.register {
   position: fixed;
   top: 0;
   left: 0;
@@ -19,7 +19,7 @@
   to { opacity: 1; }
 }
 
-.login .card {
+.register .card {
   width: 50%;
   display: flex;
   background-color: white;
@@ -28,7 +28,7 @@
   overflow: hidden;
 }
 
-.login .card .left {
+.register .card .left {
   flex: 1;
   background: 
     url("https://images.pexels.com/photos/62623/wing-plane-flying-airplane-62623.jpeg");
@@ -45,12 +45,12 @@
   position: relative;
 }
 
-.login .card .left > * {
+.register .card .left > * {
   position: relative;
   z-index: 2;
 }
 
-.login .card .left::before {
+.register .card .left::before {
   content: '';
   position: absolute;
   top: 0;
@@ -62,17 +62,16 @@
   pointer-events: none;
 }
 
-
-.login .card .left h1 {
+.register .card .left h1 {
   font-size: 100px;
   line-height: 100px;
 }
 
-.login .card .left span {
+.register .card .left span {
   font-size: 14px;
 }
 
-.login .card .left button {
+.register .card .left button {
   width: 50%;
   padding: 10px;
   border: none;
@@ -83,7 +82,7 @@
   cursor: pointer;
 }
 
-.login .card .right {
+.register .card .right {
   flex: 1;
   padding: 50px;
   display: flex;
@@ -92,23 +91,29 @@
   justify-content: center;
 }
 
-.login .card .right h1 {
+.register .card .right h1 {
   color: #555;
 }
 
-.login .card .right form {
+.register .card .right form {
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
 
-.login .card .right form input {
+.register .card .right form input {
   border: none;
   border-bottom: 1px solid lightgray;
   padding: 20px 10px;
 }
 
-.login .card .right form button {
+.register .card .right form input[type="file"] {
+  border: none;
+  padding: 10px 0;
+  background: transparent;
+}
+
+.register .card .right form button {
   width: 50%;
   padding: 10px;
   border: none;
@@ -122,4 +127,14 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+}
+
+.register .card .right form label {
+  color: #555;
+  font-size: 16px;
+  font-family: inherit;
+  margin-bottom: -10px;
+  margin-top: 10px;
+  font-weight: normal;
+  padding-left: 2px;
 }

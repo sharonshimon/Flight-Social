@@ -9,10 +9,7 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link } from "react-router-dom";
 
-// Temporary mock context values for demo
 const Navbar = () => {
-  // Remove context for now, use static values
-  const darkMode = false;
   const toggle = () => {};
   const currentUser = {
     name: "Aviator",
@@ -26,20 +23,12 @@ const Navbar = () => {
           <span>Flight Social</span>
         </Link>
         <HomeOutlinedIcon />
-        {darkMode ? (
-          <WbSunnyOutlinedIcon onClick={toggle} />
-        ) : (
-          <DarkModeOutlinedIcon onClick={toggle} />
-        )}
-        <GridViewOutlinedIcon />
         <div className="search">
           <SearchOutlinedIcon />
           <input type="text" placeholder="Search..." />
         </div>
       </div>
       <div className="right">
-        <PersonOutlinedIcon />
-        <EmailOutlinedIcon />
         <NotificationsOutlinedIcon />
         <div className="user">
           <img
