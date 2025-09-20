@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./pages/Layout";
-import Feed from "./pages/Feed";
-import Friends from "./pages/Friends";
-import Messages from "./pages/Messages";
-import Profile from "./pages/Profile";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-
+import Feed from "./pages/Feed/Feed";
+import Friends from "./pages/Friends/Friends";
+import Messages from "./pages/Messages/Messages";
+import Profile from "./pages/Profile/Profile";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+import NewPost from "./pages/NewPost/newPost";
 export default function App() {
   return (
     <BrowserRouter>
@@ -25,6 +25,7 @@ export default function App() {
           <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/newPost" element={<NewPost />} />
         </Route>
       </Routes>
     </BrowserRouter>

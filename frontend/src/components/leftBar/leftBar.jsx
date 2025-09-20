@@ -18,7 +18,7 @@ const LeftBar = () => {
   const mainMenuItems = useMemo(() => [
     { icon: icons.Friends,  name: "Flight Buddies", path: "/friends" },
     { icon: icons.Messages, name: "Messages",       path: "/messages" },
-    { icon: icons.Gallery,  name: "New Post",       path: "/gallery" },
+    { icon: icons.Gallery,  name: "New Post",       path: "/NewPost" },
     { icon: icons.Memories, name: "My Groups",      path: "/myGroups" },
   ], [icons]);
 
@@ -41,7 +41,6 @@ const LeftBar = () => {
         <div className="menu">
           {!minimized && (
             <div className="user">
-              {/* make the avatar + name clickable */}
               <Link
                 to={`/profile`} 
                 className="user-info"
