@@ -1,17 +1,13 @@
 import "./post.css";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-// Comments component can be added later or mocked
+import LikeButton from "./likeButton";
+import Comment from "./comment";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
-  // TEMPORARY
-  const liked = false;
 
   return (
     <div className="post">
@@ -33,24 +29,16 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img src={post.img} alt="" />
+          {post.img && <img src={post.img} alt="" />}
         </div>
         <div className="info">
-          <div className="item">
-            {liked ? <FavoriteOutlinedIcon /> : <FavoriteBorderOutlinedIcon />}
-            12 Likes
-          </div>
+          <LikeButton initialLikes={25} />
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            12 Comments
-          </div>
-          <div className="item">
-            <ShareOutlinedIcon />
-            Share
+            Comments
           </div>
         </div>
-        {/* Comments component placeholder */}
-        {commentOpen && <div className="comments-placeholder">Comments go here</div>}
+        {commentOpen && <Comment />}
       </div>
     </div>
   );
