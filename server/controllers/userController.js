@@ -1,109 +1,117 @@
+import {
+    deleteUser,
+    followUser,
+    getUser,
+    getUserFriends,
+    getUserProfile,
+    unfollowUser,
+    updateProfilePicture,
+    updateUser,
+} from "../services/userService.js";
+import { verifyToken } from "../services/authService.js"; // Import the verifyToken function
 
-const User = require('../model/user');
+// Update user
+export const updateUserController = async (req, res) => {
+    try {
+        const userData = verifyToken(req);
 
-// Create a new user
-// Get all users
-exports.getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find();
-        res.status(200).json({
-            status: 'success',
-            results: users.length,
-            data: { users }
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: 'fail',
-            message: error.message
-        });
-    }
-};
-exports.createUser = async (req, res) => {
-    try {
-        const user = await User.create(req.body);
-        res.status(201).json({
-            status: 'success',
-            data: {
-                user
-            }
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: 'fail',
-            message: error.message
-        });
-    }
-};
-
-// Get user details by ID
-exports.getUser = async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).json({
-                status: 'fail',
-                message: 'User not found'
-            });
+        if (userData.id === req.params.id || userData.isAdmin) {
+            const user = await updateUser(req.params.id, req.body);
+            res.status(200).json({ user, message: "Account has been updated successfully" });
+        } else {
+            res.status(403).json({ message: "You can only update your account" });
         }
-        res.status(200).json({
-            status: 'success',
-            data: {
-                user
-            }
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: 'fail',
-            message: error.message
-        });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
     }
 };
 
-// Update user information
-exports.updateUser = async (req, res) => {
+// Update profile picture
+export const updateProfilePictureController = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
-        if (!user) {
-            return res.status(404).json({
-                status: 'fail',
-                message: 'User not found'
-            });
-        }
-        res.status(200).json({
-            status: 'success',
-            data: {
-                user
-            }
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: 'fail',
-            message: error.message
-        });
+        verifyToken(req);
+        const user = await updateProfilePicture(req.params.id, req.file.path);
+        res.status(200).json({ user, message: "Profile picture has been updated successfully" });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
     }
 };
 
-// Delete a user
-exports.deleteUser = async (req, res) => {
+// Delete user
+export const deleteUserController = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) {
-            return res.status(404).json({
-                status: 'fail',
-                message: 'User not found'
-            });
+        const userData = verifyToken(req);
+
+        if (userData.id === req.params.id || userData.isAdmin) {
+            await deleteUser(req.params.id);
+            res.status(200).json({ message: "Account has been deleted successfully" });
+        } else {
+            res.status(403).json({ message: "You can only delete your account" });
         }
-        res.status(204).json({
-            status: 'success',
-            data: null
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: 'fail',
-            message: error.message
-        });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
+    }
+};
+
+// Get user by ID
+export const getUserController = async (req, res) => {
+    try {
+        verifyToken(req);
+        const user = await getUser(req.params.id);
+        const { password, ...data } = user._doc;
+        res.status(200).json({ userInfo: data });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
+    }
+};
+
+// Get user by username
+export const getUserProfileController = async (req, res) => {
+    try {
+        verifyToken(req);
+        const user = await getUserProfile(req.query);
+        const { password, ...data } = user._doc;
+        res.status(200).json({ userInfo: data });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
+    }
+};
+
+// Follow user
+export const followUserController = async (req, res) => {
+    try {
+        const userData = verifyToken(req); // verify token
+        const updateData = { id: req.params.id };  // the id of the user to follow
+
+        const result = await followUser(userData, updateData);
+
+        res.status(200).json({ message: "User followed successfully", result });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+// Unfollow user
+export const unfollowUserController = async (req, res) => {
+    try {
+        const userData = verifyToken(req); // verify token
+        const updateData = { id: req.params.id }; // the id of the user to unfollow
+
+        const result = await unfollowUser(userData, updateData);
+
+        res.status(200).json({ message: "User unfollowed successfully", result });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+// Get friends
+export const getUserFriendsController = async (req, res) => {
+    try {
+        verifyToken(req);
+        const friends = await getUserFriends(req.params.userId);
+        res.status(200).json({ friends, message: "Friends fetched successfully" });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
     }
 };

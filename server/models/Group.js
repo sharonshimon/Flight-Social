@@ -72,9 +72,14 @@ const groupSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
-    }
-}, {
-    timestamps: true // Automatically manage createdAt and updatedAt fields
-});
+    },
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post"
+    }]
+},
+    {
+        timestamps: true // Automatically manage createdAt and updatedAt fields
+    });
 
 export default mongoose.model("Group", groupSchema);

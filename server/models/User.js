@@ -23,8 +23,7 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: [true, 'Password is mandatory'],
-    minlength: [6, 'Password must be at least 6 characters'],
-    maxlength: [20, 'Password must be less than 20 characters']
+    minlength: [8, 'Password must be at least 8 characters'],
   },
   firstName: {
     type: String,
@@ -40,7 +39,8 @@ const userSchema = new Schema({
   },
   profilePicture: {
     type: String,
-    default: ''
+    //default: ''
+    default: "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE="
   },
   bio: {
     type: String,
@@ -53,30 +53,30 @@ const userSchema = new Schema({
   },
   country: {
     type: String,
-    default: "Ghana"
+    default: "Israel"
   },
   city: {
     type: String,
-    default: "Accra"
+    default: "Jerusalem"
   },
   relationship: {
-    type: Number,
-    enum: [1, 2, 3],
-    default: 1
+    type: String,
+    enum: ['Single', 'In a relationship', 'Married'],
+    default: 'Single'
   },
-  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  followings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // These are the people following you.
+  followings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // These are the people you follow.
   createdAt: { type: Date, default: Date.now }
 });
 
-// Hash password before saving the user
+// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// Instance method compare password
+// Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
