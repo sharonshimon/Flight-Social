@@ -1,6 +1,10 @@
 {
   "dependencies": {
-    "mongoose": "^8.18.0"
+    "cloudinary": "^1.41.3",
+    "mongoose": "^8.18.0",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
