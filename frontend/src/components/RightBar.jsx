@@ -1,4 +1,6 @@
 import "./rightbar.css";
+import SuggestionUser from "./SuggestionUser";
+import OnlineFriend from "./OnlineFriend";
 
 const RightBar = () => {
   return (
@@ -6,64 +8,41 @@ const RightBar = () => {
       <div className="container">
         <div className="item">
           <span>Suggestions For You</span>
-          <div className="user">
+          <SuggestionUser
+            img="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+            name="Jane Doe"
+          />
+          <SuggestionUser
+            img="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+            name="Jane Doe"
+          />
+        </div>
+        <span>Latest Activities</span>
+        {[...Array(4)].map((_, i) => (
+          <div className="user" key={i}>
             <div className="userInfo">
               <img
                 src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
                 alt=""
               />
-              <span>Jane Doe</span>
+              <p>
+                <span>Jane Doe</span> changed their cover picture
+              </p>
             </div>
-            <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
-            </div>
+            <span>1 min ago</span>
           </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                alt=""
-              />
-              <span>Jane Doe</span>
-            </div>
-            <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
-            </div>
-          </div>
-        </div>
-        <div className="item">
-          <span>Latest Activities</span>
-          {[...Array(4)].map((_, i) => (
-            <div className="user" key={i}>
-              <div className="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <p>
-                  <span>Jane Doe</span> changed their cover picture
-                </p>
-              </div>
-              <span>1 min ago</span>
-            </div>
-          ))}
-        </div>
+        ))}
         <div className="item">
           <span>Online Friends</span>
-          {[...Array(11)].map((_, i) => (
-            <div className="user" key={i}>
-              <div className="userInfo">
-                <img
-                  src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <div className="online" />
-                <span>Jane Doe</span>
-              </div>
-            </div>
-          ))}
+          <div className="onlineFriendsScroll">
+            {[...Array(11)].map((_, i) => (
+              <OnlineFriend
+                key={i}
+                img="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
+                name="Jane Doe"
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

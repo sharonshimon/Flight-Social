@@ -5,12 +5,13 @@
   font-weight: normal;
   font-style: normal;
 }
+html, body {margin: 0; height: 100%; overflow: hidden}
 
 .feed-bg {
   width: 100vw;
   min-height: 100vh;
-  background-color: #f5faff; /* soft cloud white, same as login */
-
+  height: 120vh; 
+  background-color: #f5faff;
 }
 
 .feed-content {
