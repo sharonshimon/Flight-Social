@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import LeftBar from "../components/LeftBar";
-import RightBar from "../components/RightBar";
+import Navbar from "../components/upperNavBar/Navbar";
+import LeftBar from "../components/leftBar/LeftBar";
+import RightBar from "../components/rightBar/RightBar";
 
 export default function Layout() {
   return (

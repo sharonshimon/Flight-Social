@@ -14,14 +14,12 @@ export default function Profile() {
     avatar: "https://randomuser.me/api/portraits/men/32.jpg",
     bio: "Thailand Addict!!!!!",
     stats: { posts: 42, followers: 318, following: 180 },
-    photos: ["/thailandPictures/thailand1.jpg",
-      "/thailandPictures/thailand2.jpg",
-      "/thailandPictures/thailand3.jpg",
-      "/thailandPictures/thailand4.jpg",
-      "/thailandPictures/thailand5.jpg",
-      "/thailandPictures/thailand6.jpg",
-      "/thailandPictures/thailand7.jpg",
-    ],
+    photos: [
+  "https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1454372182658-c712e4c5a1db?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000&auto=format&fit=crop",]
   }), []);
 
   const isMe = userId === "me";
