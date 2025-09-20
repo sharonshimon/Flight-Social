@@ -1,0 +1,135 @@
+html, body {margin: 0; height: 100%; overflow: hidden}
+
+.ig-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header layout */
+.ig-header {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.ig-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ig-head-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Username row */
+.ig-username-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ig-username {
+  margin: 0;
+  font-weight: 500;
+  font-size: 22px;
+}
+
+.ig-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+.ig-btn--icon { width: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Stats row */
+.ig-stats {
+  list-style: none;
+  display: flex;
+  gap: 24px;
+  padding: 0;
+  margin: 0;
+}
+.ig-stats li { font-size: 14px; }
+.ig-stats strong { font-weight: 600; }
+
+/* Bio */
+.ig-bio { display: flex; flex-direction: column; gap: 4px; }
+.ig-name { font-weight: 600; }
+.ig-link { color: #2563eb; text-decoration: none; }
+
+/* Tabs */
+.ig-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+.ig-tab {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  padding: 10px 0;
+  cursor: pointer;
+}
+.ig-tab.is-active { color: #111827; font-weight: 600; }
+
+/* Grid */
+.ig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.ig-grid-item {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+}
+.ig-grid-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  transition: transform .2s ease;
+}
+.ig-grid-item:hover img { transform: scale(1.03); }
+
+/* Empty tab placeholder */
+.ig-empty {
+  display: grid;
+  place-items: center;
+  height: 200px;
+  color: #6b7280;
+  border: 1px dashed #e5e7eb;
+  border-radius: 12px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ig-header {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .ig-avatar {
+    width: 96px; height: 96px;
+    justify-self: center;
+  }
+  .ig-username-row { justify-content: center; flex-wrap: wrap; }
+  .ig-stats { justify-content: center; }
+  .ig-bio { text-align: center; }
+}
