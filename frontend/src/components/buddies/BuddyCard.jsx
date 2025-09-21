@@ -4,8 +4,8 @@ export default function BuddyCard({
   name,
   handle,
   mutuals,
-  onClick,          // optional: e.g. open profile
-  rightSlot,        // optional: custom action element (button, icon, etc.)
+  onClick, 
+  rightSlot, 
 }) {
   return (
     <div className="buddy card" onClick={onClick} role={onClick ? "button" : undefined}>
