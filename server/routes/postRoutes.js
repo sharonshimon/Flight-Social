@@ -7,7 +7,10 @@ import {
     getPostController,
     getTimelinePostsController,
     getAllPostsController,
-    getPostsByTagController
+    getPostsByTagController,
+    addCommentController,
+    updateCommentController,
+    deleteCommentFromPostController,
 } from "../controllers/postController.js";
 import { parser } from "../src/config/cloudinary.js";
 
@@ -36,5 +39,12 @@ router.get("/get-timeline-posts/:username", getTimelinePostsController);
 
 // Get posts by tag
 router.get("/get-posts-by-tag/:tag", getPostsByTagController);
+
+// Add comment
+router.post("/add-comment/:id", addCommentController);
+// Update comment
+router.put("/update-comment/:id", updateCommentController);
+// Delete comment
+router.delete("/delete-comment/:id", deleteCommentFromPostController);
 
 export default router;

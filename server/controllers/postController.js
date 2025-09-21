@@ -7,8 +7,12 @@ import {
   getPostWithComments,
   getTimelinePosts,
   getAllPosts,
-  getPostsByTag
+  getPostsByTag,
+  addComment,
+  updateComment,
+  deleteCommentFromPost
 } from "../services/postService.js";
+import * as postService from "../services/postService.js";
 import { verifyToken } from "../services/authService.js";
 
 // Create Post
@@ -120,5 +124,35 @@ export const getPostsByTagController = async (req, res) => {
     res.status(200).json({ data: posts, message: `Posts filtered by tag: ${tag}` });
   } catch (err) {
     res.status(400).json({ data: null, message: "Failed to fetch posts by tag", error: err.message });
+  }
+};
+
+// Add Comment
+export const addCommentController = async (req, res) => {
+  try {
+    const comments = await addComment(req.params, req.body);
+    res.status(200).json(comments);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to add comment", error: error.message });
+  }
+};
+
+// Update Comment
+export const updateCommentController = async (req, res) => {
+  try {
+    const comments = await updateComment(req.params, req.body);
+    res.status(200).json(comments);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to update comment", error: error.message });
+  }
+};
+
+// Delete Comment
+export const deleteCommentFromPostController = async (req, res) => {
+  try {
+    const comments = await deleteCommentFromPost(req.params, req.body);
+    res.status(200).json(comments);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to delete comment", error: error.message });
   }
 };

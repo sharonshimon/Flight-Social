@@ -257,7 +257,8 @@ export const updateComment = async (params, body) => {
         const post = await PostModel.findById(params.id);
         if (!post) throw new Error("Post not found");
 
-        const comment = post.comments.id(body.commentId);
+        //const comment = post.comments.id(body.commentId);
+        const comment = post.comments.find(c => c.commentId === body.commentId);
         if (!comment) throw new Error("Comment not found");
 
         if (comment.userId.toString() !== body.userId && !body.isAdmin) {
@@ -282,14 +283,15 @@ export const deleteCommentFromPost = async (params, body) => {
         const post = await PostModel.findById(params.id);
         if (!post) throw new Error("Post not found");
 
-        const comment = post.comments.id(body.commentId);
+        const comment = post.comments.find(c => c.commentId === body.commentId);
         if (!comment) throw new Error("Comment not found");
 
         if (comment.userId.toString() !== body.userId && !body.isAdmin) {
             throw new Error("You can delete only your comment");
         }
 
-        comment.remove();
+        post.comments = post.comments.filter(c => c.commentId !== body.commentId);
+
         await post.save();
         await post.populate({ path: 'comments.userId', select: 'username photoURL' });
 
@@ -298,3 +300,4 @@ export const deleteCommentFromPost = async (params, body) => {
         throw error;
     }
 };
+
