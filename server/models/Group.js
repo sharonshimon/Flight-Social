@@ -4,7 +4,7 @@ const groupSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Group name is mandatory'],
-        unique: true, //country name 
+        unique: true, // country name
         minlength: [3, 'Group name must be at least 3 characters'],
         maxlength: [50, 'Group name must be less than 50 characters'],
         trim: true
@@ -21,32 +21,17 @@ const groupSchema = new mongoose.Schema({
     },
     admins: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        default: []
     }],
     members: [{
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        },
-        joinedAt: {
-            type: Date,
-            default: Date.now
-        },
-        role: {
-            type: String,
-            enum: ['member', 'admin'],
-            default: 'member'
-        }
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        joinedAt: { type: Date, default: Date.now },
+        role: { type: String, enum: ['member', 'admin'], default: 'member' }
     }],
     joinRequests: [{
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        },
-        requestedAt: {
-            type: Date,
-            default: Date.now
-        }
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        requestedAt: { type: Date, default: Date.now }
     }],
     privacy: {
         type: String,
@@ -54,32 +39,15 @@ const groupSchema = new mongoose.Schema({
         required: [true, 'Privacy is mandatory'],
         default: 'public'
     },
-    category: {
-        type: String,
-        enum: [
-            "Adventure", "CityTrip", "Nature", "Luxury", "Backpacking", "FoodAndDrink",
-            "Cultural", "Family", "Couples", "SoloTravel", "Budget", "Wellness", "RoadTrip"
-        ]
-    },
-    rules: [{
-        type: String,
-        maxlength: [200, 'Rule cannot exceed 200 characters']
-    }],
     coverImageUrl: {
         type: String,
-        default: ''
+        default: "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE="
     },
-    isActive: {
-        type: Boolean,
-        default: true
-    },
+    isActive: { type: Boolean, default: true },
     posts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post"
     }]
-},
-    {
-        timestamps: true // Automatically manage createdAt and updatedAt fields
-    });
+}, { timestamps: true });
 
 export default mongoose.model("Group", groupSchema);
