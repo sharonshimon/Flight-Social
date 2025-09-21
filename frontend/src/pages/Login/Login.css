@@ -104,9 +104,8 @@
 }
 
 .login .card .right form input {
-  border: none;
+  border: 1px solid lightgray;
   border-radius: 5px;
-  border-bottom: 1px solid lightgray;
   padding: 20px 10px;
 }
 

@@ -18,7 +18,7 @@
 }
 
 .register .card {
-  width: 50%;
+  width: 60%;
   height: 100%;
   display: flex;
   background-color: white;
@@ -97,13 +97,12 @@
 .register .card .right form {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 15px;
 }
 
 .register .card .right form input {
-  border: none;
+  border:1px solid lightgray;
   border-radius: 5px;
-  border-bottom: 1px solid lightgray;
   padding: 20px 10px;
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import './Register.css'
-
+import LoginInput from '../Login/LoginInput'
 const handleRegister = (e) => {
     e.preventDefault()
     // Add register logic here
@@ -14,12 +14,12 @@ const Register = () => {
                 <div className="right">
                     <h1>Register</h1>
                     <form>
-                        <input type="text" placeholder="Username" />
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
-                        <input type="text" placeholder="Full Name" />
-                        <input type="text" placeholder="Country" />
-                        <input type="text" placeholder="City" />
+                        <LoginInput text="User Name" type="text"/>
+                        <LoginInput text="Email" type="email"/>
+                        <LoginInput text="Password" type="password"/>
+                        <LoginInput text="Full Name" type="text"/>
+                        <LoginInput text="Country" type="text"/>
+                        <LoginInput text="City" type="text"/>
                         <label htmlFor="profileImage">Add Profile Image</label>
                         <input type="file" accept="image/*" placeholder="Profile Image" />
                         <button onClick={handleRegister}>Register</button>
