@@ -4,27 +4,20 @@ import { v4 as uuidv4 } from 'uuid';
 const commentSchema = new mongoose.Schema({
   commentId: { type: String, default: uuidv4 },
   postId: { type: String, required: true },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  userDisplayName: { type: String, default: 'Anonymous' },
-  userPhotoURL: { type: String, default: null },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  isAnonymous: { type: Boolean, default: false },
   content: {
     type: String,
     required: [true, 'Comment content is mandatory'],
     maxlength: [200, 'Comment must be less than 200 characters']
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  createdAt: { type: Date, default: Date.now }
 });
 
 const postSchema = new mongoose.Schema({
   postId: { type: String, default: uuidv4, unique: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  isAnonymous: { type: Boolean, default: false },
   content: { type: String },
   media: [
     {

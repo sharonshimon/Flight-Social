@@ -1,14 +1,15 @@
 import express from "express";
 import {
     createPostController,
+    updatePostController,
     deletePostController,
-    getAllPostsController,
+    likeAndDislikeController,
     getPostController,
     getTimelinePostsController,
-    likeAndDislikeController,
-    updatePostController,
+    getAllPostsController,
+    getPostsByTagController
 } from "../controllers/postController.js";
-import { cloudinary, parser } from "../src/config/cloudinary.js";
+import { parser } from "../src/config/cloudinary.js";
 
 const router = express.Router();
 
@@ -32,5 +33,8 @@ router.get("/", getAllPostsController);
 
 // Timeline posts
 router.get("/get-timeline-posts/:username", getTimelinePostsController);
+
+// Get posts by tag
+router.get("/get-posts-by-tag/:tag", getPostsByTagController);
 
 export default router;

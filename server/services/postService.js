@@ -1,7 +1,11 @@
+
 import PostModel from "../models/Post.js";
 import UserModel from "../models/User.js";
+import GroupModel from "../models/Group.js";
 import { cloudinary } from "../src/config/cloudinary.js";
 
+
+// Create Post
 export const createPost = async (body, files) => {
     try {
         const mediaData = files?.length
@@ -13,10 +17,19 @@ export const createPost = async (body, files) => {
             }))
             : [];
 
+        let groupId = null;
+        if (body.group) {
+            const group = await GroupModel.findOne({ name: body.group });
+            if (group) groupId = group._id;
+        }
+
         const newPost = new PostModel({
             ...body,
+            isAnonymous: body.isAnonymous || false,
             media: mediaData,
             links: body.links || [],
+            tags: body.tags || [],
+            group: groupId
         });
 
         await newPost.save();
@@ -36,26 +49,36 @@ export const updatePost = async (params, body, files) => {
             throw new Error("You can update only your post");
         }
 
-        const updatableFields = ["content", "tags", "privacy", "links"];
+        const updatableFields = ["content", "tags", "privacy", "links", "isAnonymous", "group"];
         for (const field of updatableFields) {
-            if (body[field] !== undefined) post[field] = body[field];
+            if (field === "group") {
+                if (body.group) {
+                    const group = await GroupModel.findOne({ name: body.group });
+                    post.group = group ? group._id : null;
+                } else {
+                    post.group = null;
+                }
+            } else if (body[field] !== undefined) {
+                post[field] = body[field];
+            }
         }
 
+        // update media only if new files are provided
         if (files && files.length > 0) {
-            for (const file of files) {
-                if (post.media?.public_id) {
-                    await cloudinary.uploader.destroy(post.media.public_id, {
-                        resource_type: post.media.type
+            if (post.media && post.media.length > 0) {
+                for (const m of post.media) {
+                    await cloudinary.uploader.destroy(m.public_id, {
+                        resource_type: m.type
                     });
                 }
-
-                post.media = files.map(f => ({
-                    type: f.mimetype.startsWith("video") ? "video" : "image",
-                    url: f.path,
-                    filename: f.originalname,
-                    public_id: f.filename
-                }));
             }
+
+            post.media = files.map(f => ({
+                type: f.mimetype.startsWith("video") ? "video" : "image",
+                url: f.path,
+                filename: f.originalname,
+                public_id: f.filename
+            }));
         }
 
         await post.save();
@@ -75,20 +98,34 @@ export const deletePost = async (params, body) => {
             throw new Error("You can delete only your post");
         }
 
-        // מחיקת מדיה מ-Cloudinary אם קיימת
-        if (post.media && post.media.public_id) {
-            await cloudinary.uploader.destroy(post.media.public_id, { resource_type: "auto" });
+        if (post.media?.length) {
+            for (const m of post.media) {
+                if (m.public_id) await cloudinary.uploader.destroy(m.public_id, { resource_type: m.type });
+            }
         }
 
         await post.deleteOne();
-
         return post;
     } catch (error) {
         throw error;
     }
 };
 
-// Like and Dislike Post
+// Get posts by tag
+export const getPostsByTag = async (tag) => {
+    try {
+        // Find posts containing the tag
+        const posts = await PostModel.find({ tags: tag }).sort({ createdAt: -1 })
+            .populate({ path: 'comments.userId', select: 'username photoURL' });
+
+        return posts.map(formatComments); // reuse existing formatting function
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+// Like / Dislike 
 export const likeAndDislike = async (params, body) => {
     try {
         const post = await PostModel.findById(params.id);
@@ -111,12 +148,41 @@ export const likeAndDislike = async (params, body) => {
     }
 };
 
-// Get Post
-export const getPost = async (params) => {
+// Format Post with Comments 
+export const formatComments = (post) => {
+    const comments = post.comments.map(comment => {
+        if (comment.isAnonymous) {
+            return {
+                commentId: comment.commentId,
+                content: comment.content,
+                createdAt: comment.createdAt,
+                username: "Anonymous",
+                photoURL: null
+            };
+        } else {
+            return {
+                commentId: comment.commentId,
+                content: comment.content,
+                createdAt: comment.createdAt,
+                username: comment.userId.username,
+                photoURL: comment.userId.photoURL
+            };
+        }
+    });
+
+    return { ...post.toObject(), comments };
+};
+
+// Get Post with Comments
+export const getPostWithComments = async (params) => {
     try {
-        const post = await PostModel.findById(params.id);
+        const post = await PostModel.findById(params.id).populate({
+            path: 'comments.userId',
+            select: 'username photoURL'
+        });
+
         if (!post) throw new Error("Post not found");
-        return post;
+        return formatComments(post);
     } catch (error) {
         throw error;
     }
@@ -128,25 +194,106 @@ export const getTimelinePosts = async (params) => {
         const currentUser = await UserModel.findOne({ username: params.username });
         if (!currentUser) throw new Error("User not found");
 
-        const userPosts = await PostModel.find({ userId: currentUser._id }).sort({ createdAt: -1 });
+        const userPosts = await PostModel.find({ userId: currentUser._id })
+            .sort({ createdAt: -1 })
+            .populate({ path: 'comments.userId', select: 'username photoURL' });
 
-        const timelinePosts = await Promise.all(
-            currentUser.followings.map((friendId) =>
-                PostModel.find({ userId: friendId }).sort({ createdAt: -1 })
+        const timelinePostsArr = await Promise.all(
+            currentUser.followings.map(friendId =>
+                PostModel.find({ userId: friendId })
+                    .sort({ createdAt: -1 })
+                    .populate({ path: 'comments.userId', select: 'username photoURL' })
             )
         );
 
-        return userPosts.concat(...timelinePosts);
+        return userPosts.concat(...timelinePostsArr).map(formatComments);
     } catch (error) {
         throw error;
     }
 };
 
-// Get All Posts
+// Get All Posts 
 export const getAllPosts = async () => {
     try {
         const posts = await PostModel.aggregate([{ $sample: { size: 40 } }]);
-        return posts;
+        const populatedPosts = await PostModel.find({ _id: { $in: posts.map(p => p._id) } })
+            .populate({ path: 'comments.userId', select: 'username photoURL' });
+
+        return populatedPosts.map(formatComments);
+    } catch (error) {
+        throw error;
+    }
+};
+
+//  Add Comment 
+export const addComment = async (params, body) => {
+    try {
+        const post = await PostModel.findById(params.id);
+        if (!post) throw new Error("Post not found");
+
+        const user = await UserModel.findById(body.userId);
+        if (!user) throw new Error("User not found");
+
+        const newComment = {
+            postId: post._id,
+            userId: user._id,
+            isAnonymous: body.isAnonymous || false,
+            content: body.content
+        };
+
+        post.comments.push(newComment);
+        await post.save();
+        await post.populate({ path: 'comments.userId', select: 'username photoURL' });
+
+        return formatComments(post);
+    } catch (error) {
+        throw error;
+    }
+};
+
+//  Update Comment 
+export const updateComment = async (params, body) => {
+    try {
+        const post = await PostModel.findById(params.id);
+        if (!post) throw new Error("Post not found");
+
+        const comment = post.comments.id(body.commentId);
+        if (!comment) throw new Error("Comment not found");
+
+        if (comment.userId.toString() !== body.userId && !body.isAdmin) {
+            throw new Error("You can update only your comment");
+        }
+
+        if (body.content !== undefined) comment.content = body.content;
+        if (body.isAnonymous !== undefined) comment.isAnonymous = body.isAnonymous;
+
+        await post.save();
+        await post.populate({ path: 'comments.userId', select: 'username photoURL' });
+
+        return formatComments(post);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Delete Comment 
+export const deleteCommentFromPost = async (params, body) => {
+    try {
+        const post = await PostModel.findById(params.id);
+        if (!post) throw new Error("Post not found");
+
+        const comment = post.comments.id(body.commentId);
+        if (!comment) throw new Error("Comment not found");
+
+        if (comment.userId.toString() !== body.userId && !body.isAdmin) {
+            throw new Error("You can delete only your comment");
+        }
+
+        comment.remove();
+        await post.save();
+        await post.populate({ path: 'comments.userId', select: 'username photoURL' });
+
+        return formatComments(post);
     } catch (error) {
         throw error;
     }

@@ -1,11 +1,13 @@
+
 import {
   createPost,
   updatePost,
   deletePost,
   likeAndDislike,
-  getPost,
+  getPostWithComments,
   getTimelinePosts,
   getAllPosts,
+  getPostsByTag
 } from "../services/postService.js";
 import { verifyToken } from "../services/authService.js";
 
@@ -57,11 +59,11 @@ export const deletePostController = async (req, res) => {
     const userData = verifyToken(req);
     const deletedPost = await deletePost(req.params, {
       userId: userData.id,
-      isAdmin: userData.isAdmin,
+      isAdmin: userData.isAdmin
     });
     res.status(200).json({ data: deletedPost, message: "Post has been deleted successfully" });
   } catch (err) {
-    res.status(401).json({ data: null, message: "Post deletion failed", error: err.message });
+    res.status(400).json({ data: null, message: "Post deletion failed", error: err.message });
   }
 };
 
@@ -72,18 +74,18 @@ export const likeAndDislikeController = async (req, res) => {
     const post = await likeAndDislike(req.params, { userId: userData.id });
     res.status(200).json({ data: post, message: "Like/Dislike action completed" });
   } catch (err) {
-    res.status(401).json({ data: null, message: "Like/Dislike action failed", error: err.message });
+    res.status(400).json({ data: null, message: "Like/Dislike action failed", error: err.message });
   }
 };
 
-// Get Post
+// Get Post with Comments
 export const getPostController = async (req, res) => {
   try {
     verifyToken(req);
-    const post = await getPost(req.params);
+    const post = await getPostWithComments(req.params);
     res.status(200).json({ data: post, message: "Post fetched successfully" });
   } catch (err) {
-    res.status(401).json({ data: null, message: "Post fetch failed", error: err.message });
+    res.status(400).json({ data: null, message: "Post fetch failed", error: err.message });
   }
 };
 
@@ -94,7 +96,7 @@ export const getTimelinePostsController = async (req, res) => {
     const posts = await getTimelinePosts(req.params);
     res.status(200).json({ data: posts, message: "Timeline posts fetched successfully" });
   } catch (err) {
-    res.status(401).json({ data: null, message: "Timeline fetch failed", error: err.message });
+    res.status(400).json({ data: null, message: "Timeline fetch failed", error: err.message });
   }
 };
 
@@ -105,6 +107,18 @@ export const getAllPostsController = async (req, res) => {
     const posts = await getAllPosts();
     res.status(200).json({ data: posts, message: "Posts fetched successfully" });
   } catch (err) {
-    res.status(401).json({ data: null, message: "Posts fetch failed", error: err.message });
+    res.status(400).json({ data: null, message: "Posts fetch failed", error: err.message });
+  }
+};
+
+// Get Posts by Tag
+export const getPostsByTagController = async (req, res) => {
+  try {
+    verifyToken(req);
+    const tag = req.params.tag;
+    const posts = await getPostsByTag(tag);
+    res.status(200).json({ data: posts, message: `Posts filtered by tag: ${tag}` });
+  } catch (err) {
+    res.status(400).json({ data: null, message: "Failed to fetch posts by tag", error: err.message });
   }
 };
