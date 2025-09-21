@@ -8,6 +8,7 @@ import Profile from "./pages/Profile/Profile";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import NewPost from "./pages/NewPost/newPost";
+import MyGroups from "./pages/MyGroups/myGroups"
 export default function App() {
   return (
     <BrowserRouter>
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/newPost" element={<NewPost />} />
+          <Route path="/myGroups" element={<MyGroups />} />
         </Route>
       </Routes>
     </BrowserRouter>

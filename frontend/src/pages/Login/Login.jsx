@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { Link } from 'react-router-dom'
+import LoginInput from './LoginInput'
 import './Login.css'
 
 const handleLogin = (e) => {
@@ -27,8 +28,8 @@ const Login = () => {
         <div className="right">
           <h1>Login</h1>
           <form>
-            <input type="text" placeholder="Username" />
-            <input type="password" placeholder="Password" />
+            <LoginInput text="User Name" type="text"/>
+            <LoginInput text="Password" type="password"/>
             <button onClick={handleLogin}>Login</button>
           </form>
         </div>

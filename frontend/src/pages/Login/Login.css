@@ -21,6 +21,7 @@
 
 .login .card {
   width: 50%;
+  height: 100%;
   display: flex;
   background-color: white;
   border-radius: 10px;
@@ -103,8 +104,8 @@
 }
 
 .login .card .right form input {
-  border: none;
-  border-bottom: 1px solid lightgray;
+  border: 1px solid lightgray;
+  border-radius: 5px;
   padding: 20px 10px;
 }
 

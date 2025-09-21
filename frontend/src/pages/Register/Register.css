@@ -1,11 +1,9 @@
-/* Register page styles */
-/* Soft cloud white background for flight theme */
 .register {
-  position: fixed;
+  position: fixed; 
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(180deg, #b1caf5 0%, #dbeeff 50%, #ffffff 100%);
   display: flex;
   align-items: center;
@@ -20,7 +18,8 @@
 }
 
 .register .card {
-  width: 50%;
+  width: 60%;
+  height: 100%;
   display: flex;
   background-color: white;
   border-radius: 10px;
@@ -98,18 +97,19 @@
 .register .card .right form {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 15px;
 }
 
 .register .card .right form input {
-  border: none;
-  border-bottom: 1px solid lightgray;
+  border:1px solid lightgray;
+  border-radius: 5px;
   padding: 20px 10px;
 }
 
 .register .card .right form input[type="file"] {
   border: none;
   padding: 10px 0;
+  border-radius: 5px;
   background: transparent;
 }
 
