@@ -87,7 +87,7 @@
   color: #6b7280;
 }
 
-/* Fields */
+
 .np-label {
   display: grid;
   gap: 8px;
@@ -117,7 +117,6 @@
   gap: 12px;
 }
 
-/* Actions */
 .np-actions {
   display: flex;
   justify-content: flex-end;
@@ -125,6 +124,7 @@
   padding-top: 6px;
 }
 .btn {
+  height: 40px;
   border: 1px solid #d1d5db;
   background: #fff;
   border-radius: 10px;
