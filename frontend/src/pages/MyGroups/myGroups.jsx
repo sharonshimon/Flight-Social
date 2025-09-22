@@ -34,19 +34,24 @@ const seedGroups = [
     privacy: "Public",
     about: "Share your best air-to-air and ramp shots."
   },
-];
+]; //mock up
 
 export default function MyGroups() {
   const [query, setQuery] = useState("");
   const [groups, setGroups] = useState(seedGroups);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ name: "", privacy: "Public", about: "" });
+  const [form, setForm] = useState({
+    name: "",
+    privacy: "Public",
+    about: "",
+    groupPicture: ""
+  });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return groups;
     return groups.filter(
-      g =>
+      (g) =>
         g.name.toLowerCase().includes(q) ||
         g.about.toLowerCase().includes(q)
     );
@@ -58,13 +63,15 @@ export default function MyGroups() {
     const newGroup = {
       id: `g${Date.now()}`,
       name: form.name.trim(),
-      avatar: "https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=400&auto=format&fit=crop",
+      avatar:
+        form.groupPicture.trim() ||
+        "https://via.placeholder.com/120x120.png?text=Group",
       members: 1,
       privacy: form.privacy,
-      about: form.about.trim() || "New group",
+      about: form.about.trim() || "New group"
     };
     setGroups([newGroup, ...groups]);
-    setForm({ name: "", privacy: "Public", about: "" });
+    setForm({ name: "", privacy: "Public", about: "", groupPicture: "" });
     setCreating(false);
   };
 
@@ -75,7 +82,12 @@ export default function MyGroups() {
 
         <div className="groups__actions">
           <div className="groups__search">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="m21.71 20.29l-3.4-3.39A8.94 8.94 0 0 0 19 11a9 9 0 1 0-9 9a8.94 8.94 0 0 0 5.9-2.69l3.39 3.4a1 1 0 0 0 1.42-1.42zM4 11a7 7 0 1 1 7 7a7 7 0 0 1-7-7z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="m21.71 20.29l-3.4-3.39A8.94 8.94 0 0 0 19 11a9 9 0 1 0-9 9a8.94 8.94 0 0 0 5.9-2.69l3.39 3.4a1 1 0 0 0 1.42-1.42zM4 11a7 7 0 1 1 7 7a7 7 0 0 1-7-7z"
+              />
+            </svg>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -83,13 +95,16 @@ export default function MyGroups() {
             />
           </div>
 
-          <button className="btn btn--primary" onClick={() => setCreating(true)}>
+          <button
+            className="btn btn--primary"
+            onClick={() => setCreating(true)}
+          >
             + Create Group
           </button>
         </div>
       </div>
       <div className="groups__list">
-        {filtered.map(g => (
+        {filtered.map((g) => (
           <GroupRow
             key={g.id}
             group={g}
@@ -105,8 +120,14 @@ export default function MyGroups() {
         )}
       </div>
       {creating && (
-        <div className="groups__modal" onClick={() => setCreating(false)}>
-          <div className="groups__dialog" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="groups__modal"
+          onClick={() => setCreating(false)}
+        >
+          <div
+            className="groups__dialog"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3>Create a Group</h3>
             <form className="groups__form" onSubmit={createGroup}>
               <label className="label">
@@ -114,7 +135,9 @@ export default function MyGroups() {
                 <input
                   placeholder="e.g., STOL Lovers"
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, name: e.target.value })
+                  }
                 />
               </label>
 
@@ -122,7 +145,9 @@ export default function MyGroups() {
                 Privacy
                 <select
                   value={form.privacy}
-                  onChange={(e) => setForm({ ...form, privacy: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, privacy: e.target.value })
+                  }
                 >
                   <option>Public</option>
                   <option>Private</option>
@@ -135,12 +160,50 @@ export default function MyGroups() {
                   rows={3}
                   placeholder="What is this group about?"
                   value={form.about}
-                  onChange={(e) => setForm({ ...form, about: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, about: e.target.value })
+                  }
                 />
               </label>
 
+              <label className="label" htmlFor="profileImage">
+                Add Profile Image
+              </label>
+              <input
+                type="file"
+                id="profileImage"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const url = URL.createObjectURL(file);
+                    setForm({ ...form, groupPicture: url });
+                  }
+                }}
+              />
+
+              {form.groupPicture && (
+                <img
+                  src={form.groupPicture}
+                  alt="Group preview"
+                  className="group__preview"
+                />
+              )}
+
               <div className="dialog__actions">
-                <button type="button" className="btn" onClick={() => setCreating(false)}>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    setForm({
+                      name: "",
+                      privacy: "Public",
+                      about: "",
+                      groupPicture: ""
+                    });
+                    setCreating(false);
+                  }}
+                >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn--primary">
@@ -158,7 +221,11 @@ export default function MyGroups() {
 function GroupRow({ group, onOpen, onLeave }) {
   return (
     <div className="group card" role="button" onClick={onOpen}>
-      <img className="group__avatar" src={group.avatar} alt={`${group.name} cover`} />
+      <img
+        className="group__avatar"
+        src={group.avatar}
+        alt={`${group.name} cover`}
+      />
       <div className="group__main">
         <div className="group__name">{group.name}</div>
         <div className="group__meta">

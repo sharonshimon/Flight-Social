@@ -60,6 +60,10 @@
   border-radius: 12px; object-fit: cover;
 }
 
+.group__preview {
+  height: 300px;
+  width: 500px;
+}
 .group__name { font-weight: 700; font-size: 16px; }
 .group__meta { color: #6b7280; font-size: 13px; display: flex; gap: 8px; margin-top: 2px; }
 .group__about {
