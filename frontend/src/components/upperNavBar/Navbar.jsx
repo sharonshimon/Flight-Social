@@ -9,10 +9,29 @@ import NotificationsMenu from "./NotificationsMenu";
 const Navbar = () => {
   const [openNotif, setOpenNotif] = useState(false);
 
-  const currentUser = {
-    name: "Aviator",
-    profilePic: "https://randomuser.me/api/portraits/men/32.jpg",
-  };
+
+  // Get user from localStorage
+  let currentUser = null;
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const userObj = JSON.parse(userStr);
+      currentUser = {
+        name: userObj.username || userObj.firstName || 'User',
+        profilePic: userObj.profilePicture || "https://randomuser.me/api/portraits/men/32.jpg"
+      };
+    }
+  } catch (e) {
+    currentUser = null;
+  }
+
+  // Fallback if not logged in
+  if (!currentUser) {
+    currentUser = {
+      name: "Guest",
+      profilePic: "https://randomuser.me/api/portraits/men/32.jpg"
+    };
+  }
 
   return (
     <div className="navbar">
