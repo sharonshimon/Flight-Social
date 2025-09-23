@@ -1,15 +1,17 @@
 import React from "react";
 
-export default function ProfileGrid({ photos }) {
+export default function ProfileGrid({ posts, onPostClick }) {
   return (
     <div className="ig-grid">
-      {photos.map((src, i) => (
+      {posts.map((post) => (
         <button
-          key={i}
+          key={post.id}
           className="ig-grid-item"
-          aria-label={`Open post ${i + 1}`}
+          aria-label={`Open post ${post.id}`}
+          onClick={() => onPostClick?.(post)}
+          type="button"
         >
-          <img src={src} alt="" />
+          <img src={post.src} alt={post.desc || "post"} />
         </button>
       ))}
     </div>
