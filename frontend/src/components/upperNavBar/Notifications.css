@@ -1,0 +1,67 @@
+/* Ensure right side can position the popover */
+.navbar .right { position: relative; display: flex; align-items: center; gap: 10px; }
+
+.icon-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.icon-btn:hover { background: rgba(0,0,0,0.05); }
+
+/* small unread dot */
+.badge {
+  position: absolute;
+  top: 2px; right: 2px;
+  width: 8px; height: 8px;
+  background: #ef4444;
+  border-radius: 999px;
+}
+
+/* anchor so the panel aligns beneath the icon */
+.notif-anchor { position: relative; }
+
+/* panel */
+.notif-popover {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  width: 360px;
+  max-height: 70vh;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.15);
+  border: 1px solid #eef2f7;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  z-index: 3000;
+}
+
+.notif-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-bottom: 1px solid #eef2f7; font-weight: 600;
+}
+.link-btn { background: transparent; border: none; color: #2563eb; cursor: pointer; font-weight: 600; }
+
+.notif-list {
+  overflow: auto; padding: 6px; display: grid; gap: 6px;
+}
+.notif-item {
+  display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center;
+  width: 100%; background: #fff; border: none; text-align: left;
+  padding: 8px; border-radius: 10px; cursor: pointer;
+}
+.notif-item:hover { background: #f9fafb; }
+.notif-item.is-unread { background: #eef2ff; }
+
+.notif-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.notif-main { display: grid; gap: 4px; }
+.notif-text { font-size: 14px; }
+.notif-meta { font-size: 12px; color: #6b7280; }
+
+.notif-empty { padding: 20px; text-align: center; color: #6b7280; }

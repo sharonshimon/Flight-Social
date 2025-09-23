@@ -3,8 +3,12 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import NotificationsMenu from "./NotificationsMenu"; 
 
 const Navbar = () => {
+  const [openNotif, setOpenNotif] = useState(false);
+
   const currentUser = {
     name: "Aviator",
     profilePic: "https://randomuser.me/api/portraits/men/32.jpg",
@@ -13,7 +17,6 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="left">
-        {/* If "/" goes to login, point the logo to /feed instead */}
         <Link to="/feed" style={{ textDecoration: "none" }}>
           <span>Flight Social</span>
         </Link>
@@ -25,8 +28,22 @@ const Navbar = () => {
           <input type="text" placeholder="Search..." />
         </div>
       </div>
+
       <div className="right">
-        <NotificationsOutlinedIcon />
+        <button
+          className="icon-btn notif-btn"
+          aria-label="Open notifications"
+          onClick={() => setOpenNotif(v => !v)}
+        >
+          <NotificationsOutlinedIcon />
+          <span className="badge" aria-hidden="true" />
+        </button>
+
+        {/* anchor keeps popover positioned under the bell */}
+        <div className="notif-anchor">
+          {openNotif && <NotificationsMenu onClose={() => setOpenNotif(false)} />}
+        </div>
+
         <Link to="/profile" className="user" aria-label="Open profile">
           <img src={currentUser.profilePic} alt={`${currentUser.name} avatar`} />
           <span>{currentUser.name}</span>
