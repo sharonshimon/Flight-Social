@@ -2,92 +2,44 @@ import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./Profile.css";
 
+import ProfileHeader from "./ProfileHeader";
+import ProfileTabs from "./ProfileTabs";
+import ProfileGrid from "./ProfileGrid";
+import ProfileEmpty from "./ProfileEmpty";
+
 export default function Profile() {
   const params = useParams();
-  const userId = params.id ?? "me"; // still supports /profile/:id if you ever need it
-  const [activeTab, setActiveTab] = useState("posts"); // posts | reels | tagged
+  const userId = params.id ?? "me";
+  const [activeTab, setActiveTab] = useState("posts");
 
-  const user = useMemo(() => ({
-    id: "me",
-    username: "aviator",
-    name: "Aviator",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    bio: "Thailand Addict!!!!!",
-    stats: { posts: 42, followers: 318, following: 180 },
-    photos: [
-  "https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=1000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1454372182658-c712e4c5a1db?q=80&w=1000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000&auto=format&fit=crop",]
-  }), []);
-
-  const isMe = userId === "me";
+  const user = useMemo(
+    () => ({
+      id: "me",
+      username: "aviator",
+      name: "Aviator",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      bio: "Thailand Addict!!!!!",
+      stats: { posts: 42, followers: 318, following: 180 },
+      photos: [
+        "https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1454372182658-c712e4c5a1db?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000&auto=format&fit=crop",
+      ],
+    }),
+    []
+  );
 
   return (
     <div className="ig-profile">
-      <div className="ig-header">
-        <img className="ig-avatar" src={user.avatar} alt={`${user.username} avatar`} />
-        <div className="ig-head-main">
-          <div className="ig-username-row">
-            <h2 className="ig-username">{user.username}</h2>
-          </div>
+      <ProfileHeader user={user} />
+      <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-          <ul className="ig-stats">
-            <li><strong>{user.stats.posts}</strong> posts</li>
-            <li><strong>{user.stats.followers}</strong> followers</li>
-            <li><strong>{user.stats.following}</strong> following</li>
-          </ul>
-
-          <div className="ig-bio">
-            <span className="ig-name">{user.name}</span>
-            <p>{user.bio}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="ig-tabs">
-        <button
-          className={`ig-tab ${activeTab === "posts" ? "is-active" : ""}`}
-          onClick={() => setActiveTab("posts")}
-        >
-          POSTS
-        </button>
-        <button
-          className={`ig-tab ${activeTab === "reels" ? "is-active" : ""}`}
-          onClick={() => setActiveTab("reels")}
-        >
-          REELS
-        </button>
-        <button
-          className={`ig-tab ${activeTab === "tagged" ? "is-active" : ""}`}
-          onClick={() => setActiveTab("tagged")}
-        >
-          TAGGED
-        </button>
-      </div>
-
-      {/* Content */}
-      {activeTab === "posts" && (
-        <div className="ig-grid">
-          {user.photos.map((src, i) => (
-            <button key={i} className="ig-grid-item" aria-label={`Open post ${i + 1}`}>
-              <img src={src} alt="" />
-            </button>
-          ))}
-        </div>
-      )}
-
-      {activeTab === "reels" && (
-        <div className="ig-empty">
-          <p>No reels yet</p>
-        </div>
-      )}
-
+      {activeTab === "posts" && <ProfileGrid photos={user.photos} />}
+      {activeTab === "reels" && <ProfileEmpty text="No reels yet" />}
       {activeTab === "tagged" && (
-        <div className="ig-empty">
-          <p>Photos of you will appear here</p>
-        </div>
+        <ProfileEmpty text="Photos of you will appear here" />
       )}
     </div>
   );
