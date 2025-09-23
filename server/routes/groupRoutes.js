@@ -6,8 +6,8 @@ const router = express.Router();
 // Get all groups
 router.get("/", groupController.getAllGroups);
 
-// Get group by ID
-router.get("/id/:id", groupController.getGroupById);
+// Get a single group by ID
+router.get("/:id", groupController.getGroupById);
 
 // Get group by name
 router.get("/name/:name", groupController.getGroupByName);
@@ -15,10 +15,31 @@ router.get("/name/:name", groupController.getGroupByName);
 // Create a new group
 router.post("/", groupController.createGroup);
 
-// Update, Delete, Join, Leave group
+// Update a group
 router.put("/:id", groupController.updateGroup);
+
+// Delete a group
 router.delete("/:id", groupController.deleteGroup);
+
+// Join a group
 router.post("/:id/join", groupController.joinGroup);
+
+// Leave a group
 router.post("/:id/leave", groupController.leaveGroup);
+
+// Toggle admin status for a member
+router.post("/:id/admin", groupController.updateAdmin);
+
+// Get all group members
+router.get("/:id/members", groupController.getMembers);
+
+// Get all join requests (for private groups)
+router.get("/:id/requests", groupController.getJoinRequests);
+
+// Approve a join request
+router.post("/:id/requests/approve", groupController.approveJoinRequest);
+
+// Reject a join request
+router.post("/:id/requests/reject", groupController.rejectJoinRequest);
 
 export default router;

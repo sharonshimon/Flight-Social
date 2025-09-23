@@ -14,7 +14,8 @@ export const registerUser = async (body) => {
         email: body.email,
         password: body.password,
         firstName: body.firstName,
-        lastName: body.lastName
+        lastName: body.lastName,
+        gender: body.gender,
     });
 
     await newUser.save();

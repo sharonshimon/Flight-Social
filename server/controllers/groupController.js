@@ -106,6 +106,92 @@ class GroupController {
       res.status(400).json({ success: false, message: err.message });
     }
   }
+
+  // Approve join request
+  async approveJoinRequest(req, res) {
+    try {
+      const userData = verifyToken(req);
+      const group = await groupService.getGroupById(req.params.id);
+
+      if (group.privacy !== "private") {
+        return res.status(400).json({ success: false, message: "Only private groups use join requests" });
+      }
+
+      if (!group.admins.some(a => a.toString() === userData.id) && group.creator.toString() !== userData.id) {
+        return res.status(403).json({ success: false, message: "Only admins can approve requests" });
+      }
+
+      const updatedGroup = await groupService.approveJoinRequest(req.params.id, req.body.userId);
+      res.status(200).json({ success: true, group: updatedGroup });
+    } catch (err) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
+  // Reject join request
+  async rejectJoinRequest(req, res) {
+    try {
+      const userData = verifyToken(req);
+      const group = await groupService.getGroupById(req.params.id);
+
+      if (group.privacy !== "private") {
+        return res.status(400).json({ success: false, message: "Only private groups use join requests" });
+      }
+
+      if (!group.admins.some(a => a.toString() === userData.id) && group.creator.toString() !== userData.id) {
+        return res.status(403).json({ success: false, message: "Only admins can reject requests" });
+      }
+
+      const updatedGroup = await groupService.rejectJoinRequest(req.params.id, req.body.userId);
+      res.status(200).json({ success: true, group: updatedGroup });
+    } catch (err) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
+  // Get join requests
+  async getJoinRequests(req, res) {
+    try {
+      const group = await groupService.getGroupById(req.params.id);
+
+      if (group.privacy !== "private") {
+        return res.status(400).json({ success: false, message: "Only private groups have join requests" });
+      }
+
+      const populatedGroup = await groupService.getJoinRequests(req.params.id);
+      res.status(200).json({ success: true, joinRequests: populatedGroup.joinRequests });
+    } catch (err) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
+  // Update admin status
+  async updateAdmin(req, res) {
+    try {
+      const userData = verifyToken(req);
+      const group = await groupService.getGroupById(req.params.id);
+
+      if (group.creator.toString() !== userData.id && !userData.isAdmin) {
+        return res.status(403).json({ success: false, message: "Only the creator or admins can toggle member roles" });
+      }
+
+      const updatedGroup = await groupService.updateAdmin(req.params.id, req.body.userId);
+      res.status(200).json({ success: true, group: updatedGroup });
+    } catch (err) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
+  // Get group members
+  async getMembers(req, res) {
+    try {
+      const group = await groupService.getMembers(req.params.id);
+      res.status(200).json({ success: true, members: group.members });
+    } catch (err) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+  }
+
 }
 
 export default new GroupController();

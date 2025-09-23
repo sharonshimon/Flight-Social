@@ -43,7 +43,6 @@ class GroupService {
         return Group.findByIdAndUpdate(groupId, updateData, { new: true, runValidators: true });
     }
 
-
     // Join group
     async joinGroup(groupId, userId) {
         const group = await Group.findById(groupId);
@@ -52,9 +51,21 @@ class GroupService {
         const isMember = group.members.some(m => m.user.toString() === userId);
         if (isMember) throw new Error("User is already a member");
 
-        group.members.push({ user: userId, role: 'member' });
+        // If public group, add directly to members
+        if (group.privacy === "public") {
+            group.members.push({ user: userId, role: "member" });
+            await group.save();
+            return { group, status: "joined" };
+        }
+
+        // If private group, add to join requests
+        const alreadyRequested = group.joinRequests.some(r => r.user.toString() === userId);
+        if (alreadyRequested) throw new Error("Join request already sent");
+
+        group.joinRequests.push({ user: userId });
         await group.save();
-        return group;
+        return { group, status: "request_sent" };
+
     }
 
     // Leave group
@@ -68,9 +79,66 @@ class GroupService {
         await group.save();
         return group;
     }
+
     // Delete a group
     async deleteGroup(groupId) {
         return Group.findByIdAndDelete(groupId);
+    }
+
+    // Add 
+    // Approve join request
+    async approveJoinRequest(groupId, userId) {
+        const group = await Group.findById(groupId);
+        if (!group) throw new Error("Group not found");
+
+        const requestIndex = group.joinRequests.findIndex(r => r.user.toString() === userId);
+        if (requestIndex === -1) throw new Error("Join request not found");
+
+        group.members.push({ user: userId, role: "member" });
+        group.joinRequests.splice(requestIndex, 1);
+
+        await group.save();
+        return group;
+    }
+
+    // Reject join request
+    async rejectJoinRequest(groupId, userId) {
+        const group = await Group.findById(groupId);
+        if (!group) throw new Error("Group not found");
+
+        group.joinRequests = group.joinRequests.filter(r => r.user.toString() !== userId);
+        await group.save();
+        return group;
+    }
+
+    // Update admin status
+    async updateAdmin(groupId, userId) {
+        const group = await Group.findById(groupId);
+        if (!group) throw new Error("Group not found");
+
+        const isAdmin = group.admins.some(a => a.toString() === userId);
+        if (isAdmin) {
+            group.admins = group.admins.filter(a => a.toString() !== userId);
+            const member = group.members.find(m => m.user.toString() === userId);
+            if (member) member.role = "member";
+        } else {
+            group.admins.push(userId);
+            const member = group.members.find(m => m.user.toString() === userId);
+            if (member) member.role = "admin";
+        }
+
+        await group.save();
+        return group;
+    }
+
+    // Get all members
+    async getMembers(groupId) {
+        return Group.findById(groupId).populate("members.user", "username email profilePicture");
+    }
+
+    // Get all join requests
+    async getJoinRequests(groupId) {
+        return Group.findById(groupId).populate("joinRequests.user", "username email profilePicture");
     }
 }
 
