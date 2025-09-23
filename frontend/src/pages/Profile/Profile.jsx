@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./Profile.css";
-
+import ProfileModal from "./ProfileModel";
 import ProfileHeader from "./ProfileHeader";
 import ProfileTabs from "./ProfileTabs";
 import ProfileGrid from "./ProfileGrid";
@@ -11,6 +11,8 @@ export default function Profile() {
   const params = useParams();
   const userId = params.id ?? "me";
   const [activeTab, setActiveTab] = useState("posts");
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+
 
   const user = useMemo(
     () => ({
@@ -36,10 +38,24 @@ export default function Profile() {
       <ProfileHeader user={user} />
       <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {activeTab === "posts" && <ProfileGrid photos={user.photos} />}
+      {activeTab === "posts" && (
+        <ProfileGrid photos={user.photos} onPhotoClick={setSelectedPhoto} />
+      )}
       {activeTab === "reels" && <ProfileEmpty text="No reels yet" />}
       {activeTab === "tagged" && (
         <ProfileEmpty text="Photos of you will appear here" />
+      )}
+      {selectedPhoto && (
+        <ProfileModal
+          photo={selectedPhoto}
+          onClose={() => setSelectedPhoto(null)}
+          post={{
+            profilePic: user.avatar,
+            name: user.name,
+            desc: "Chilling in Thailand 🏝️",
+            likes: 25
+          }}
+        />
       )}
     </div>
   );
