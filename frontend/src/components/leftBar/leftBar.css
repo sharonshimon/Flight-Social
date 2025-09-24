@@ -11,13 +11,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 10px;
   margin-bottom: 10px;
-  margin-left: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .leftBar .minimize-btn:hover {
   background: #b3e0ff;
   color: #005fa3;
+  display: flex;
+    align-items: center;
   border-color: #0074D9;
 }
 .leftBar {
@@ -98,7 +100,6 @@
   font-weight: bold;
   color: #0074D9;
   text-align: center;
-  margin-left: 10px;
   font-size: 1.1rem;
   padding-bottom: 4px;
 }

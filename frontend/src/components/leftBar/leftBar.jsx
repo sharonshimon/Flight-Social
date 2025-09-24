@@ -22,12 +22,32 @@ const LeftBar = () => {
     { icon: icons.Memories, name: "My Groups",      path: "/myGroups" },
   ], [icons]);
 
-  const currentUser = useMemo(() => ({
-    id: "me",                           // <-- use your real id if you have one
-    name: "Aviator",
-    profilePic: icons.Courses
-  }), [icons.Courses]);
+  // const currentUser = useMemo(() => ({
+  //   id: "me",                           // <-- use your real id if you have one
+  //   name: "Aviator",
+  //   profilePic: icons.Courses
+  // }), [icons.Courses]);
 
+  let currentUser = null;
+   try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const userObj = JSON.parse(userStr);
+      currentUser = {
+        name: userObj.username || userObj.firstName || 'User',
+        profilePic: userObj.profilePicture || "https://randomuser.me/api/portraits/men/32.jpg"
+      };
+    }
+  } catch (e) {
+    currentUser = null;
+  }
+  // Fallback if not logged in
+  if (!currentUser) {
+    currentUser = {
+      name: "Guest",
+      profilePic: "https://randomuser.me/api/portraits/men/32.jpg"
+    };
+  }
   const toggleMinimized = () => setMinimized(prev => !prev);
 
   const renderMenuItems = (items) =>
