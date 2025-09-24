@@ -21,13 +21,6 @@ const LeftBar = () => {
     { icon: icons.Gallery,  name: "New Post",       path: "/NewPost" },
     { icon: icons.Memories, name: "My Groups",      path: "/myGroups" },
   ], [icons]);
-
-  // const currentUser = useMemo(() => ({
-  //   id: "me",                           // <-- use your real id if you have one
-  //   name: "Aviator",
-  //   profilePic: icons.Courses
-  // }), [icons.Courses]);
-
   let currentUser = null;
    try {
     const userStr = localStorage.getItem('user');
