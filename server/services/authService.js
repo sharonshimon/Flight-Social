@@ -1,13 +1,22 @@
 import UserModel from "../models/User.js";
+//import cloudinary from "../src/config/cloudinary.js";
+import { cloudinary } from "../src/config/cloudinary.js";
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Register User
-export const registerUser = async (body) => {
+export const registerUser = async (body, file) => {
     const existingUser = await UserModel.findOne({ email: body.email });
     if (existingUser) throw new Error("Email already registered");
+
+    let profileImageUrl = body.profilePicture || "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
+
+    if (file) {
+        profileImageUrl = file.path;
+    }
 
     const newUser = new UserModel({
         username: body.username,
@@ -16,11 +25,15 @@ export const registerUser = async (body) => {
         firstName: body.firstName,
         lastName: body.lastName,
         gender: body.gender,
+        profilePicture: profileImageUrl,
+        country: body.country,
+        city: body.city,
     });
 
     await newUser.save();
     return newUser;
 };
+
 
 // Login User
 export const loginUser = async (body) => {

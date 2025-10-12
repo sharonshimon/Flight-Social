@@ -1,9 +1,10 @@
 import { loginUser, registerUser } from "../services/authService.js";
+import { parser } from "../src/config/cloudinary.js";
 
 // Register Controller
 export const register = async (req, res) => {
     try {
-        const newUser = await registerUser(req.body);
+        const newUser = await registerUser(req.body, req.file);
         const { password, ...userData } = newUser._doc;
 
         res.status(201).json({

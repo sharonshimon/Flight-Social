@@ -13,6 +13,9 @@ const Register = () => {
         firstName: '',
         lastName: '',
         gender: 'Other',
+        country: "Israel",
+        city: "Jerusalem"
+
     })
     const [profileImage, setProfileImage] = useState(null)
     const [error, setError] = useState('')
@@ -47,7 +50,8 @@ const Register = () => {
                 data.append('profilePicture', profileImage)
             }
             console.log([...data.entries()]);
-            await authService.register(data)
+            await authService.register(data, true)
+
             setSuccess('Registration successful! Redirecting to feed...')
             setTimeout(() => navigate('/feed'), 1500)
         } catch (err) {
@@ -66,6 +70,8 @@ const Register = () => {
                         <LoginInput text="Password" type="password" name="password" value={form.password} onChange={handleChange} />
                         <LoginInput text="First Name" type="text" name="firstName" value={form.firstName} onChange={handleChange} />
                         <LoginInput text="Last Name" type="text" name="lastName" value={form.lastName} onChange={handleChange} />
+                        <LoginInput text="Country" type="text" name="country" value={form.country} onChange={handleChange} />
+                        <LoginInput text="City" type="text" name="city" value={form.city} onChange={handleChange} />
                         <label htmlFor="gender">Gender</label>
                         <select name="gender" value={form.gender} onChange={handleChange} required>
                             <option value="Other">Other</option>

@@ -14,7 +14,7 @@ export const authService = {
             console.log('Making login request to:', API_BASE_URL + API_ENDPOINTS.auth.login)
             const response = await api.post(API_ENDPOINTS.auth.login, credentials);
             console.log('Login response:', response.data)
-            
+
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
