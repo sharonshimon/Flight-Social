@@ -3,10 +3,7 @@ import { API_BASE_URL } from '../config/api';
 
 // Create axios instance with base URL
 const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    baseURL: API_BASE_URL
 });
 
 // Request interceptor for adding auth token

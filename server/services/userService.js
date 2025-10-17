@@ -72,3 +72,9 @@ export const getUserFriends = async (userId) => {
         profilePicture: friend.profilePicture
     }));
 };
+
+// Get all users (admin use) - exclude password
+export const getAllUsers = async () => {
+    const users = await UserModel.find({}, { password: 0 }).lean();
+    return users;
+};

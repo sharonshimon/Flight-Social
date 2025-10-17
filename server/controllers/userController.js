@@ -77,6 +77,18 @@ export const getUserProfileController = async (req, res) => {
     }
 };
 
+// Get all users for admin
+export const getAllUsersController = async (req, res) => {
+    try {
+        // Require authentication to access full user list
+        verifyToken(req);
+        const users = await (await import('../services/userService.js')).getAllUsers();
+        res.status(200).json({ data: users });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
+    }
+};
+
 // Follow user
 export const followUserController = async (req, res) => {
     try {

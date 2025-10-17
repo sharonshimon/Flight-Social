@@ -202,3 +202,15 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.comment-meta {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.comment-time {
+  color: #7d8794;
+  font-size: 0.85rem;
+  margin-left: 8px;
+}

@@ -1,5 +1,7 @@
 import { loginUser, registerUser } from "../services/authService.js";
 import { parser } from "../src/config/cloudinary.js";
+import { verifyToken } from "../services/authService.js";
+import { getUser } from "../services/userService.js";
 
 // Register Controller
 export const register = async (req, res) => {
@@ -33,5 +35,18 @@ export const login = async (req, res) => {
         res.status(400).json({
             message: error.message || "Error occurred logging in the user",
         });
+    }
+};
+
+// Get current authenticated user
+export const me = async (req, res) => {
+    try {
+        const userData = verifyToken(req);
+        const user = await getUser(userData.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        const { password, ...data } = user._doc;
+        res.status(200).json({ user: data });
+    } catch (error) {
+        res.status(401).json({ message: error.message || 'Unauthorized' });
     }
 };

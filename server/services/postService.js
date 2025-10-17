@@ -23,9 +23,16 @@ export const createPost = async (body, files) => {
             if (group) groupId = group._id;
         }
 
+        // Ensure isAnonymous is boolean (FormData sends strings)
+        const isAnon = (function(v){
+            if (v === true || v === false) return v;
+            if (typeof v === 'string') return v === 'true';
+            return false;
+        })(body.isAnonymous);
+
         const newPost = new PostModel({
             ...body,
-            isAnonymous: body.isAnonymous || false,
+            isAnonymous: isAnon,
             media: mediaData,
             links: body.links || [],
             tags: body.tags || [],
@@ -59,7 +66,13 @@ export const updatePost = async (params, body, files) => {
                     post.group = null;
                 }
             } else if (body[field] !== undefined) {
-                post[field] = body[field];
+                // Coerce isAnonymous to boolean
+                if (field === 'isAnonymous') {
+                    const v = body[field];
+                    post.isAnonymous = (v === true || v === 'true');
+                } else {
+                    post[field] = body[field];
+                }
             }
         }
 
@@ -237,7 +250,7 @@ export const addComment = async (params, body) => {
         const newComment = {
             postId: post._id,
             userId: user._id,
-            isAnonymous: body.isAnonymous || false,
+            isAnonymous: (body.isAnonymous === true || body.isAnonymous === 'true') || false,
             content: body.content
         };
 
@@ -265,8 +278,8 @@ export const updateComment = async (params, body) => {
             throw new Error("You can update only your comment");
         }
 
-        if (body.content !== undefined) comment.content = body.content;
-        if (body.isAnonymous !== undefined) comment.isAnonymous = body.isAnonymous;
+    if (body.content !== undefined) comment.content = body.content;
+    if (body.isAnonymous !== undefined) comment.isAnonymous = (body.isAnonymous === true || body.isAnonymous === 'true');
 
         await post.save();
         await post.populate({ path: 'comments.userId', select: 'username photoURL' });

@@ -1,0 +1,5 @@
+.admin-console { padding: 20px; font-family: Arial, sans-serif; }
+.admin-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.admin-table th, .admin-table td { border: 1px solid #ddd; padding: 8px; }
+.admin-table th { background: #f4f6fb; }
+.btn-danger { background: #d9534f; color: white; border: none; padding: 6px 8px; border-radius: 6px; cursor: pointer; }

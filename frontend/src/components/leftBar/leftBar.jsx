@@ -20,6 +20,7 @@ const LeftBar = () => {
     { icon: icons.Messages, name: "Messages",       path: "/messages" },
     { icon: icons.Gallery,  name: "New Post",       path: "/NewPost" },
     { icon: icons.Memories, name: "My Groups",      path: "/myGroups" },
+    { icon: icons.Memories, name: "Admin",          path: "/admin" },
   ], [icons]);
   let currentUser = null;
    try {

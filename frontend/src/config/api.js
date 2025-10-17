@@ -11,7 +11,10 @@ export const API_ENDPOINTS = {
         create: '/api/v1/posts',
         delete: '/api/v1/posts/:id',
         like: '/api/v1/posts/like/:id',
-        comment: '/api/v1/posts/comment/:id'
+    comment: '/api/v1/posts/add-comment/:id',
+    updateComment: '/api/v1/posts/update-comment/:id',
+    deleteComment: '/api/v1/posts/delete-comment/:id',
+        getTimeline: '/api/v1/posts/get-timeline-posts/:username'
     },
     users: {
         getProfile: '/api/v1/users',

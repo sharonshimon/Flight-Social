@@ -5,6 +5,7 @@ import {
     getUserController,
     getUserFriendsController,
     getUserProfileController,
+    getAllUsersController,
     unfollowUserController,
     updateProfilePictureController,
     updateUserController
@@ -21,12 +22,8 @@ router.put("/:id/profile-picture", parser.single("profilePicture"), updateProfil
 
 // Delete user
 router.delete("/:id", deleteUserController);
-
-// Get user by ID
-router.get("/:id", getUserController);
-
-// Get user by username
-router.get("/", getUserProfileController);
+// Admin: get all users
+router.get("/all", getAllUsersController);
 
 // Follow a user
 router.put("/follow/:id", followUserController);
@@ -36,5 +33,11 @@ router.put("/unfollow/:id", unfollowUserController);
 
 // Get friends
 router.get("/friends/:userId", getUserFriendsController);
+
+// Get user by ID
+router.get("/:id", getUserController);
+
+// Get user by username
+router.get("/", getUserProfileController);
 
 export default router;

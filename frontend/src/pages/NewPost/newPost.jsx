@@ -1,5 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import "./NewPost.css";
+import axiosInstance from "../../services/axiosService";
+import { API_ENDPOINTS } from "../../config/api";
+import { useNavigate } from "react-router-dom";
 import MediaPicker from "./MediaPicker";
 import CaptionInput from "./CaptionInput";
 import LocationVisibility from "./LocationVisibility";
@@ -8,11 +11,16 @@ import FormActions from "./FormActions";
 const MAX_CAPTION = 2200;
 
 export default function NewPost() {
+  const navigate = useNavigate();
   const [caption, setCaption] = useState("");
   const [location, setLocation] = useState("");
   const [visibility, setVisibility] = useState("public");
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [availableGroups, setAvailableGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const inputRef = useRef(null);
 
@@ -37,36 +45,111 @@ export default function NewPost() {
 
   const canSubmit = caption.trim().length > 0 || files.length > 0;
 
-  const handleSubmit = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (!canSubmit || submitting) return;
 
     const formData = new FormData();
-    formData.append("caption", caption.trim());
+    formData.append("content", caption.trim());
+    formData.append("isAnonymous", isAnonymous ? 'true' : 'false');
+    // append tags as JSON string or multiple entries
+    if (selectedTags && selectedTags.length) {
+      // append each tag separately so server receives multiple entries
+      selectedTags.forEach(t => formData.append('tags', t));
+    }
+    if (selectedGroup) formData.append('group', selectedGroup);
     formData.append("location", location.trim());
-    formData.append("visibility", visibility);
+    formData.append("privacy", visibility);
+    // append files under key 'media' because server parser.array('media') expects that
     files.forEach((f, i) => formData.append("media", f, f.name || `media_${i}`));
 
-    console.log("Submitting new post:", {
-      caption,
-      location,
-      visibility,
-      files,
-    });
+    setSubmitting(true);
+    setSubmitError(null);
 
-    setCaption("");
-    setLocation("");
-    setVisibility("public");
-    setFiles([]);
-    previews.forEach((u) => URL.revokeObjectURL(u));
-    setPreviews([]);
-    alert("Post submitted (mock). Wire this to your API!");
+    try {
+      // Backend route: POST /api/v1/posts/create-post
+  const url = `${API_ENDPOINTS.posts.create.replace(/\/$/, '')}/create-post`;
+  // debug
+  const token = localStorage.getItem('token');
+  console.debug('NewPost.submit -> URL:', url, 'token present:', !!token);
+  // Do NOT set Content-Type manually for multipart/form-data; browser will add the correct boundary
+  const res = await axiosInstance.post(url, formData);
+
+  console.log('Post created:', res.data);
+  // log the created post object if present
+  console.debug('NewPost created post detail:', res.data?.data || res.data);
+
+  // Reset form
+      setCaption("");
+      setLocation("");
+      setVisibility("public");
+      setFiles([]);
+      previews.forEach((u) => URL.revokeObjectURL(u));
+      setPreviews([]);
+
+  // Optionally navigate to feed or show success
+  alert(res.data?.message || 'Post created successfully');
+  // notify other parts of the app that a new post was created
+  try { window.dispatchEvent(new CustomEvent('post-created', { detail: res.data?.data })); } catch(e) { console.debug('dispatch event failed', e); }
+  // navigate to feed so user can see the new post
+  navigate('/feed');
+    } catch (err) {
+      console.error('Create post error:', err.response?.data || err.message);
+      setSubmitError(err.response?.data?.message || err.message || 'Failed to create post');
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  // fetch groups for select
+  useEffect(() => {
+    let cancelled = false;
+    const loadGroups = async () => {
+      try {
+        const res = await axiosInstance.get(API_ENDPOINTS.groups.getAll);
+        if (cancelled) return;
+        const data = res.data?.data || res.data;
+        setAvailableGroups(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.debug('NewPost: failed to load groups', err?.response?.data || err.message);
+      }
+    };
+    loadGroups();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className="newpost">
       <h2>Create New Post</h2>
       <form className="np-form" onSubmit={handleSubmit}>
+          <div style={{marginBottom:12}}>
+            <label style={{display:'inline-flex',alignItems:'center',gap:8}}>
+              <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} /> Post anonymously
+            </label>
+          </div>
+
+          <div style={{marginBottom:12}}>
+            <label>Tags: </label>
+            <select multiple value={selectedTags} onChange={(e) => setSelectedTags(Array.from(e.target.selectedOptions).map(o => o.value))}>
+              {[
+                "Adventure","CityTrip","Nature","Luxury","Backpacking","FoodAndDrink",
+                "Cultural","Family","Couples","SoloTravel","Budget","Wellness","RoadTrip","Festival",
+                "Historical","Beach","Mountain","Wildlife","Cruise","Skiing","Hiking","Camping",
+                "Diving","Surfing","Cycling","Photography","Shopping","Nightlife","General","Other"
+              ].map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+
+          <div style={{marginBottom:12}}>
+            <label>Group (optional): </label>
+            <select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)}>
+              <option value="">-- none --</option>
+              {availableGroups.map(g => <option key={g._id || g.id} value={g.name || g._id || g.id}>{g.name}</option>)}
+            </select>
+          </div>
         <MediaPicker
           inputRef={inputRef}
           files={files}
@@ -85,7 +168,8 @@ export default function NewPost() {
           visibility={visibility}
           setVisibility={setVisibility}
         />
-        <FormActions canSubmit={canSubmit} />
+        {submitError && <div style={{ color: 'red' }}>{submitError}</div>}
+        <FormActions canSubmit={canSubmit} submitting={submitting} />
       </form>
     </div>
   );
