@@ -1,4 +1,5 @@
-export const API_BASE_URL = 'http://localhost:3000';
+// Use empty base so requests go through Vite dev-server proxy (recommended for dev)
+export const API_BASE_URL = ''; // when running in dev, Vite proxy will forward '/api' to backend
 
 // API endpoints configuration
 export const API_ENDPOINTS = {
@@ -29,5 +30,11 @@ export const API_ENDPOINTS = {
         getAll: '/api/v1/groups',
         create: '/api/v1/groups',
         join: '/api/v1/groups/join'
+    }
+    ,
+    chat: {
+        list: '/api/v1/chat/conversations',
+        messages: '/api/v1/chat/messages/:userId/:peerId',
+        start: '/api/v1/chat/start'
     }
 };

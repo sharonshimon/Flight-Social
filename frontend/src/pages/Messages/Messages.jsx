@@ -2,91 +2,132 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./Messages.css";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import SendIcon from "@mui/icons-material/Send";
-import { mockConversations } from "./MockConversations";
+import ChatWindow from "../../components/Chat/ChatWindow";
+import { API_BASE_URL, API_ENDPOINTS } from "../../config/api";
 
 export default function Messages() {
   const [query, setQuery] = useState("");
-  const [activeId, setActiveId] = useState(mockConversations[0]?.id || null);
-  const [convos, setConvos] = useState(mockConversations);
+  const [activeConvo, setActiveConvo] = useState(null);
+  const [convos, setConvos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const active = useMemo(
-    () => convos.find((c) => c.id === activeId) || null,
-    [convos, activeId]
-  );
+  const currentUser = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user")) || null;
+    } catch (e) {
+      return null;
+    }
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchConvos = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS?.chat?.list || '/api/v1/chat/conversations'}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Failed to load conversations');
+        const body = await res.json();
+        // body.data is expected to be an array of { _id: peerId, lastMessage, lastAt }
+        const items = (body.data || []).map((it) => ({
+          id: it._id,
+          name: it.peerDisplayName || it.peerUsername || it._id,
+          avatar: it.peerAvatar || '',
+          lastAt: it.lastAt,
+          lastMessage: it.lastMessage,
+        }));
+        setConvos(items);
+        if (items.length) setActiveConvo(items[0]);
+      } catch (err) {
+        console.error('Load convos error', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchConvos();
+  }, []);
+
+  // start a new conversation
+  const [newPeer, setNewPeer] = useState('');
+  const [newMsg, setNewMsg] = useState('');
+  const startConversation = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    if (!token) return alert('Please login to start a conversation');
+    try {
+      const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.chat.start}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ peerUsername: newPeer, content: newMsg })
+      });
+      if (!res.ok) throw new Error('Failed to start conversation');
+      const body = await res.json();
+      // refresh convos
+      const newConvo = { id: body.data.receiverId || body.data.receiverId, name: newPeer || body.data.receiverId, avatar: '' };
+      setConvos((c) => [newConvo, ...c]);
+      setActiveConvo(newConvo);
+      setNewPeer('');
+      setNewMsg('');
+    } catch (err) {
+      console.error('startConversation failed', err);
+      alert('Could not start conversation');
+    }
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return convos;
-    return convos.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.messages.some((m) => m.text.toLowerCase().includes(q))
-    );
+    return convos.filter((c) => (c.name || c.id).toLowerCase().includes(q) || (c.lastMessage || '').toLowerCase().includes(q));
   }, [convos, query]);
 
-  const handleSend = (text) => {
-    if (!text.trim() || !active) return;
-    setConvos((prev) =>
-      prev.map((c) =>
-        c.id !== active.id
-          ? c
-          : {
-              ...c,
-              unread: 0,
-              lastAt: "now",
-              messages: [
-                ...c.messages,
-                {
-                  id: `m${Date.now()}`,
-                  author: "You",
-                  text: text.trim(),
-                  at: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                  me: true,
-                },
-              ],
-            }
-      )
-    );
+  const handleSelect = (c) => {
+    setActiveConvo(c);
   };
 
   return (
     <div className="msgs">
       <aside className="msgs__list">
+        <form className="msgs__new" onSubmit={startConversation}>
+          <input value={newPeer} onChange={(e) => setNewPeer(e.target.value)} placeholder="peer username or id" />
+          <input value={newMsg} onChange={(e) => setNewMsg(e.target.value)} placeholder="first message (optional)" />
+          <button type="submit">Start</button>
+        </form>
         <div className="msgs__convos">
+          {loading && <div className="msgs__loading">Loading…</div>}
           {filtered.map((c) => (
             <button
               key={c.id}
-              className={`convo ${c.id === activeId ? "is-active" : ""}`}
-              onClick={() => setActiveId(c.id)}
-              aria-current={c.id === activeId ? "page" : undefined}
+              className={`convo ${c.id === activeConvo?.id ? "is-active" : ""}`}
+              onClick={() => handleSelect(c)}
+              aria-current={c.id === activeConvo?.id ? "page" : undefined}
             >
-              <img className="convo__avatar" src={c.avatar} alt={`${c.name} avatar`} />
+              <img className="convo__avatar" src={c.avatar || '/favicon.ico'} alt={`${c.name || c.id} avatar`} />
               <div className="convo__main">
                 <div className="convo__row">
-                  <span className="convo__name">{c.name}</span>
+                  <span className="convo__name">{c.name || c.id}</span>
                   <span className="convo__time">{c.lastAt}</span>
                 </div>
                 <div className="convo__row">
-                  <span className="convo__preview">
-                    {c.messages[c.messages.length - 1]?.text ?? "No messages yet"}
-                  </span>
-                  {c.unread > 0 && <span className="convo__badge">{c.unread}</span>}
+                  <span className="convo__preview">{c.lastMessage || 'No messages yet'}</span>
                 </div>
               </div>
             </button>
           ))}
-          {filtered.length === 0 && (
-            <div className="msgs__empty">No conversations match “{query}”.</div>
+          {!loading && filtered.length === 0 && (
+            <div className="msgs__empty">No conversations yet. Start a chat!</div>
           )}
         </div>
       </aside>
       <section className="msgs__thread">
-        {active ? (
-          <>
-            <ThreadHeader name={active.name} avatar={active.avatar} />
-            <ThreadMessages messages={active.messages} />
-            <ThreadComposer onSend={handleSend} />
-          </>
+        {activeConvo ? (
+          <ChatWindow currentUser={currentUser} peerId={activeConvo.id} />
         ) : (
           <div className="msgs__placeholder">Select a conversation to start chatting</div>
         )}

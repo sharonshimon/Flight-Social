@@ -10,7 +10,6 @@ import Register from "./pages/Register/Register";
 import NewPost from "./pages/NewPost/newPost";
 import MyGroups from "./pages/MyGroups/myGroups"
 import AdminConsole from "./pages/Admin/AdminConsole";
-import AdminDebug from "./pages/Admin/AdminDebug";
 export default function App() {
   return (
     <BrowserRouter>
@@ -32,7 +31,6 @@ export default function App() {
           <Route path="/newPost" element={<NewPost />} />
           <Route path="/myGroups" element={<MyGroups />} />
           <Route path="/admin" element={<AdminConsole />} />
-          <Route path="/admin-debug" element={<AdminDebug />} />
         </Route>
       </Routes>
     </BrowserRouter>

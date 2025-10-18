@@ -1,6 +1,9 @@
-const mongoose = require('mongoose');
 
-const chatMessageSchema = new mongoose.Schema({
+import mongoose from 'mongoose';
+
+const { Schema } = mongoose;
+
+const chatMessageSchema = new Schema({
   senderId: {
     type: String,
     required: true,
@@ -12,12 +15,16 @@ const chatMessageSchema = new mongoose.Schema({
   },
   receiverId: {
     type: String,
-    required: true,
     index: true
   },
   receiverName: {
+    type: String
+  },
+  // Optional username when a message is started by username instead of id
+  peerUsername: {
     type: String,
-    required: true
+    index: true,
+    sparse: true
   },
   content: {
     type: String,
@@ -47,3 +54,5 @@ const chatMessageSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+export default mongoose.model('ChatMessage', chatMessageSchema);

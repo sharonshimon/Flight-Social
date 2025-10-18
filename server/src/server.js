@@ -23,9 +23,11 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
+import http from "http";
 import { dbConnect } from "./config/db.js";
 import { cloudinary, parser } from "./config/cloudinary.js";
 import routes from "../routes/routes.js";
+import { setupSocket } from "./socket.js";
 
 // Load environment variables
 dotenv.config();
@@ -38,6 +40,9 @@ app.use(helmet());
 app.use(morgan("common"));
 app.use(cors());
 app.use(express.json());
+// Support URL-encoded form bodies (e.g., from forms) and plain text bodies as a fallback
+app.use(express.urlencoded({ extended: true }));
+app.use(express.text({ type: ['text/*', 'application/x-www-form-urlencoded'] }));
 
 // Routes
 app.use(routes);
@@ -47,11 +52,13 @@ app.get("/", (req, res) => {
   res.send("Backend is working!");
 });
 
-// Start server after DB connection
+// Start server after DB connection and attach socket.io
 dbConnect()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT} ✅`);
+    const server = http.createServer(app);
+    const io = setupSocket(server);
+    server.listen(PORT, () => {
+      console.log(`Server + Socket.io running on http://localhost:${PORT} ✅`);
     });
   })
   .catch((err) => {
