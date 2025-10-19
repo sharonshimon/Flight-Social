@@ -24,7 +24,7 @@ export const createPost = async (body, files) => {
         }
 
         // Ensure isAnonymous is boolean (FormData sends strings)
-        const isAnon = (function(v){
+        const isAnon = (function (v) {
             if (v === true || v === false) return v;
             if (typeof v === 'string') return v === 'true';
             return false;
@@ -125,17 +125,38 @@ export const deletePost = async (params, body) => {
 };
 
 // Get posts by tag
+// export const getPostsByTag = async (tag) => {
+//     try {
+//         // Find posts containing the tag
+//         const posts = await PostModel.find({ tags: tag }).sort({ createdAt: -1 })
+//             .populate({ path: 'comments.userId', select: 'username photoURL' });
+
+//         return posts.map(formatComments); // reuse existing formatting function
+//     } catch (error) {
+//         throw error;
+//     }
+// };
+
+// Get posts by tag (both enum tags and hashtags in content)
 export const getPostsByTag = async (tag) => {
     try {
-        // Find posts containing the tag
-        const posts = await PostModel.find({ tags: tag }).sort({ createdAt: -1 })
+        // Use $regex for content hashtags and direct match for enum tags
+        const posts = await PostModel.find({
+            $or: [
+                { tags: tag }, // enum tags
+                { content: { $regex: `#${tag}`, $options: "i" } } // hashtags in content
+            ]
+        })
+            .sort({ createdAt: -1 })
             .populate({ path: 'comments.userId', select: 'username photoURL' });
 
-        return posts.map(formatComments); // reuse existing formatting function
+        return posts.map(formatComments); // reuse existing formatting
     } catch (error) {
         throw error;
     }
 };
+
+
 
 
 // Like / Dislike 
@@ -278,8 +299,8 @@ export const updateComment = async (params, body) => {
             throw new Error("You can update only your comment");
         }
 
-    if (body.content !== undefined) comment.content = body.content;
-    if (body.isAnonymous !== undefined) comment.isAnonymous = (body.isAnonymous === true || body.isAnonymous === 'true');
+        if (body.content !== undefined) comment.content = body.content;
+        if (body.isAnonymous !== undefined) comment.isAnonymous = (body.isAnonymous === true || body.isAnonymous === 'true');
 
         await post.save();
         await post.populate({ path: 'comments.userId', select: 'username photoURL' });

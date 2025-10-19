@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./ProfileModel.css";
 import LikeButton from "../../components/postsComponents/likeButton";
 import Comment from "../../components/postsComponents/comment";
@@ -25,9 +26,9 @@ export default function ProfileModal({ photo, onClose, post, canEdit = false }) 
       const fd = new FormData();
       fd.append('content', desc || '');
       // Use postService update (multipart/form-data)
-  const updated = await postService.updatePost(id, fd);
+      const updated = await postService.updatePost(id, fd);
       // Broadcast update for grid/feed
-  window.dispatchEvent(new CustomEvent('post-updated', { detail: { id, post: updated } }));
+      window.dispatchEvent(new CustomEvent('post-updated', { detail: { id, post: updated } }));
       setEditing(false);
     } catch (err) {
       console.error('ProfileModal save failed', err);
@@ -47,6 +48,32 @@ export default function ProfileModal({ photo, onClose, post, canEdit = false }) 
     setDesc(post.desc || "");
   };
 
+  // פונקציה לעיבוד תגיות בתיאור
+  const renderDescriptionWithTags = (text) => {
+    if (!text) return null;
+    return text.split(/\s+/).map((word, index) => {
+      if (word.startsWith("#")) {
+        const cleanTag = word.replace(/[.,!?]$/, "").substring(1);
+        return (
+          <Link
+            key={index}
+            to={`/posts?tag=${encodeURIComponent(cleanTag)}`}
+            style={{
+              color: "blue",
+              textDecoration: "none",
+              marginRight: 4
+            }}
+            onMouseEnter={(e) => e.target.style.textDecoration = "underline"}
+            onMouseLeave={(e) => e.target.style.textDecoration = "none"}
+          >
+            {word}
+          </Link>
+        );
+      }
+      return word + " ";
+    });
+  };
+
   return (
     <div className="ig-modal-overlay" onClick={onClose}>
       <div className="ig-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -62,7 +89,7 @@ export default function ProfileModal({ photo, onClose, post, canEdit = false }) 
           <div className="ig-modal-header">
             {post.isAnonymous ? (
               <>
-                <div className="ig-user-pic" style={{width:40,height:40,borderRadius:20,background:'#ddd'}} />
+                <div className="ig-user-pic" style={{ width: 40, height: 40, borderRadius: 20, background: '#ddd' }} />
                 <span className="ig-user-name">Anonymous</span>
               </>
             ) : (
@@ -78,7 +105,9 @@ export default function ProfileModal({ photo, onClose, post, canEdit = false }) 
 
           <div className="ig-modal-desc">
             {!editing ? (
-              <p>{post.desc}</p>
+              // <p>{post.desc}</p>
+              <p>{renderDescriptionWithTags(post.desc)}</p>
+
             ) : (
               <div className="ig-edit-area">
                 <textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows={4} />

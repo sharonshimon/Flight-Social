@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Feed from "./pages/Feed/Feed";
+import TagFeed from "./pages/FeedByTag/TagFeed";
 import Friends from "./pages/Friends/Friends";
 import Messages from "./pages/Messages/Messages";
 import Profile from "./pages/Profile/Profile";
@@ -24,6 +25,7 @@ export default function App() {
         {/* app chrome stays mounted */}
         <Route element={<Layout />}>
           <Route path="/feed" element={<Feed />} />
+          <Route path="/posts" element={<TagFeed />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />

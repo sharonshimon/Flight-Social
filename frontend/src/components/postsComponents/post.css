@@ -17,7 +17,7 @@
 .post .container {
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   padding: 32px 40px;
   width: 100%;
   max-width: 600px;
@@ -42,7 +42,7 @@
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .post .details .name {
@@ -72,7 +72,7 @@
   max-height: 350px;
   object-fit: cover;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s;
 }
 
@@ -106,7 +106,7 @@
   color: #333;
   font-size: 1rem;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 
@@ -116,7 +116,7 @@
   background: #f9fbff;
   border-radius: 14px;
   padding: 16px 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -135,10 +135,12 @@
 .comment-list::-webkit-scrollbar {
   width: 6px;
 }
+
 .comment-list::-webkit-scrollbar-track {
   background: #e6f2ff;
   border-radius: 8px;
 }
+
 .comment-list::-webkit-scrollbar-thumb {
   background: #0074D9;
   border-radius: 8px;
@@ -150,13 +152,13 @@
   border-radius: 10px;
   font-size: 0.95rem;
   color: #333;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .comment:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 /* Comment input box */
@@ -178,7 +180,7 @@
 
 .comment-input input:focus {
   border-color: #0074D9;
-  box-shadow: 0 0 0 3px rgba(0,116,217,0.2);
+  box-shadow: 0 0 0 3px rgba(0, 116, 217, 0.2);
 }
 
 .comment-input button {
@@ -199,8 +201,15 @@
 
 /* Small fade animation */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .comment-meta {
@@ -213,4 +222,39 @@
   color: #7d8794;
   font-size: 0.85rem;
   margin-left: 8px;
+}
+
+/* עיצוב לתגיות החופשיות (#Coffee, #Trip וכו׳) */
+.tag-link {
+  color: #0077ff;
+  text-decoration: none;
+  margin-right: 4px;
+  font-weight: 500;
+}
+
+.tag-link:hover {
+  text-decoration: underline;
+}
+
+/* עיצוב לתגיות המובנות מהמערך */
+.tags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-bubble {
+  color: #444;
+  background-color: #f3f3f3;
+  border-radius: 20px;
+  padding: 4px 10px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.tag-bubble:hover {
+  background-color: #dbeafe;
+  color: #0056b3;
 }

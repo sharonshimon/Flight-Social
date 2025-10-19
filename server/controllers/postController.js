@@ -115,17 +115,42 @@ export const getAllPostsController = async (req, res) => {
   }
 };
 
-// Get Posts by Tag
+// // Get Posts by Tag
+// export const getPostsByTagController = async (req, res) => {
+//   try {
+//     verifyToken(req);
+//     const tag = req.params.tag;
+//     const posts = await getPostsByTag(tag);
+//     res.status(200).json({ data: posts, message: `Posts filtered by tag: ${tag}` });
+//   } catch (err) {
+//     res.status(400).json({ data: null, message: "Failed to fetch posts by tag", error: err.message });
+//   }
+// };
+
+
 export const getPostsByTagController = async (req, res) => {
   try {
     verifyToken(req);
-    const tag = req.params.tag;
-    const posts = await getPostsByTag(tag);
-    res.status(200).json({ data: posts, message: `Posts filtered by tag: ${tag}` });
+    const tag = req.query.tag;
+
+    let posts;
+    if (!tag) {
+      posts = await PostModel.find().sort({ createdAt: -1 });
+    } else {
+      posts = await PostModel.find({
+        $or: [
+          { tags: tag },
+          { content: { $regex: `#${tag}`, $options: "i" } }
+        ]
+      }).sort({ createdAt: -1 });
+    }
+
+    res.status(200).json(posts);
   } catch (err) {
-    res.status(400).json({ data: null, message: "Failed to fetch posts by tag", error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
+
 
 // Add Comment
 export const addCommentController = async (req, res) => {
