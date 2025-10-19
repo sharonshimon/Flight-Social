@@ -115,19 +115,7 @@ export const getAllPostsController = async (req, res) => {
   }
 };
 
-// // Get Posts by Tag
-// export const getPostsByTagController = async (req, res) => {
-//   try {
-//     verifyToken(req);
-//     const tag = req.params.tag;
-//     const posts = await getPostsByTag(tag);
-//     res.status(200).json({ data: posts, message: `Posts filtered by tag: ${tag}` });
-//   } catch (err) {
-//     res.status(400).json({ data: null, message: "Failed to fetch posts by tag", error: err.message });
-//   }
-// };
-
-
+// Get Posts by Tag
 export const getPostsByTagController = async (req, res) => {
   try {
     verifyToken(req);

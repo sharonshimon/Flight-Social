@@ -124,19 +124,6 @@ export const deletePost = async (params, body) => {
     }
 };
 
-// Get posts by tag
-// export const getPostsByTag = async (tag) => {
-//     try {
-//         // Find posts containing the tag
-//         const posts = await PostModel.find({ tags: tag }).sort({ createdAt: -1 })
-//             .populate({ path: 'comments.userId', select: 'username photoURL' });
-
-//         return posts.map(formatComments); // reuse existing formatting function
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
 // Get posts by tag (both enum tags and hashtags in content)
 export const getPostsByTag = async (tag) => {
     try {

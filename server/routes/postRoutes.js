@@ -38,7 +38,6 @@ router.get("/", getAllPostsController);
 router.get("/get-timeline-posts/:username", getTimelinePostsController);
 
 // Get posts by tag
-// router.get("/get-posts-by-tag/:tag", getPostsByTagController);
 router.get("/", getPostsByTagController);
 
 // Add comment
