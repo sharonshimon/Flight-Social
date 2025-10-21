@@ -1,0 +1,97 @@
+.edit-profile-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px 30px;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-family: "Arial", sans-serif;
+}
+
+.edit-profile-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #262626;
+}
+
+.edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.image-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #dbdbdb;
+}
+
+.image-section input[type="file"] {
+    cursor: pointer;
+}
+
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-fields input,
+.form-fields textarea,
+.form-fields select {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #dbdbdb;
+    border-radius: 6px;
+    background-color: #fafafa;
+    outline: none;
+    transition: border 0.2s ease;
+}
+
+.form-fields input:focus,
+.form-fields textarea:focus,
+.form-fields select:focus {
+    border-color: #a8a8a8;
+}
+
+.form-fields textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+button[type="submit"] {
+    padding: 12px;
+    background-color: #0095f6;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0073c9;
+}
+
+button[type="submit"]:disabled {
+    background-color: #b2dffc;
+    cursor: not-allowed;
+}
+
+.error {
+    color: #ed4956;
+    font-size: 13px;
+    text-align: center;
+}

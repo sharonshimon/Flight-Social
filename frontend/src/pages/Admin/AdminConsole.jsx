@@ -128,11 +128,11 @@ export default function AdminConsole() {
       const endpoint = API_BASE + '/users/all';
       console.log('Loading users from', endpoint);
       try {
-  const { res, xhr } = await doAjax('GET', endpoint);
-  pushRequest('users-primary', endpoint, xhr && xhr.status, res);
-  setUsers(res.data || res);
-  console.log('users (primary response):', res.data || res);
-  setAuthStatus('ok');
+        const { res, xhr } = await doAjax('GET', endpoint);
+        pushRequest('users-primary', endpoint, xhr && xhr.status, res);
+        setUsers(res.data || res);
+        console.log('users (primary response):', res.data || res);
+        setAuthStatus('ok');
       } catch (err) {
         console.error('Users load failed (primary):', err);
         setAuthStatus('fail');
@@ -220,20 +220,20 @@ export default function AdminConsole() {
   return (
     <div className="admin-console">
       <h2>Admin Console (jQuery AJAX)</h2>
-      <div style={{marginBottom:12}}>
-        <div style={{display:'flex', gap:8, alignItems:'center'}}>
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           {/* Token input intentionally hidden from the UI to avoid exposing secrets. Use browser DevTools or the Save/Clear buttons to manage the token in localStorage. */}
         </div>
 
-        <div style={{marginTop:8, fontSize:'0.9rem', color:'#333', display:'flex', alignItems:'center', gap:8}}>
-          {currentAdmin && <span style={{fontSize:'0.95rem',color:'#222'}}>Verified admin: <strong>{currentAdmin}</strong></span>}
+        <div style={{ marginTop: 8, fontSize: '0.9rem', color: '#333', display: 'flex', alignItems: 'center', gap: 8 }}>
+          {currentAdmin && <span style={{ fontSize: '0.95rem', color: '#222' }}>Verified admin: <strong>{currentAdmin}</strong></span>}
           <span title={authStatus === 'ok' ? 'Authenticated' : authStatus === 'fail' ? 'Auth failed' : 'Unknown'}>
             {authStatus === 'ok' ? (
-              <span style={{display:'inline-block',width:10,height:10,background:'#3bbf6f',borderRadius:10}} />
+              <span style={{ display: 'inline-block', width: 10, height: 10, background: '#3bbf6f', borderRadius: 10 }} />
             ) : authStatus === 'fail' ? (
-              <span style={{display:'inline-block',width:10,height:10,background:'#e84a4a',borderRadius:10}} />
+              <span style={{ display: 'inline-block', width: 10, height: 10, background: '#e84a4a', borderRadius: 10 }} />
             ) : (
-              <span style={{display:'inline-block',width:10,height:10,background:'#ccc',borderRadius:10}} />
+              <span style={{ display: 'inline-block', width: 10, height: 10, background: '#ccc', borderRadius: 10 }} />
             )}
           </span>
         </div>
@@ -242,7 +242,7 @@ export default function AdminConsole() {
       <section>
         <h3>Users</h3>
         <button onClick={loadUsers}>Reload</button>
-        {loadingUsers && <span style={{marginLeft:8}}>Loading users...</span>}
+        {loadingUsers && <span style={{ marginLeft: 8 }}>Loading users...</span>}
         <table className="admin-table">
           <thead><tr><th>Username</th><th>Email</th><th>First</th><th>Last</th><th>Actions</th></tr></thead>
           <tbody>
@@ -253,12 +253,12 @@ export default function AdminConsole() {
                 <td>{u.firstName}</td>
                 <td>{u.lastName}</td>
                 <td>
-                  <button style={{marginRight:8}} onClick={() => setViewUser(u)}>View</button>
+                  <button style={{ marginRight: 8 }} onClick={() => setViewUser(u)}>View</button>
                   <button className="btn-danger" onClick={() => deleteUser(u._id || u.id)}>Delete</button>
                 </td>
               </tr>
             )) : (
-              <tr><td colSpan={5} style={{color:'#666'}}>No users or unexpected response format</td></tr>
+              <tr><td colSpan={5} style={{ color: '#666' }}>No users or unexpected response format</td></tr>
             )}
           </tbody>
         </table>
@@ -267,7 +267,7 @@ export default function AdminConsole() {
       <section>
         <h3>Groups</h3>
         <button onClick={loadGroups}>Reload</button>
-        {loadingGroups && <span style={{marginLeft:8}}>Loading groups...</span>}
+        {loadingGroups && <span style={{ marginLeft: 8 }}>Loading groups...</span>}
         <table className="admin-table">
           <thead><tr><th>Name</th><th>Privacy</th><th>Members</th></tr></thead>
           <tbody>
@@ -278,49 +278,49 @@ export default function AdminConsole() {
                 <td>{(g.members && g.members.length) || 0}</td>
               </tr>
             )) : (
-              <tr><td colSpan={3} style={{color:'#666'}}>No groups or unexpected response format</td></tr>
+              <tr><td colSpan={3} style={{ color: '#666' }}>No groups or unexpected response format</td></tr>
             )}
           </tbody>
         </table>
       </section>
       {error && (
-        <div style={{marginTop:16, padding:12, background:'#ffecec', color:'#a33', borderRadius:8}}>
+        <div style={{ marginTop: 16, padding: 12, background: '#ffecec', color: '#a33', borderRadius: 8 }}>
           <strong>Error:</strong> {error}
-          <div style={{marginTop:8, fontSize:'0.9rem', color:'#333'}}>Also check the browser console (F12) and Network tab for details.</div>
+          <div style={{ marginTop: 8, fontSize: '0.9rem', color: '#333' }}>Also check the browser console (F12) and Network tab for details.</div>
         </div>
       )}
       {viewUser && (
-        <div style={{position:'fixed',left:0,top:0,right:0,bottom:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center'}} onClick={() => setViewUser(null)}>
-          <div style={{background:'#fff',padding:20,borderRadius:8,minWidth:400,maxWidth:'90%',maxHeight:'80%',overflow:'auto'}} onClick={e => e.stopPropagation()}>
-              <h3>User details: {viewUser.username || viewUser._id}</h3>
-              <div style={{display:'flex',gap:20,flexWrap:'wrap',alignItems:'flex-start'}}>
-                <div style={{width:120,flex:'0 0 120px',textAlign:'center'}}>
-                  {/* Avatar: check common fields and fall back to placeholder */}
-                  <img alt={viewUser.username || 'avatar'} src={viewUser.profilePicture || viewUser.profilePic || viewUser.avatar || viewUser.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg'} style={{width:96,height:96,objectFit:'cover',borderRadius:8,boxShadow:'0 1px 3px rgba(0,0,0,0.15)'}} />
-                </div>
-                <div style={{minWidth:300,flex:1}}>
-                  <table style={{width:'100%',borderCollapse:'collapse'}}>
-                    <tbody>
-                      <tr><td style={{padding:6,fontWeight:600}}>Username</td><td style={{padding:6}}>{viewUser.username}</td></tr>
-                      <tr><td style={{padding:6,fontWeight:600}}>Email</td><td style={{padding:6}}>{viewUser.email}</td></tr>
-                      <tr><td style={{padding:6,fontWeight:600}}>First</td><td style={{padding:6}}>{viewUser.firstName}</td></tr>
-                      <tr><td style={{padding:6,fontWeight:600}}>Last</td><td style={{padding:6}}>{viewUser.lastName}</td></tr>
-                      <tr><td style={{padding:6,fontWeight:600}}>Admin</td><td style={{padding:6}}>{viewUser.isAdmin ? 'Yes' : 'No'}</td></tr>
-                      <tr><td style={{padding:6,fontWeight:600}}>Joined</td><td style={{padding:6}}>{viewUser.createdAt ? new Date(viewUser.createdAt).toLocaleString() : '-'}</td></tr>
-                      <tr><td style={{padding:6,fontWeight:600}}>Bio</td><td style={{padding:6}}>{viewUser.bio || '-'}</td></tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div style={{minWidth:300,flex:1}}>
-                  <details style={{background:'#f7f7f7',padding:10,borderRadius:6}}>
-                    <summary style={{cursor:'pointer',fontWeight:600}}>Raw JSON (expand)</summary>
-                    <pre style={{whiteSpace:'pre-wrap',fontSize:'0.85rem',marginTop:8,maxHeight:300,overflow:'auto'}}>{JSON.stringify(viewUser, null, 2)}</pre>
-                  </details>
-                </div>
+        <div style={{ position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setViewUser(null)}>
+          <div style={{ background: '#fff', padding: 20, borderRadius: 8, minWidth: 400, maxWidth: '90%', maxHeight: '80%', overflow: 'auto' }} onClick={e => e.stopPropagation()}>
+            <h3>User details: {viewUser.username || viewUser._id}</h3>
+            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+              <div style={{ width: 120, flex: '0 0 120px', textAlign: 'center' }}>
+                {/* Avatar: check common fields and fall back to placeholder */}
+                <img alt={viewUser.username || 'avatar'} src={viewUser.profilePicture || viewUser.profilePic || viewUser.avatar || viewUser.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg'} style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }} />
               </div>
-              <div style={{textAlign:'right',marginTop:12}}>
-                <button onClick={() => setViewUser(null)}>Close</button>
+              <div style={{ minWidth: 300, flex: 1 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    <tr><td style={{ padding: 6, fontWeight: 600 }}>Username</td><td style={{ padding: 6 }}>{viewUser.username}</td></tr>
+                    <tr><td style={{ padding: 6, fontWeight: 600 }}>Email</td><td style={{ padding: 6 }}>{viewUser.email}</td></tr>
+                    <tr><td style={{ padding: 6, fontWeight: 600 }}>First</td><td style={{ padding: 6 }}>{viewUser.firstName}</td></tr>
+                    <tr><td style={{ padding: 6, fontWeight: 600 }}>Last</td><td style={{ padding: 6 }}>{viewUser.lastName}</td></tr>
+                    <tr><td style={{ padding: 6, fontWeight: 600 }}>Admin</td><td style={{ padding: 6 }}>{viewUser.isAdmin ? 'Yes' : 'No'}</td></tr>
+                    <tr><td style={{ padding: 6, fontWeight: 600 }}>Joined</td><td style={{ padding: 6 }}>{viewUser.createdAt ? new Date(viewUser.createdAt).toLocaleString() : '-'}</td></tr>
+                    <tr><td style={{ padding: 6, fontWeight: 600 }}>Bio</td><td style={{ padding: 6 }}>{viewUser.bio || '-'}</td></tr>
+                  </tbody>
+                </table>
               </div>
+              <div style={{ minWidth: 300, flex: 1 }}>
+                <details style={{ background: '#f7f7f7', padding: 10, borderRadius: 6 }}>
+                  <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Raw JSON (expand)</summary>
+                  <pre style={{ whiteSpace: 'pre-wrap', fontSize: '0.85rem', marginTop: 8, maxHeight: 300, overflow: 'auto' }}>{JSON.stringify(viewUser, null, 2)}</pre>
+                </details>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right', marginTop: 12 }}>
+              <button onClick={() => setViewUser(null)}>Close</button>
+            </div>
           </div>
         </div>
       )}

@@ -1,4 +1,9 @@
-html, body {margin: 0; height: 100%; overflow: hidden}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden
+}
 
 .ig-profile {
   display: flex;
@@ -48,7 +53,14 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   font-size: 14px;
   cursor: pointer;
 }
-.ig-btn--icon { width: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+.ig-btn--icon {
+  width: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Stats row */
 .ig-stats {
@@ -58,13 +70,30 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   padding: 0;
   margin: 0;
 }
-.ig-stats li { font-size: 14px; }
-.ig-stats strong { font-weight: 600; }
+
+.ig-stats li {
+  font-size: 14px;
+}
+
+.ig-stats strong {
+  font-weight: 600;
+}
 
 /* Bio */
-.ig-bio { display: flex; flex-direction: column; gap: 4px; }
-.ig-name { font-weight: 600; }
-.ig-link { color: #2563eb; text-decoration: none; }
+.ig-bio {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ig-name {
+  font-weight: 600;
+}
+
+.ig-link {
+  color: #2563eb;
+  text-decoration: none;
+}
 
 /* Tabs */
 .ig-tabs {
@@ -74,6 +103,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   border-top: 1px solid #e5e7eb;
   padding-top: 12px;
 }
+
 .ig-tab {
   font-size: 12px;
   letter-spacing: 0.08em;
@@ -83,7 +113,11 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   padding: 10px 0;
   cursor: pointer;
 }
-.ig-tab.is-active { color: #111827; font-weight: 600; }
+
+.ig-tab.is-active {
+  color: #111827;
+  font-weight: 600;
+}
 
 /* Grid */
 .ig-grid {
@@ -91,6 +125,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
 }
+
 .ig-grid-item {
   display: block;
   position: relative;
@@ -100,6 +135,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   cursor: pointer;
   background: transparent;
 }
+
 .ig-grid-item img {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -107,7 +143,10 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   display: block;
   transition: transform .2s ease;
 }
-.ig-grid-item:hover img { transform: scale(1.03); }
+
+.ig-grid-item:hover img {
+  transform: scale(1.03);
+}
 
 /* Empty tab placeholder */
 .ig-empty {
@@ -125,11 +164,51 @@ html, body {margin: 0; height: 100%; overflow: hidden}
     grid-template-columns: 1fr;
     gap: 16px;
   }
+
   .ig-avatar {
-    width: 96px; height: 96px;
+    width: 96px;
+    height: 96px;
     justify-self: center;
   }
-  .ig-username-row { justify-content: center; flex-wrap: wrap; }
-  .ig-stats { justify-content: center; }
-  .ig-bio { text-align: center; }
+
+  .ig-username-row {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ig-stats {
+    justify-content: center;
+  }
+
+  .ig-bio {
+    text-align: center;
+  }
+
+  .ig-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .ig-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #efefef;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .ig-btn:hover {
+    background-color: #e0e0e0;
+  }
+
+  .ig-btn-icon {
+    width: 18px;
+    height: 18px;
+  }
 }

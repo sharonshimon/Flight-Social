@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../services/axiosService";
 import { API_ENDPOINTS } from "../../config/api";
 import "./Profile.css";
@@ -52,6 +53,7 @@ const samplePosts = [
 
 export default function Profile() {
   const params = useParams();
+  const navigate = useNavigate();
   const userId = params.id ?? "me";
   const [activeTab, setActiveTab] = useState("posts");
   const [selectedPost, setSelectedPost] = useState(null);
@@ -77,7 +79,7 @@ export default function Profile() {
       const userObj = JSON.parse(userStr);
       currentUser = {
         username: userObj.username || userObj.firstName || "User",
-        name: userObj.firstName +" "+ userObj.lastName || "User",
+        name: userObj.firstName + " " + userObj.lastName || "User",
         avatar:
           userObj.profilePicture ||
           "https://randomuser.me/api/portraits/men/32.jpg",
@@ -108,6 +110,27 @@ export default function Profile() {
   const storedUserId = localStorage.getItem('userId');
   const isOwnProfile = userId === 'me' || (storedUserId && storedUserId === userId);
 
+  // Handle clicking the "Edit Profile" button
+  const onEditClick = () => {
+    if (isOwnProfile) {
+      navigate("/edit-profile"); // Navigate to the edit profile page
+    } else {
+      alert("You do not have permission to edit this profile");
+    }
+  };
+
+  // Handle clicking the "Share Profile" button
+  const onShareClick = async () => {
+    try {
+      const profileLink = window.location.href;
+      await navigator.clipboard.writeText(profileLink); // Copy profile link to clipboard
+      alert("Profile link copied to clipboard");
+    } catch (err) {
+      console.error("Failed to copy profile link:", err);
+      alert("Unable to copy the profile link");
+    }
+  };
+
   useEffect(() => {
     let cancelled = false;
     const loadProfilePosts = async () => {
@@ -118,33 +141,33 @@ export default function Profile() {
         const paramsId = userId;
         let username = null;
         if (paramsId === "me") {
-            // try to fetch full user info for 'me' to get followers/following counts
-            username = currentUser.username || (currentUser.user && currentUser.user.username) || null;
-            try {
-              const storedId = localStorage.getItem('userId');
-              if (storedId) {
-                const userByIdEndpoint = API_ENDPOINTS.users.getById || '/api/v1/users/:id';
-                const meRes = await axiosInstance.get(userByIdEndpoint.replace(':id', storedId));
-                const userInfo = meRes?.data?.userInfo;
-                if (userInfo) {
-                  // update profileUser with full info
-                  setProfileUser(prev => ({
-                    ...prev,
-                    username: userInfo.username || prev.username,
-                    name: `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim() || prev.name,
-                    avatar: userInfo.profilePicture || prev.avatar,
-                    bio: userInfo.bio || prev.bio,
-                    stats: {
-                      posts: prev.stats.posts,
-                      followers: Array.isArray(userInfo.followers) ? userInfo.followers.length : (userInfo.followers || prev.stats.followers || 0),
-                      following: Array.isArray(userInfo.followings) ? userInfo.followings.length : (userInfo.followings || prev.stats.following || 0)
-                    }
-                  }));
-                }
+          // try to fetch full user info for 'me' to get followers/following counts
+          username = currentUser.username || (currentUser.user && currentUser.user.username) || null;
+          try {
+            const storedId = localStorage.getItem('userId');
+            if (storedId) {
+              const userByIdEndpoint = API_ENDPOINTS.users.getById || '/api/v1/users/:id';
+              const meRes = await axiosInstance.get(userByIdEndpoint.replace(':id', storedId));
+              const userInfo = meRes?.data?.userInfo;
+              if (userInfo) {
+                // update profileUser with full info
+                setProfileUser(prev => ({
+                  ...prev,
+                  username: userInfo.username || prev.username,
+                  name: `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim() || prev.name,
+                  avatar: userInfo.profilePicture || prev.avatar,
+                  bio: userInfo.bio || prev.bio,
+                  stats: {
+                    posts: prev.stats.posts,
+                    followers: Array.isArray(userInfo.followers) ? userInfo.followers.length : (userInfo.followers || prev.stats.followers || 0),
+                    following: Array.isArray(userInfo.followings) ? userInfo.followings.length : (userInfo.followings || prev.stats.following || 0)
+                  }
+                }));
               }
-            } catch (meErr) {
-              console.debug('Profile: unable to fetch full current user info', meErr.response?.data || meErr.message);
             }
+          } catch (meErr) {
+            console.debug('Profile: unable to fetch full current user info', meErr.response?.data || meErr.message);
+          }
         } else {
           // fetch user by id to get username
           try {
@@ -250,13 +273,15 @@ export default function Profile() {
 
   return (
     <div className="ig-profile">
-      <ProfileHeader user={profileUser} />
+      <ProfileHeader user={profileUser}
+        onEditClick={onEditClick}
+        onShareClick={onShareClick} />
       <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {activeTab === "posts" && (
         postsLoading ? <div>Loading posts...</div>
-        : postsError ? <div style={{color:'red'}}>Error loading posts: {postsError}</div>
-        : <ProfileGrid posts={profilePosts} onPostClick={setSelectedPost} />
+          : postsError ? <div style={{ color: 'red' }}>Error loading posts: {postsError}</div>
+            : <ProfileGrid posts={profilePosts} onPostClick={setSelectedPost} />
       )}
       {activeTab === "reels" && <ProfileEmpty text="No reels yet" />}
       {activeTab === "tagged" && (

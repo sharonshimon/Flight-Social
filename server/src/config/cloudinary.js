@@ -20,7 +20,6 @@ const storage = new CloudinaryStorage({
         const isImage = file.mimetype.startsWith("image/");
         const isAudio = file.mimetype.startsWith("audio/");
 
-        // נניח שבפרונט תשלחי שדה בשם "context" (לדוגמה: "profile", "post", "comment")
         const context = req.body.context || "general";
 
         let folder = `flight-social.app/${context}`;

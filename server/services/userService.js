@@ -3,11 +3,15 @@ import UserModel from "../models/User.js";
 
 // Update user info
 export const updateUser = async (userId, updateData) => {
-    if (updateData.password) {
+    if (updateData.password && updateData.password.trim() !== "") {
         updateData.password = await bcrypt.hash(updateData.password, 10);
+    } else {
+        delete updateData.password;
     }
+
     return await UserModel.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
 };
+
 
 // Update profile picture
 export const updateProfilePicture = async (userId, newProfilePicture) => {

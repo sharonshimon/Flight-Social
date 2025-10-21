@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
+    "lucide-react": "^0.546.0",
     "mongoose": "^8.18.0",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",

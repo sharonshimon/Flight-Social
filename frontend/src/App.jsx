@@ -6,6 +6,7 @@ import TagFeed from "./pages/FeedByTag/TagFeed";
 import Friends from "./pages/Friends/Friends";
 import Messages from "./pages/Messages/Messages";
 import Profile from "./pages/Profile/Profile";
+import EditProfile from "./pages/Profile/EditProfile";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import NewPost from "./pages/NewPost/newPost";
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/newPost" element={<NewPost />} />
           <Route path="/myGroups" element={<MyGroups />} />
           <Route path="/admin" element={<AdminConsole />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>
