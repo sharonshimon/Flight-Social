@@ -13,11 +13,11 @@ This condensed checklist is intended for sprint planning and team tracking. Mark
     - [x] `GET /api/v1/auth/me` returns 200 + sanitized user JSON when called with `Authorization: Bearer <token>`
 
 - [ ] User profiles
-  - [ ] View profile (avatar, bio, posts, followers/following)
-- [ ] Edit profile and update profile picture
+  - [x] View profile (avatar, bio, posts, followers/following)
+- [x] Edit profile and update profile picture
 - Acceptance:
-    - [ ] `GET /api/v1/users/:id` returns user profile with recent posts (paginated)
-    - [ ] `PUT /api/v1/users/:id` updates editable fields and returns the updated profile (auth required)
+    - [x] `GET /api/v1/users/:id` returns user profile with recent posts (paginated)
+    - [x] `PUT /api/v1/users/:id` updates editable fields and returns the updated profile (auth required)
 
 - [x] Posts timeline
 - [x] Create posts with text, media (image/video), location, tags, `isAnonymous` option
