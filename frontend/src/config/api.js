@@ -12,7 +12,7 @@ export const API_ENDPOINTS = {
         getAll: '/api/v1/posts',
         create: '/api/v1/posts',
         delete: '/api/v1/posts/:id',
-        like: '/api/v1/posts/like/:id',
+        like: '/api/v1/posts/like-post/:id',
         comment: '/api/v1/posts/add-comment/:id',
         updateComment: '/api/v1/posts/update-comment/:id',
         deleteComment: '/api/v1/posts/delete-comment/:id',

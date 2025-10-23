@@ -150,6 +150,16 @@ export const addCommentController = async (req, res) => {
   }
 };
 
+// Add Comment Controller
+// export const addCommentController = async (req, res) => {
+//   try {
+//     const post = await addComment(req.params, req.body);
+//     res.status(200).json(post);
+//   } catch (error) {
+//     res.status(400).json({ message: "Failed to add comment", error: error.message });
+//   }
+// };
+
 // Update Comment
 export const updateCommentController = async (req, res) => {
   try {

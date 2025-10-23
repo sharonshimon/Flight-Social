@@ -296,7 +296,7 @@ export default function AdminConsole() {
             <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-start' }}>
               <div style={{ width: 120, flex: '0 0 120px', textAlign: 'center' }}>
                 {/* Avatar: check common fields and fall back to placeholder */}
-                <img alt={viewUser.username || 'avatar'} src={viewUser.profilePicture || viewUser.profilePic || viewUser.avatar || viewUser.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg'} style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }} />
+                <img alt={viewUser.username || 'avatar'} src={viewUser.profilePicture || viewUser.profilePic || viewUser.avatar || viewUser.profilePicture || 'https://randomuser.me/api/portraits/lego/1.jpg'} style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }} />
               </div>
               <div style={{ minWidth: 300, flex: 1 }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>

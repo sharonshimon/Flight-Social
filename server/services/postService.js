@@ -135,7 +135,7 @@ export const getPostsByTag = async (tag) => {
             ]
         })
             .sort({ createdAt: -1 })
-            .populate({ path: 'comments.userId', select: 'username photoURL' });
+            .populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         return posts.map(formatComments); // reuse existing formatting
     } catch (error) {
@@ -178,7 +178,7 @@ export const formatComments = (post) => {
                 content: comment.content,
                 createdAt: comment.createdAt,
                 username: "Anonymous",
-                photoURL: null
+                profilePicture: null
             };
         } else {
             return {
@@ -186,12 +186,13 @@ export const formatComments = (post) => {
                 content: comment.content,
                 createdAt: comment.createdAt,
                 username: comment.userId.username,
-                photoURL: comment.userId.photoURL
+                profilePicture: comment.userId?.profilePicture || null
             };
         }
     });
 
     return { ...post.toObject(), comments };
+
 };
 
 // Get Post with Comments
@@ -199,7 +200,7 @@ export const getPostWithComments = async (params) => {
     try {
         const post = await PostModel.findById(params.id).populate({
             path: 'comments.userId',
-            select: 'username photoURL'
+            select: 'username profilePicture'
         });
 
         if (!post) throw new Error("Post not found");
@@ -217,13 +218,13 @@ export const getTimelinePosts = async (params) => {
 
         const userPosts = await PostModel.find({ userId: currentUser._id })
             .sort({ createdAt: -1 })
-            .populate({ path: 'comments.userId', select: 'username photoURL' });
+            .populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         const timelinePostsArr = await Promise.all(
             currentUser.followings.map(friendId =>
                 PostModel.find({ userId: friendId })
                     .sort({ createdAt: -1 })
-                    .populate({ path: 'comments.userId', select: 'username photoURL' })
+                    .populate({ path: 'comments.userId', select: 'username profilePicture' })
             )
         );
 
@@ -238,7 +239,7 @@ export const getAllPosts = async () => {
     try {
         const posts = await PostModel.aggregate([{ $sample: { size: 40 } }]);
         const populatedPosts = await PostModel.find({ _id: { $in: posts.map(p => p._id) } })
-            .populate({ path: 'comments.userId', select: 'username photoURL' });
+            .populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         return populatedPosts.map(formatComments);
     } catch (error) {
@@ -264,13 +265,49 @@ export const addComment = async (params, body) => {
 
         post.comments.push(newComment);
         await post.save();
-        await post.populate({ path: 'comments.userId', select: 'username photoURL' });
+        await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         return formatComments(post);
     } catch (error) {
         throw error;
     }
 };
+
+// //  Add Comment 
+// export const addComment = async (params, body) => {
+//     try {
+//         // 1. מציאת הפוסט
+//         const post = await PostModel.findById(params.id);
+//         if (!post) throw new Error("Post not found");
+
+//         // 2. מציאת המשתמש
+//         const user = await UserModel.findById(body.userId);
+//         if (!user) throw new Error("User not found");
+
+//         // 3. יצירת תגובה חדשה
+//         const newComment = {
+//             postId: post._id,
+//             userId: user._id,
+//             isAnonymous: body.isAnonymous === true || body.isAnonymous === 'true',
+//             content: body.content
+//         };
+
+//         // 4. הוספה לפוסט
+//         post.comments.push(newComment);
+//         await post.save();
+
+//         // 5. population כדי להביא username ו-profilePicture
+//         await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
+
+//         // 6. החזרת הפוסט עם תגובות מעודכנות
+//         return post;
+//     } catch (error) {
+//         throw error;
+//     }
+// };
+
+
+
 
 //  Update Comment 
 export const updateComment = async (params, body) => {
@@ -290,7 +327,7 @@ export const updateComment = async (params, body) => {
         if (body.isAnonymous !== undefined) comment.isAnonymous = (body.isAnonymous === true || body.isAnonymous === 'true');
 
         await post.save();
-        await post.populate({ path: 'comments.userId', select: 'username photoURL' });
+        await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         return formatComments(post);
     } catch (error) {
@@ -314,7 +351,7 @@ export const deleteCommentFromPost = async (params, body) => {
         post.comments = post.comments.filter(c => c.commentId !== body.commentId);
 
         await post.save();
-        await post.populate({ path: 'comments.userId', select: 'username photoURL' });
+        await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         return formatComments(post);
     } catch (error) {

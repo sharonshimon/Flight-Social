@@ -1,13 +1,11 @@
-
-
-import "./post.css";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { Link } from "react-router-dom";
-import { useState } from "react";
 import LikeButton from "./likeButton";
 import Comment from "./comment";
 import postService from "../../services/postService";
+import "./post.css";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
@@ -15,8 +13,7 @@ const Post = ({ post }) => {
   const [editContent, setEditContent] = useState("");
   const [submittingEdit, setSubmittingEdit] = useState(false);
 
-  // Normalize post shape
-  const poster = post.user || post.userId || {};
+  //current user from local storage
   const localUser = (() => {
     try {
       const u = localStorage.getItem("user");
@@ -26,6 +23,10 @@ const Post = ({ post }) => {
     }
   })();
 
+  // user who posted
+  const poster = post.user || post.userId || {};
+
+  // post ownership
   const storedId = localStorage.getItem("userId");
   const postUserId =
     typeof post.userId === "string"
@@ -33,22 +34,23 @@ const Post = ({ post }) => {
       : poster._id || poster.id || post.userId || "";
   const isOwnPost = storedId && postUserId && storedId === postUserId;
 
-  // --- הגדרות עיקריות של הפוסט ---
+  // post content
   const content = post.content || post.desc || post.caption || "";
   const tags = post.tags || [];
+
+  // name and profile picture
   const name =
     (isOwnPost && localUser?.username) ||
     poster.username ||
     post.name ||
     `${poster.firstName || ""} ${poster.lastName || ""}`.trim() ||
     "Unknown";
-  const profilePic =
-    (isOwnPost &&
-      (localUser?.profilePicture || localUser?.photoURL)) ||
+  const profilePicture =
+    (isOwnPost && (localUser?.profilePicture || localUser?.photoURL)) ||
+    poster.profilePicture ||
     poster.photoURL ||
-    post.profilePicture ||
-    post.profilePic ||
     "";
+
   const mediaUrl =
     Array.isArray(post.media) && post.media.length
       ? post.media[0].url
@@ -58,12 +60,11 @@ const Post = ({ post }) => {
     typeof post.userId === "string"
       ? post.userId
       : poster._id || poster.id || post.userId || "";
-  const anonymous =
-    post.isAnonymous === true || post.isAnonymous === "true";
+  const anonymous = post.isAnonymous === true || post.isAnonymous === "true";
   const displayName = anonymous ? "Anonymous" : name;
-  const displayPic = anonymous ? null : profilePic;
+  const displayPic = anonymous ? null : profilePicture;
 
-  // --- עריכה ---
+  // edit handlers
   const openEdit = () => {
     setEditContent(content || "");
     setEditing(true);
@@ -133,11 +134,7 @@ const Post = ({ post }) => {
               className="post-actions"
               style={{ display: "flex", gap: 8, alignItems: "center" }}
             >
-              <button
-                className="btn btn-link"
-                onClick={openEdit}
-                title="Edit post"
-              >
+              <button className="btn btn-link" onClick={openEdit} title="Edit post">
                 Edit
               </button>
               <button
@@ -166,58 +163,77 @@ const Post = ({ post }) => {
 
         {/* ----------- Content ----------- */}
         <div className="content">
-          <p>
-            {content.split(/\s+/).map((word, index) => {
-              if (word.startsWith("#")) {
-                const cleanTag = word.replace(/[.,!?]$/, "").substring(1);
-                return (
-                  <Link
-                    key={index}
-                    to={`/posts?tag=${encodeURIComponent(cleanTag)}`}
-                    className="tag-link"
-                  >
-                    {word}
-                  </Link>
-                );
-              }
-              return word + " ";
-            })}
-          </p>
-
-          {mediaUrl && (
-            <img
-              src={mediaUrl}
-              alt=""
-              style={{
-                width: "100%",
-                borderRadius: "10px",
-                marginTop: "8px",
-              }}
-            />
-          )}
-
-          {/* תגיות מובנות */}
-          {tags.length > 0 && (
-            <div className="tags">
-              {tags.map((tag, index) => (
-                <Link
-                  key={index}
-                  to={`/posts?tag=${encodeURIComponent(tag)}`}
-                  className="tag-bubble"
-                >
-                  #{tag}
-                </Link>
-              ))}
+          {editing ? (
+            <div>
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                rows={3}
+                style={{ width: "100%" }}
+              />
+              <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                <button onClick={submitEdit} disabled={submittingEdit}>
+                  Save
+                </button>
+                <button onClick={cancelEdit}>Cancel</button>
+              </div>
             </div>
+          ) : (
+            <>
+              <p>
+                {content.split(/\s+/).map((word, index) => {
+                  if (word.startsWith("#")) {
+                    const cleanTag = word.replace(/[.,!?]$/, "").substring(1);
+                    return (
+                      <Link
+                        key={index}
+                        to={`/posts?tag=${encodeURIComponent(cleanTag)}`}
+                        className="tag-link"
+                      >
+                        {word}
+                      </Link>
+                    );
+                  }
+                  return word + " ";
+                })}
+              </p>
+              {mediaUrl && (
+                <img
+                  src={mediaUrl}
+                  alt=""
+                  style={{
+                    width: "100%",
+                    borderRadius: "10px",
+                    marginTop: "8px",
+                  }}
+                />
+              )}
+              {tags.length > 0 && (
+                <div className="tags">
+                  {tags.map((tag, index) => (
+                    <Link
+                      key={index}
+                      to={`/posts?tag=${encodeURIComponent(tag)}`}
+                      className="tag-bubble"
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
         {/* ----------- Info ----------- */}
         <div className="info">
-          <LikeButton initialLikes={post.likes ? post.likes.length : 0} />
+          <LikeButton
+            initialLikes={post.likes?.length || 0}
+            postId={post._id || post.id}
+            postLikes={post.likes || []}
+          />
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
-            <TextsmsOutlinedIcon />
-            Comments
+            <TextsmsOutlinedIcon /> Comments
           </div>
         </div>
 

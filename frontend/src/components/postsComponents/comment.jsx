@@ -1,39 +1,33 @@
 import React, { useEffect, useState } from "react";
 import postService from "../../services/postService";
+import defaultAvatar from '../../assets/photoplaceholder.jpg';
 
 const Comment = ({ postId, initialComments = [] }) => {
-  const [comments, setComments] = useState(initialComments || []);
+  const [comments, setComments] = useState(initialComments);
   const [text, setText] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingText, setEditingText] = useState("");
 
-  useEffect(() => {
-    // Only update local comments state when incoming comments actually changed
-    setComments(prev => {
-      const prevIds = (prev || []).map(c => c.commentId || c._id || c.id).join(',');
-      const newIds = (initialComments || []).map(c => c.commentId || c._id || c.id).join(',');
-      if (prevIds === newIds) return prev;
-      return initialComments || [];
-    });
-  }, [initialComments]);
+  const currentUserId = localStorage.getItem("userId");
 
-  const currentUserId = localStorage.getItem('userId');
+  useEffect(() => {
+    setComments(initialComments);
+  }, [initialComments]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
+
     try {
       const body = { content: text.trim(), isAnonymous, userId: currentUserId };
-      const updatedPost = await postService.createComment(postId, body);
-      // updatedPost should be the post object with comments
-      setComments(updatedPost?.comments || []);
+      const updatedPost = await postService.addComment(postId, body);
+      setComments(updatedPost.comments);
       setText("");
       setIsAnonymous(false);
-      window.dispatchEvent(new CustomEvent('post-updated', { detail: { id: postId, post: updatedPost } }));
     } catch (err) {
-      console.error('Failed to create comment', err);
-      alert('Could not post comment. See console for details.');
+      console.error("Failed to create comment", err);
+      alert("Could not post comment.");
     }
   };
 
@@ -50,81 +44,73 @@ const Comment = ({ postId, initialComments = [] }) => {
   const submitEdit = async (comment) => {
     if (!editingText.trim()) return;
     try {
-      const body = { commentId: comment.commentId, content: editingText.trim(), userId: currentUserId };
+      const body = { commentId: comment.commentId, content: editingText, userId: currentUserId };
       const updatedPost = await postService.updateComment(postId, body);
-      setComments(updatedPost?.comments || []);
+      setComments(updatedPost.comments);
       setEditingCommentId(null);
       setEditingText("");
-      window.dispatchEvent(new CustomEvent('post-updated', { detail: { id: postId, post: updatedPost } }));
     } catch (err) {
-      console.error('Failed to update comment', err);
-      alert('Could not update comment. See console for details.');
+      console.error("Failed to update comment", err);
+      alert("Could not update comment.");
     }
   };
 
   const handleDelete = async (comment) => {
-    if (!window.confirm('Delete this comment?')) return;
+    if (!window.confirm("Delete this comment?")) return;
     try {
       const body = { commentId: comment.commentId, userId: currentUserId };
-      const updatedPost = await postService.deleteComment(postId, body);
-      setComments(updatedPost?.comments || []);
-      window.dispatchEvent(new CustomEvent('post-updated', { detail: { id: postId, post: updatedPost } }));
+      const updatedPost = await postService.deleteCommentFromPost(postId, body);
+      setComments(updatedPost.comments);
     } catch (err) {
-      console.error('Failed to delete comment', err);
-      alert('Could not delete comment. See console for details.');
+      console.error("Failed to delete comment", err);
+      alert("Could not delete comment.");
     }
   };
 
-  const renderAuthor = (c) => {
-    if (c.isAnonymous) return 'Anonymous';
-    if (c.username) return c.username;
-    // c.userId may be object or id
-    return c.userId?.username || c.userId || 'User';
+  const renderAvatar = (c) => {
+    const avatarUrl = c.isAnonymous || !c.profilePicture ? defaultAvatar : c.profilePicture;
+    return <img src={avatarUrl} alt="avatar" style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8, objectFit: 'cover' }} />;
   };
+
+  const renderAuthor = (c) => c.isAnonymous ? "Anonymous" : c.username || "User";
 
   return (
     <div className="comments">
       <div className="comment-list">
         {comments.map((c) => (
-          <div key={c.commentId || c._id || c.id} className="comment">
-            <div className="comment-meta">
+          <div key={c.commentId} className="comment">
+            <div className="comment-meta" style={{ display: "flex", alignItems: "center" }}>
+              {renderAvatar(c)}
               <strong>{renderAuthor(c)}</strong>
-              <span className="comment-time">{new Date(c.createdAt).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: '2-digit', second: '2-digit' })}</span>
+              <span style={{ marginLeft: 8, fontSize: 12, color: "#555" }}>{new Date(c.createdAt).toLocaleString()}</span>
             </div>
+
             {editingCommentId === c.commentId ? (
               <div className="comment-edit">
-                <textarea value={editingText} onChange={(e) => setEditingText(e.target.value)} />
-                <div>
+                <textarea value={editingText} onChange={(e) => setEditingText(e.target.value)} style={{ width: "100%", marginTop: 4 }} />
+                <div style={{ marginTop: 4 }}>
                   <button onClick={cancelEdit}>Cancel</button>
                   <button onClick={() => submitEdit(c)}>Save</button>
                 </div>
               </div>
             ) : (
-              <div className="comment-body">
-                <p>{c.content}</p>
+              <div className="comment-body"><p>{c.content}</p></div>
+            )}
+
+            {String(c.userId) === String(currentUserId) && editingCommentId !== c.commentId && (
+              <div className="comment-actions" style={{ marginTop: 4 }}>
+                <button onClick={() => startEdit(c)}>Edit</button>
+                <button onClick={() => handleDelete(c)}>Delete</button>
               </div>
             )}
-            <div className="comment-actions">
-              {String(c.userId) === String(currentUserId) && editingCommentId !== c.commentId && (
-                <>
-                  <button onClick={() => startEdit(c)}>Edit</button>
-                  <button onClick={() => handleDelete(c)}>Delete</button>
-                </>
-              )}
-            </div>
           </div>
         ))}
       </div>
 
-      <form className="comment-input" onSubmit={handleCreate}>
-        <input
-          type="text"
-          placeholder="Write a comment..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <label style={{marginLeft:8}}>
-          <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} /> Post anonymously
+      <form className="comment-input" onSubmit={handleCreate} style={{ marginTop: 8 }}>
+        <input type="text" placeholder="Write a comment..." value={text} onChange={(e) => setText(e.target.value)} style={{ width: "70%", marginRight: 8 }} />
+        <label style={{ marginRight: 8 }}>
+          <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} /> Anonymous
         </label>
         <button type="submit">Post</button>
       </form>
