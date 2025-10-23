@@ -8,7 +8,6 @@ const router = express.Router();
 // Register new user
 router.post("/register", parser.single("profilePicture"), register);
 
-
 // Login existing user
 router.post("/login", login);
 

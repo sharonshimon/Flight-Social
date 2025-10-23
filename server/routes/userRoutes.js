@@ -22,6 +22,7 @@ router.put("/:id/profile-picture", parser.single("profilePicture"), updateProfil
 
 // Delete user
 router.delete("/:id", deleteUserController);
+
 // Admin: get all users
 router.get("/all", getAllUsersController);
 

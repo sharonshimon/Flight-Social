@@ -1,3 +1,4 @@
+import { get } from "mongoose";
 // Use empty base so requests go through Vite dev-server proxy (recommended for dev)
 export const API_BASE_URL = ''; // when running in dev, Vite proxy will forward '/api' to backend
 
@@ -12,9 +13,9 @@ export const API_ENDPOINTS = {
         create: '/api/v1/posts',
         delete: '/api/v1/posts/:id',
         like: '/api/v1/posts/like/:id',
-    comment: '/api/v1/posts/add-comment/:id',
-    updateComment: '/api/v1/posts/update-comment/:id',
-    deleteComment: '/api/v1/posts/delete-comment/:id',
+        comment: '/api/v1/posts/add-comment/:id',
+        updateComment: '/api/v1/posts/update-comment/:id',
+        deleteComment: '/api/v1/posts/delete-comment/:id',
         getTimeline: '/api/v1/posts/get-timeline-posts/:username'
     },
     users: {
@@ -22,9 +23,10 @@ export const API_ENDPOINTS = {
         getById: '/api/v1/users/:id',
         updateProfile: '/api/v1/users/:id',
         getFriends: '/api/v1/users/friends/:userId',
-        follow: '/api/v1/users/follow/:id',
-        unfollow: '/api/v1/users/unfollow/:id',
-        updateProfilePicture: '/api/v1/users/:id/profile-picture'
+        follow: (id) => `/api/v1/users/follow/${id}`,
+        unfollow: (id) => `/api/v1/users/unfollow/${id}`,
+        updateProfilePicture: '/api/v1/users/:id/profile-picture',
+        getAllUsers: '/api/v1/users/all'
     },
     groups: {
         getAll: '/api/v1/groups',
