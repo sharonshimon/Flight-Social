@@ -3,7 +3,7 @@
 This condensed checklist is intended for sprint planning and team tracking. Mark items with ✅ when done and assign owners/estimates.
 
 ## MVP — Core features
-- [ ] User auth
+- [x] User auth
   - [x] Sign up with profile picture upload (Cloudinary)
   - [x] Login / JWT token handling
   - [x] GET /auth/me endpoint to validate token (protected)
@@ -12,7 +12,7 @@ This condensed checklist is intended for sprint planning and team tracking. Mark
     - [x] `POST /api/v1/auth/login` returns a JWT on valid credentials
     - [x] `GET /api/v1/auth/me` returns 200 + sanitized user JSON when called with `Authorization: Bearer <token>`
 
-- [ ] User profiles
+- [x] User profiles
   - [x] View profile (avatar, bio, posts, followers/following)
 - [x] Edit profile and update profile picture
 - Acceptance:
@@ -31,8 +31,8 @@ This condensed checklist is intended for sprint planning and team tracking. Mark
     - [x] `DELETE /api/v1/posts/:id` deletes the post when requested by the owner or admin
     - Note: implemented routes are available under the posts router (examples): `/create-post`, `/update-post/:id`, `/delete-post/:id`, `/get-timeline-posts/:username`, `/get-post/:id`.
 
-- [ ] Comments
-- [ ] Add/edit/delete comments on posts (anonymous option)
+- [x] Comments
+- [x] Add/edit/delete comments on posts (anonymous option)
   - Acceptance:
     - [x] `POST /api/v1/posts/:postId/comments` creates a comment (optionally anonymous) and returns the comment
     - [x] `PUT /api/v1/comments/:id` edits a comment by its owner
@@ -81,8 +81,8 @@ This condensed checklist is intended for sprint planning and team tracking. Mark
  - [x] AdminConsole using jQuery/AJAX for admin actions
  - [x] Vite dev proxy for /api → backend
  - [x] RightBar minimizable (FAB toggle; hidden when minimized)
-- [ ] Responsive layout and pages (Feed, Profile, Groups, Admin)
-- [ ] New post form uses FormData for media uploads
+- [x] Responsive layout and pages (Feed, Profile, Groups, Admin)
+- [] New post form uses FormData for media uploads
 - [ ] Optimistic UI updates where sensible
 
 ## DevOps & Deployment
@@ -93,7 +93,7 @@ This condensed checklist is intended for sprint planning and team tracking. Mark
 - [ ] DB hosting (MongoDB Atlas)
 
 ## Security & Compliance
-- [ ] Hash passwords, secure JWT handling
+- [x] Hash passwords, secure JWT handling
 - [ ] Rate limiting
 - [ ] File upload validation (mimetype, size)
 - [ ] Input sanitization (prevent XSS)
