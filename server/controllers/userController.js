@@ -3,6 +3,7 @@ import {
     followUser,
     getUser,
     getUserFriends,
+    getUserFollowers,
     getUserProfile,
     unfollowUser,
     updateProfilePicture,
@@ -123,6 +124,17 @@ export const getUserFriendsController = async (req, res) => {
         verifyToken(req);
         const friends = await getUserFriends(req.params.userId);
         res.status(200).json({ friends, message: "Friends fetched successfully" });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
+    }
+};
+
+// Get followers controller
+export const getUserFollowersController = async (req, res) => {
+    try {
+        verifyToken(req);
+        const followers = await getUserFollowers(req.params.userId);
+        res.status(200).json({ followers, message: "Followers fetched successfully" });
     } catch (err) {
         res.status(401).json({ error: err.message });
     }

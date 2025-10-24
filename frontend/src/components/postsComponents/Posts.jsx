@@ -14,7 +14,6 @@ const Posts = () => {
 
     const onPostCreated = (e) => {
       console.debug('Posts: received post-created event, detail:', e.detail);
-      // If the API returned the created post object in event.detail, prepend it optimistically
       if (e.detail) {
         setPosts(prev => [e.detail, ...prev]);
         return;
@@ -42,49 +41,39 @@ const Posts = () => {
       setLoading(true);
       setError(null);
       try {
-        // debug: check token presence
         const token = localStorage.getItem('token');
         console.debug('Posts.fetchPosts - token present:', !!token);
         if (token) console.debug('Posts.fetchPosts - token (masked):', `${token.slice(0, 10)}...`);
 
-        // Prefer using stored userId to request the username from server, then fetch timeline by username
         const storedUserId = localStorage.getItem('userId');
         let res;
+
         if (storedUserId) {
           try {
             console.debug('Posts.fetchPosts - fetching user by id:', storedUserId);
-            const userByIdEndpoint = API_ENDPOINTS.users.getById || '/api/v1/users/:id';
-            const userRes = await axiosInstance.get(userByIdEndpoint.replace(':id', storedUserId));
+            const userRes = await axiosInstance.get(API_ENDPOINTS.users.getById(storedUserId));
             const username = userRes?.data?.userInfo?.username;
+
             if (username) {
               console.debug('Posts.fetchPosts - got username from id:', username);
-              const timelineEndpointTemplate = API_ENDPOINTS.posts.getTimeline || '/api/v1/posts/get-timeline-posts/:username';
-              // include userId as query param so server receives both
-              const timelineUrl = `${timelineEndpointTemplate.replace(':username', username)}?userId=${encodeURIComponent(storedUserId)}`;
-              console.debug('Posts.fetchPosts - calling timeline URL:', timelineUrl);
-              res = await axiosInstance.get(timelineUrl);
+              const timelineUrl = API_ENDPOINTS.posts.getTimeline(username);
+              res = await axiosInstance.get(`${timelineUrl}?userId=${encodeURIComponent(storedUserId)}`);
             } else {
               console.warn('Posts.fetchPosts - username not found for id, falling back to getAll');
               res = await axiosInstance.get(API_ENDPOINTS.posts.getAll);
             }
           } catch (userErr) {
             console.error('Posts.fetchPosts - error fetching user by id', userErr.response?.data || userErr.message);
-            // fallback to getAll if user fetch fails
             res = await axiosInstance.get(API_ENDPOINTS.posts.getAll);
           }
         } else {
-          // fallback: try to read username from stored user object
           const userJson = localStorage.getItem('user');
           if (userJson) {
             const user = JSON.parse(userJson);
             if (user?.username) {
               const uidFromUser = user?._id || user?.id || '';
-              const timelineEndpointTemplate = API_ENDPOINTS.posts.getTimeline || '/api/v1/posts/get-timeline-posts/:username';
-              const timelineUrl = uidFromUser
-                ? `${timelineEndpointTemplate.replace(':username', user.username)}?userId=${encodeURIComponent(uidFromUser)}`
-                : timelineEndpointTemplate.replace(':username', user.username);
-              console.debug('Posts.fetchPosts - calling timeline URL (from stored user):', timelineUrl);
-              res = await axiosInstance.get(timelineUrl);
+              const timelineUrl = API_ENDPOINTS.posts.getTimeline(user.username);
+              res = await axiosInstance.get(uidFromUser ? `${timelineUrl}?userId=${encodeURIComponent(uidFromUser)}` : timelineUrl);
             } else {
               res = await axiosInstance.get(API_ENDPOINTS.posts.getAll);
             }
@@ -92,9 +81,10 @@ const Posts = () => {
             res = await axiosInstance.get(API_ENDPOINTS.posts.getAll);
           }
         }
-        const data = res.data;
 
+        const data = res.data;
         let list = [];
+
         if (Array.isArray(data)) {
           list = data;
         } else if (Array.isArray(data.posts)) {
@@ -108,7 +98,6 @@ const Posts = () => {
         if (!cancelled) setPosts(list);
       } catch (err) {
         if (!cancelled) {
-          // log full error for debugging
           console.error('Posts.fetchPosts error', {
             status: err.response?.status,
             data: err.response?.data,
@@ -123,12 +112,11 @@ const Posts = () => {
       }
     };
 
-  fetchPosts();
+    fetchPosts();
 
-  // listen for post-created events (dispatched by NewPost)
-  window.addEventListener('post-created', onPostCreated);
-  window.addEventListener('post-deleted', onPostDeleted);
-  window.addEventListener('post-updated', onPostUpdated);
+    window.addEventListener('post-created', onPostCreated);
+    window.addEventListener('post-deleted', onPostDeleted);
+    window.addEventListener('post-updated', onPostUpdated);
 
     return () => {
       cancelled = true;

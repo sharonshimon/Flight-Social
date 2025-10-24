@@ -216,13 +216,16 @@ export const getTimelinePosts = async (params) => {
 
         const userPosts = await PostModel.find({ userId: currentUser._id })
             .sort({ createdAt: -1 })
+            .populate({ path: "userId", select: "username profilePicture" })
             .populate({ path: 'comments.userId', select: 'username profilePicture' });
+
 
         const timelinePostsArr = await Promise.all(
             currentUser.followings.map(friendId =>
                 PostModel.find({ userId: friendId })
                     .sort({ createdAt: -1 })
-                    .populate({ path: 'comments.userId', select: 'username profilePicture' })
+                    .populate({ path: "userId", select: "username profilePicture" })
+                    .populate({ path: "comments.userId", select: "username profilePicture" })
             )
         );
 

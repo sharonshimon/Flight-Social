@@ -4,6 +4,7 @@ import {
     followUserController,
     getUserController,
     getUserFriendsController,
+    getUserFollowersController,
     getUserProfileController,
     getAllUsersController,
     unfollowUserController,
@@ -34,6 +35,9 @@ router.put("/unfollow/:id", unfollowUserController);
 
 // Get friends
 router.get("/friends/:userId", getUserFriendsController);
+
+// Get followers
+router.get("/followers/:userId", getUserFollowersController);
 
 // Get user by ID
 router.get("/:id", getUserController);

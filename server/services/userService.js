@@ -77,6 +77,25 @@ export const getUserFriends = async (userId) => {
     }));
 };
 
+// Get followers (users who follow the current user)
+export const getUserFollowers = async (userId) => {
+    const user = await UserModel.findById(userId);
+
+    // אם אין followers, מחזיר מערך ריק
+    if (!user.followers || user.followers.length === 0) return [];
+
+    const followers = await Promise.all(
+        user.followers.map(followerId => UserModel.findById(followerId))
+    );
+
+    return followers.map(follower => ({
+        _id: follower._id,
+        username: follower.username,
+        profilePicture: follower.profilePicture
+    }));
+};
+
+
 // Get all users (admin use) - exclude password
 export const getAllUsers = async () => {
     const users = await UserModel.find({}, { password: 0 }).lean();

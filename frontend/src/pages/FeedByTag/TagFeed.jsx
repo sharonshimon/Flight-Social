@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
+import postService from "../../services/postService";
 import Posts from "../../components/postsComponents/Posts";
 import "./TagFeed.css";
 
@@ -9,7 +9,6 @@ export default function TagFeed() {
     const [posts, setPosts] = useState([]);
     const [tag, setTag] = useState("");
 
-    // שליפת ה-tag מה-URL
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const tagParam = queryParams.get("tag");
@@ -19,11 +18,10 @@ export default function TagFeed() {
         }
     }, [location.search]);
 
-    // בקשת GET לשרת לפי תגית
     const fetchPostsByTag = async (tag) => {
         try {
-            const response = await axios.get(`http://localhost:3000/posts/byTag/${tag}`);
-            setPosts(response.data);
+            const data = await postService.getPostsByTag(tag);
+            setPosts(data);
         } catch (error) {
             console.error("Error fetching posts by tag:", error);
         }
