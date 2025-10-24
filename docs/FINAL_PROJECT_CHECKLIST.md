@@ -155,9 +155,9 @@ Marked done (from implemented codebase):
 
 Remaining / in-progress items (recommendations to finish before defense):
 
-- [ ] View/edit profile (avatar, bio, posts, followers/following) — frontend: `frontend/src/pages/Profile/` (partial)
-- [ ] Full posts CRUD and comments CRUD (edit/delete UI flows and confirmation) — `frontend/src/pages/NewPost/`, `frontend/src/pages/postsComponents/`
-- [ ] Images validation and Cloudinary hardening (server-side mimetype/size checks)
+- [X] View/edit profile (avatar, bio, posts, followers/following) — frontend: `frontend/src/pages/Profile/` (partial)
+- [X] Full posts CRUD and comments CRUD (edit/delete UI flows and confirmation) — `frontend/src/pages/NewPost/`, `frontend/src/pages/postsComponents/`
+- [X] Images validation and Cloudinary hardening (server-side mimetype/size checks)
 - [ ] Audit logs for admin actions (server-side)
 - [ ] Unit and integration tests (backend auth/post flow)
 - [ ] D3 analytics components and Socket.io chat wiring (analytics under `frontend/src/components/Analytics/`, chat under `frontend/src/components/Chat/`)
