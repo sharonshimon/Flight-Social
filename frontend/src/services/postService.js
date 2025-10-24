@@ -46,7 +46,7 @@ const postService = {
     },
 
     // Delete a comment: body should include { commentId, userId }
-    deleteComment: async (postId, body) => {
+    deleteCommentFromPost: async (postId, body) => {
         const url = (API_ENDPOINTS.posts.deleteComment || '/api/v1/posts/delete-comment/:id').replace(':id', postId);
         const response = await api.delete(url, { data: body });
         return response.data?.data ?? response.data;

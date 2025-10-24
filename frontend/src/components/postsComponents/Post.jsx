@@ -13,6 +13,24 @@ const Post = ({ post }) => {
   const [editContent, setEditContent] = useState("");
   const [submittingEdit, setSubmittingEdit] = useState(false);
 
+  // utility to format time ago
+  const formatTimeAgo = (createdAt) => {
+    if (!createdAt) return "";
+    const now = new Date();
+    const created = new Date(createdAt);
+    const diffMs = now - created;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+
+    if (diffHours < 1) return `${diffMins} min${diffMins !== 1 ? "s" : ""} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
+
+    const day = String(created.getDate()).padStart(2, "0");
+    const month = String(created.getMonth() + 1).padStart(2, "0");
+    const year = created.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
   //current user from local storage
   const localUser = (() => {
     try {
@@ -124,7 +142,7 @@ const Post = ({ post }) => {
                   <span className="name">{displayName}</span>
                 </Link>
               )}
-              <span className="date">1 min ago</span>
+              <span className="date">{formatTimeAgo(post.createdAt)}</span>
             </div>
           </div>
 

@@ -4,7 +4,6 @@ import UserModel from "../models/User.js";
 import GroupModel from "../models/Group.js";
 import { cloudinary } from "../src/config/cloudinary.js";
 
-
 // Create Post
 export const createPost = async (body, files) => {
     try {
@@ -143,9 +142,6 @@ export const getPostsByTag = async (tag) => {
     }
 };
 
-
-
-
 // Like / Dislike 
 export const likeAndDislike = async (params, body) => {
     try {
@@ -172,11 +168,13 @@ export const likeAndDislike = async (params, body) => {
 // Format Post with Comments 
 export const formatComments = (post) => {
     const comments = post.comments.map(comment => {
+        //placeholder for user
         if (comment.isAnonymous) {
             return {
                 commentId: comment.commentId,
                 content: comment.content,
                 createdAt: comment.createdAt,
+                userId: comment.userId ? comment.userId._id || comment.userId : null, // חשוב להשאיר userId גם לאנונימי
                 username: "Anonymous",
                 profilePicture: null
             };
@@ -185,14 +183,14 @@ export const formatComments = (post) => {
                 commentId: comment.commentId,
                 content: comment.content,
                 createdAt: comment.createdAt,
+                userId: comment.userId._id || comment.userId,
                 username: comment.userId.username,
-                profilePicture: comment.userId?.profilePicture || null
+                profilePicture: comment.userId.profilePicture || null
             };
         }
     });
 
     return { ...post.toObject(), comments };
-
 };
 
 // Get Post with Comments
@@ -247,115 +245,71 @@ export const getAllPosts = async () => {
     }
 };
 
-//  Add Comment 
+// Comments Management
+// Add Comment
 export const addComment = async (params, body) => {
-    try {
-        const post = await PostModel.findById(params.id);
-        if (!post) throw new Error("Post not found");
+    const post = await PostModel.findById(params.id);
+    if (!post) throw new Error("Post not found");
 
-        const user = await UserModel.findById(body.userId);
-        if (!user) throw new Error("User not found");
+    const user = await UserModel.findById(body.userId);
+    if (!user) throw new Error("User not found");
 
-        const newComment = {
-            postId: post._id,
-            userId: user._id,
-            isAnonymous: (body.isAnonymous === true || body.isAnonymous === 'true') || false,
-            content: body.content
-        };
+    const newComment = {
+        postId: post._id,
+        userId: user._id,
+        isAnonymous: (body.isAnonymous === true || body.isAnonymous === 'true') || false,
+        content: body.content
+    };
 
-        post.comments.push(newComment);
-        await post.save();
-        await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
+    post.comments.push(newComment);
+    await post.save();
+    await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
 
-        return formatComments(post);
-    } catch (error) {
-        throw error;
-    }
+    return formatComments(post);
 };
 
-// //  Add Comment 
-// export const addComment = async (params, body) => {
-//     try {
-//         // 1. מציאת הפוסט
-//         const post = await PostModel.findById(params.id);
-//         if (!post) throw new Error("Post not found");
-
-//         // 2. מציאת המשתמש
-//         const user = await UserModel.findById(body.userId);
-//         if (!user) throw new Error("User not found");
-
-//         // 3. יצירת תגובה חדשה
-//         const newComment = {
-//             postId: post._id,
-//             userId: user._id,
-//             isAnonymous: body.isAnonymous === true || body.isAnonymous === 'true',
-//             content: body.content
-//         };
-
-//         // 4. הוספה לפוסט
-//         post.comments.push(newComment);
-//         await post.save();
-
-//         // 5. population כדי להביא username ו-profilePicture
-//         await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
-
-//         // 6. החזרת הפוסט עם תגובות מעודכנות
-//         return post;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
-
-
-
-//  Update Comment 
+// Update Comment
 export const updateComment = async (params, body) => {
-    try {
-        const post = await PostModel.findById(params.id);
-        if (!post) throw new Error("Post not found");
+    const post = await PostModel.findById(params.id);
+    if (!post) throw new Error("Post not found");
 
-        //const comment = post.comments.id(body.commentId);
-        const comment = post.comments.find(c => c.commentId === body.commentId);
-        if (!comment) throw new Error("Comment not found");
+    const comment = post.comments.find(c => c.commentId === body.commentId);
+    if (!comment) throw new Error("Comment not found");
 
-        if (comment.userId.toString() !== body.userId && !body.isAdmin) {
-            throw new Error("You can update only your comment");
-        }
-
-        if (body.content !== undefined) comment.content = body.content;
-        if (body.isAnonymous !== undefined) comment.isAnonymous = (body.isAnonymous === true || body.isAnonymous === 'true');
-
-        await post.save();
-        await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
-
-        return formatComments(post);
-    } catch (error) {
-        throw error;
+    //only the owner of the comment (not anonymous) or admin can update
+    if (comment.isAnonymous) throw new Error("Cannot edit anonymous comment");
+    if (String(comment.userId) !== body.userId && !body.isAdmin) {
+        throw new Error("You can update only your comment");
     }
+
+    if (body.content !== undefined) comment.content = body.content;
+    if (body.isAnonymous !== undefined) comment.isAnonymous = (body.isAnonymous === true || body.isAnonymous === 'true');
+
+    await post.save();
+    await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
+
+    return formatComments(post);
 };
 
-// Delete Comment 
+// Delete Comment
 export const deleteCommentFromPost = async (params, body) => {
-    try {
-        const post = await PostModel.findById(params.id);
-        if (!post) throw new Error("Post not found");
+    const post = await PostModel.findById(params.id);
+    if (!post) throw new Error("Post not found");
 
-        const comment = post.comments.find(c => c.commentId === body.commentId);
-        if (!comment) throw new Error("Comment not found");
+    const comment = post.comments.find(c => c.commentId === body.commentId);
+    if (!comment) throw new Error("Comment not found");
 
-        if (comment.userId.toString() !== body.userId && !body.isAdmin) {
-            throw new Error("You can delete only your comment");
-        }
-
-        post.comments = post.comments.filter(c => c.commentId !== body.commentId);
-
-        await post.save();
-        await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
-
-        return formatComments(post);
-    } catch (error) {
-        throw error;
+    //only the owner of the comment (not anonymous) or admin can delete
+    if (comment.isAnonymous) throw new Error("Cannot delete anonymous comment");
+    if (String(comment.userId) !== body.userId && !body.isAdmin) {
+        throw new Error("You can delete only your comment");
     }
+
+    post.comments = post.comments.filter(c => c.commentId !== body.commentId);
+
+    await post.save();
+    await post.populate({ path: 'comments.userId', select: 'username profilePicture' });
+
+    return formatComments(post);
 };
 
