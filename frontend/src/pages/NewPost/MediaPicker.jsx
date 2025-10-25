@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import "./MediaPicker.css";
 export default function MediaPicker({
   inputRef,
   files,

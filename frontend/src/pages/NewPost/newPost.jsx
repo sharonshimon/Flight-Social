@@ -71,18 +71,18 @@ export default function NewPost() {
 
     try {
       // Backend route: POST /api/v1/posts/create-post
-  const url = `${API_ENDPOINTS.posts.create.replace(/\/$/, '')}/create-post`;
-  // debug
-  const token = localStorage.getItem('token');
-  console.debug('NewPost.submit -> URL:', url, 'token present:', !!token);
-  // Do NOT set Content-Type manually for multipart/form-data; browser will add the correct boundary
-  const res = await axiosInstance.post(url, formData);
+      const url = `${API_ENDPOINTS.posts.create.replace(/\/$/, '')}/create-post`;
+      // debug
+      const token = localStorage.getItem('token');
+      console.debug('NewPost.submit -> URL:', url, 'token present:', !!token);
+      // Do NOT set Content-Type manually for multipart/form-data; browser will add the correct boundary
+      const res = await axiosInstance.post(url, formData);
 
-  console.log('Post created:', res.data);
-  // log the created post object if present
-  console.debug('NewPost created post detail:', res.data?.data || res.data);
+      console.log('Post created:', res.data);
+      // log the created post object if present
+      console.debug('NewPost created post detail:', res.data?.data || res.data);
 
-  // Reset form
+      // Reset form
       setCaption("");
       setLocation("");
       setVisibility("public");
@@ -90,12 +90,12 @@ export default function NewPost() {
       previews.forEach((u) => URL.revokeObjectURL(u));
       setPreviews([]);
 
-  // Optionally navigate to feed or show success
-  alert(res.data?.message || 'Post created successfully');
-  // notify other parts of the app that a new post was created
-  try { window.dispatchEvent(new CustomEvent('post-created', { detail: res.data?.data })); } catch(e) { console.debug('dispatch event failed', e); }
-  // navigate to feed so user can see the new post
-  navigate('/feed');
+      // Optionally navigate to feed or show success
+      alert(res.data?.message || 'Post created successfully');
+      // notify other parts of the app that a new post was created
+      try { window.dispatchEvent(new CustomEvent('post-created', { detail: res.data?.data })); } catch (e) { console.debug('dispatch event failed', e); }
+      // navigate to feed so user can see the new post
+      navigate('/feed');
     } catch (err) {
       console.error('Create post error:', err.response?.data || err.message);
       setSubmitError(err.response?.data?.message || err.message || 'Failed to create post');
@@ -125,31 +125,52 @@ export default function NewPost() {
     <div className="newpost">
       <h2>Create New Post</h2>
       <form className="np-form" onSubmit={handleSubmit}>
-          <div style={{marginBottom:12}}>
-            <label style={{display:'inline-flex',alignItems:'center',gap:8}}>
-              <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} /> Post anonymously
-            </label>
-          </div>
+        <div style={{ marginBottom: 12 }}>
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <input type="checkbox" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} /> Post anonymously
+          </label>
+        </div>
 
-          <div style={{marginBottom:12}}>
-            <label>Tags: </label>
-            <select multiple value={selectedTags} onChange={(e) => setSelectedTags(Array.from(e.target.selectedOptions).map(o => o.value))}>
-              {[
-                "Adventure","CityTrip","Nature","Luxury","Backpacking","FoodAndDrink",
-                "Cultural","Family","Couples","SoloTravel","Budget","Wellness","RoadTrip","Festival",
-                "Historical","Beach","Mountain","Wildlife","Cruise","Skiing","Hiking","Camping",
-                "Diving","Surfing","Cycling","Photography","Shopping","Nightlife","General","Other"
-              ].map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
+        <div className="tags-container">
+          <label>Tags:</label>
+          <select
+            multiple
+            className="tags-select"
+            value={selectedTags}
+            onChange={(e) =>
+              setSelectedTags(Array.from(e.target.selectedOptions).map((o) => o.value))
+            }
+          >
+            {[
+              "Adventure", "CityTrip", "Nature", "Luxury", "Backpacking", "FoodAndDrink",
+              "Cultural", "Family", "Couples", "SoloTravel", "Budget", "Wellness", "RoadTrip", "Festival",
+              "Historical", "Beach", "Mountain", "Wildlife", "Cruise", "Skiing", "Hiking", "Camping",
+              "Diving", "Surfing", "Cycling", "Photography", "Shopping", "Nightlife", "General", "Other"
+            ].map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <div style={{marginBottom:12}}>
-            <label>Group (optional): </label>
-            <select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)}>
-              <option value="">-- none --</option>
-              {availableGroups.map(g => <option key={g._id || g.id} value={g.name || g._id || g.id}>{g.name}</option>)}
-            </select>
-          </div>
+
+        <div className="single-select-container">
+          <label>Group (optional): </label>
+          <select
+            className="single-select"
+            value={selectedGroup}
+            onChange={(e) => setSelectedGroup(e.target.value)}
+          >
+            <option value="">-- none --</option>
+            {availableGroups.map(g => (
+              <option key={g._id || g.id} value={g.name || g._id || g.id}>
+                {g.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <MediaPicker
           inputRef={inputRef}
           files={files}

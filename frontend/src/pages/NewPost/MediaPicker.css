@@ -1,0 +1,138 @@
+/* =========================
+   Media Picker Component
+   ========================= */
+.np-drop {
+  border: 2px dashed #ccc;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: #fafafa;
+  position: relative;
+}
+
+.np-drop.is-dragging {
+  border-color: #007bff;
+  background-color: #f0f8ff;
+}
+
+/* Empty state */
+.np-drop__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.np-drop__icon {
+  font-size: 48px;
+  color: #007bff;
+  margin-bottom: 12px;
+}
+
+.np-drop__text {
+  font-size: 16px;
+  color: #555;
+}
+
+.np-drop__text .link {
+  color: #007bff;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.np-drop__hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #888;
+}
+
+/* =========================
+   Grid layout for media previews
+   ========================= */
+.np-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.np-grid__item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background-color: #f1f1f1;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.np-grid__item img,
+.np-grid__item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Remove button (top-right corner) */
+.np-grid__remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.np-grid__remove:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Add More Button */
+.np-grid__addmore {
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 40px;
+  color: #007bff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+}
+
+.np-grid__addmore:hover {
+  border-color: #007bff;
+  background-color: #f0f8ff;
+}
+
+/* =========================
+   Accessibility & Focus
+   ========================= */
+.np-drop:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #eef6ff;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .np-drop {
+    padding: 24px;
+  }
+
+  .np-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
