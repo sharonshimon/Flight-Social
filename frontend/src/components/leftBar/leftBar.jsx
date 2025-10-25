@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Link } from "react-router-dom";             // ⬅️ add this
+import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import "./leftbar.css";
 import LeftBarItem from "./leftBarItem";
@@ -16,14 +16,16 @@ const LeftBar = () => {
   }), []);
 
   const mainMenuItems = useMemo(() => [
-    { icon: icons.Friends,  name: "Flight Buddies", path: "/friends" },
-    { icon: icons.Messages, name: "Messages",       path: "/messages" },
-    { icon: icons.Gallery,  name: "New Post",       path: "/NewPost" },
-    { icon: icons.Memories, name: "My Groups",      path: "/myGroups" },
-    { icon: icons.Memories, name: "Admin",          path: "/admin" },
+    { icon: icons.Friends, name: "Flight Buddies", path: "/friends" },
+    { icon: icons.Messages, name: "Messages", path: "/messages" },
+    { icon: icons.Gallery, name: "New Post", path: "/NewPost" },
+    { icon: icons.Memories, name: "My Groups", path: "/myGroups" },
+    // { icon: icons.Memories, name: "Groups", path: "/groups" },
+    { icon: icons.Courses, name: "Explore Groups", path: "/explore-groups" },
+    { icon: icons.Memories, name: "Admin", path: "/admin" },
   ], [icons]);
   let currentUser = null;
-   try {
+  try {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       const userObj = JSON.parse(userStr);
@@ -56,7 +58,7 @@ const LeftBar = () => {
           {!minimized && (
             <div className="user">
               <Link
-                to={`/profile`} 
+                to={`/profile`}
                 className="user-info"
                 aria-label="Open profile"
               >

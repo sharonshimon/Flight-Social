@@ -43,47 +43,49 @@ class GroupService {
         return Group.findByIdAndUpdate(groupId, updateData, { new: true, runValidators: true });
     }
 
-    // Join group
+    // Join a group
     async joinGroup(groupId, userId) {
-        const group = await Group.findById(groupId);
+        const group = await Group.findById(groupId)
+            .populate("members.user", "_id username")
+            .populate("joinRequests.user", "_id username");
+
         if (!group) throw new Error("Group not found");
 
-        const isMember = group.members.some(m => m.user.toString() === userId);
+        // check if already a member
+        const isMember = group.members.some(m => String(m.user._id || m.user) === String(userId));
         if (isMember) throw new Error("User is already a member");
 
-        // If public group, add directly to members
+        // check if already requested
+        const alreadyRequested = group.joinRequests.some(r => String(r.user._id || r.user) === String(userId));
+        if (alreadyRequested) throw new Error("Join request already sent");
+
         if (group.privacy === "public") {
             group.members.push({ user: userId, role: "member" });
             await group.save();
             return { group, status: "joined" };
         }
 
-        // If private group, add to join requests
-        const alreadyRequested = group.joinRequests.some(r => r.user.toString() === userId);
-        if (alreadyRequested) throw new Error("Join request already sent");
-
+        // private group
         group.joinRequests.push({ user: userId });
         await group.save();
         return { group, status: "request_sent" };
+    };
 
-    }
-
-    // Leave group
+    // Leave a group
     async leaveGroup(groupId, userId) {
         const group = await Group.findById(groupId);
         if (!group) throw new Error("Group not found");
 
-        group.members = group.members.filter(m => m.user.toString() !== userId);
-        group.admins = group.admins.filter(a => a.toString() !== userId);
-
+        group.members = group.members.filter(m => String(m.user || m._id) !== String(userId));
         await group.save();
         return group;
     }
 
+
     // Delete a group
     async deleteGroup(groupId) {
         return Group.findByIdAndDelete(groupId);
-    }
+    };
 
     // Add 
     // Approve join request

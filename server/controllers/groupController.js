@@ -88,22 +88,28 @@ class GroupController {
   // Join group
   async joinGroup(req, res) {
     try {
-      const userData = verifyToken(req);
-      const group = await groupService.joinGroup(req.params.id, userData.id);
-      res.status(200).json({ success: true, group });
+      const { id } = req.params; // groupId
+      const { userId } = req.body;
+
+      const { group, status } = await groupService.joinGroup(id, userId);
+      return res.status(200).json({ group, status });
     } catch (err) {
-      res.status(400).json({ success: false, message: err.message });
+      console.error(err.message);
+      return res.status(400).json({ message: err.message });
     }
   }
 
   // Leave group
   async leaveGroup(req, res) {
     try {
-      const userData = verifyToken(req);
-      const group = await groupService.leaveGroup(req.params.id, userData.id);
-      res.status(200).json({ success: true, group });
+      const { id } = req.params; // groupId
+      const { userId } = req.body;
+
+      const group = await groupService.leaveGroup(id, userId);
+      return res.status(200).json({ group });
     } catch (err) {
-      res.status(400).json({ success: false, message: err.message });
+      console.error(err.message);
+      return res.status(400).json({ message: err.message });
     }
   }
 

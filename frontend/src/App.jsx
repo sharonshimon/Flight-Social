@@ -10,7 +10,9 @@ import EditProfile from "./pages/Profile/EditProfile";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import NewPost from "./pages/NewPost/newPost";
-import MyGroups from "./pages/MyGroups/myGroups"
+import ExploreGroups from "./pages/Groups/ExploreGroups";
+import Groups from "./pages/Groups/GroupPage";
+import MyGroups from "./pages/Groups/myGroups"
 import AdminConsole from "./pages/Admin/AdminConsole";
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/newPost" element={<NewPost />} />
+          <Route path="/explore-groups" element={<ExploreGroups />} />
+          <Route path="/groups" element={<Groups />} />
           <Route path="/myGroups" element={<MyGroups />} />
           <Route path="/admin" element={<AdminConsole />} />
           <Route path="/edit-profile" element={<EditProfile />} />
