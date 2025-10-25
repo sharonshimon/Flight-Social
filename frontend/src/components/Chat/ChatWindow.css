@@ -1,0 +1,96 @@
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0; /* allow children with overflow to size correctly */
+  background: #f8fafc;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+/* Messages List */
+.messages {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1 1 auto;           /* take remaining space and scroll */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 0;         /* remove reserved space for absolute composer */
+  scroll-behavior: smooth;
+}
+
+/* Individual Message */
+/* ...existing code... */
+
+/* Composer fixed at bottom */
+.composer {
+  position: relative;       /* no absolute positioning */
+  flex: 0 0 auto;           /* do not grow/shrink, stays at bottom */
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  z-index: 2;
+}
+
+.composer input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  outline: none;
+}
+/* Individual Message */
+.msg {
+  max-width: 70%;
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  align-self: flex-start;
+  word-wrap: break-word;
+}
+
+.msg.sent {
+  background: #e0e7ff;
+  align-self: flex-end;
+}
+
+.msg .content {
+  font-size: 14px;
+  color: #111827;
+}
+
+.msg .time {
+  font-size: 11px;
+  color: #6b7280;
+  text-align: right;
+  margin-top: 4px;
+}
+
+
+.composer input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.composer button {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.composer button:hover {
+  filter: brightness(0.9);
+}
