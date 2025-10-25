@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { connectSocket } from './socket';
 import { API_BASE_URL, API_ENDPOINTS } from '../../config/api';
+import "./ChatWindow.css";
+
 
 export default function ChatWindow({ currentUser, peerId }) {
   const [messages, setMessages] = useState([]);
