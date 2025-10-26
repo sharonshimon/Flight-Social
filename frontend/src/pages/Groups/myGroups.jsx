@@ -1,40 +1,40 @@
 import React, { useMemo, useState } from "react";
 import "./MyGroups.css";
 
-// const seedGroups = [
-//   {
-//     id: "g1",
-//     name: "Flight Buddies TLV",
-//     avatar: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=400&auto=format&fit=crop",
-//     members: 128,
-//     privacy: "Public",
-//     about: "Casual meetups, routes, and photos around Tel Aviv."
-//   },
-//   {
-//     id: "g2",
-//     name: "IFR Learners",
-//     avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=400&auto=format&fit=crop",
-//     members: 87,
-//     privacy: "Private",
-//     about: "Study group for instrument rating. Weekly Zoom sessions."
-//   },
-//   {
-//     id: "g3",
-//     name: "Heli Ops Israel",
-//     avatar: "https://images.unsplash.com/photo-1517817748493-49ec54a32485?q=80&w=400&auto=format&fit=crop",
-//     members: 54,
-//     privacy: "Public",
-//     about: "Helicopter operations, maintenance tips, and safety."
-//   },
-//   {
-//     id: "g4",
-//     name: "Aviation Photography",
-//     avatar: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400&auto=format&fit=crop",
-//     members: 203,
-//     privacy: "Public",
-//     about: "Share your best air-to-air and ramp shots."
-//   },
-// ]; //mock up
+const seedGroups = [
+  {
+    id: "g1",
+    name: "Flight Buddies TLV",
+    avatar: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=400&auto=format&fit=crop",
+    members: 128,
+    privacy: "Public",
+    about: "Casual meetups, routes, and photos around Tel Aviv."
+  },
+  {
+    id: "g2",
+    name: "IFR Learners",
+    avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=400&auto=format&fit=crop",
+    members: 87,
+    privacy: "Private",
+    about: "Study group for instrument rating. Weekly Zoom sessions."
+  },
+  {
+    id: "g3",
+    name: "Heli Ops Israel",
+    avatar: "https://images.unsplash.com/photo-1517817748493-49ec54a32485?q=80&w=400&auto=format&fit=crop",
+    members: 54,
+    privacy: "Public",
+    about: "Helicopter operations, maintenance tips, and safety."
+  },
+  {
+    id: "g4",
+    name: "Aviation Photography",
+    avatar: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400&auto=format&fit=crop",
+    members: 203,
+    privacy: "Public",
+    about: "Share your best air-to-air and ramp shots."
+  },
+]; //mock up
 
 export default function MyGroups() {
   const [query, setQuery] = useState("");

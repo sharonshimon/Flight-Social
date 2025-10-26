@@ -2,15 +2,26 @@ import groupService from "../services/groupService.js";
 import { verifyToken } from "../services/authService.js";
 
 class GroupController {
-
   // Create a new group
   async createGroup(req, res) {
     try {
-      const userData = verifyToken(req); // JWT verification
-      const { name, bio, privacy, coverImageUrl } = req.body;
+      const userData = verifyToken(req);
+      const { name, bio, privacy } = req.body;
       const creator = userData.id;
+      let coverImageUrl = req.body.coverImageUrl;
 
-      const group = await groupService.createGroup({ name, bio, privacy, coverImageUrl, creator });
+      if (req.file) {
+        coverImageUrl = req.file.path || req.file.url || req.file.secure_url;
+      }
+
+      const group = await groupService.createGroup({
+        name,
+        bio,
+        privacy,
+        coverImageUrl,
+        creator
+      });
+
       res.status(201).json({ success: true, group });
     } catch (err) {
       res.status(400).json({ success: false, message: err.message });

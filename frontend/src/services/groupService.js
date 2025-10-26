@@ -3,9 +3,22 @@ import { API_ENDPOINTS } from "../config/api";
 
 const groupService = {
     // create group
-    async createGroup(data) {
-        const res = await axiosInstance.post(API_ENDPOINTS.groups.createGroup, data);
-        return res.data;
+    async createGroup({ name, bio, privacy, image }) {
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("bio", bio);
+        formData.append("privacy", privacy);
+        if (image) formData.append("image", image);
+
+        const res = await axiosInstance.post(
+            API_ENDPOINTS.groups.createGroup,
+            formData,
+            {
+                headers: { "Content-Type": "multipart/form-data" },
+            }
+        );
+
+        return res.data.group;
     },
 
     // get all groups

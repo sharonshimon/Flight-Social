@@ -1,5 +1,6 @@
 import express from "express";
 import groupController from "../controllers/groupController.js";
+import { parser } from "../src/config/cloudinary.js";
 
 const router = express.Router();
 
@@ -12,8 +13,8 @@ router.get("/:id", groupController.getGroupById);
 // Get group by name
 router.get("/name/:name", groupController.getGroupByName);
 
-// Create a new group
-router.post("/", groupController.createGroup);
+// Create a new group with optional cover image
+router.post("/create", parser.single("image"), groupController.createGroup);
 
 // Update a group
 router.put("/:id", groupController.updateGroup);

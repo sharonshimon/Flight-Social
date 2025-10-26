@@ -2,11 +2,14 @@ import Group from "../models/Group.js";
 
 class GroupService {
     // Create a new group (or return existing group with the same name)
-    async createGroup({ name, bio, creator, privacy, coverImageUrl }) {
-        // check if group with the same name already exists
+    async createGroup({ name, bio, privacy, coverImageUrl, creator }) {
         let group = await Group.findOne({ name: name.trim() });
         if (group) {
-            return group; // return existing group
+            return group;
+        }
+
+        if (!coverImageUrl) {
+            coverImageUrl = "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
         }
 
         group = new Group({
