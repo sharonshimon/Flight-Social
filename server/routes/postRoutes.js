@@ -8,6 +8,7 @@ import {
     getTimelinePostsController,
     getAllPostsController,
     getPostsByTagController,
+    getPostsByUserIdContoller,
     addCommentController,
     updateCommentController,
     deleteCommentFromPostController,
@@ -39,6 +40,9 @@ router.get("/get-timeline-posts/:username", getTimelinePostsController);
 
 // Get posts by tag
 router.get("/", getPostsByTagController);
+
+// Get posts by userId
+router.get("/:userId", getPostsByUserIdContoller);
 
 // Add comment
 router.post("/add-comment/:id", addCommentController);

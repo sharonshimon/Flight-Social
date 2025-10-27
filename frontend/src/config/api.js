@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
         updateComment: (id) => `/api/v1/posts/update-comment/${id}`,
         deleteComment: (id) => `/api/v1/posts/delete-comment/${id}`,
         byTag: (tag) => `/posts/byTag/${tag}`,
+        byUserId: (userId) => `/api/v1/posts/${userId}`,
         getTimeline: (username) => `/api/v1/posts/get-timeline-posts/${username}`
     },
     users: {

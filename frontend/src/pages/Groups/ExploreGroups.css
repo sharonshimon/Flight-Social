@@ -29,13 +29,81 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+.groups-search {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid #d0e4ff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+.groups-search:hover {
+    border-color: #97C5FF;
+    box-shadow: 0 3px 8px rgba(24, 115, 204, 0.15);
+}
+
+.groups-search:focus-within {
+    border-color: #1873CC;
+    box-shadow: 0 0 0 3px rgba(24, 115, 204, 0.25);
+}
+
+.groups-search svg {
+    color: #1873CC;
+    flex-shrink: 0;
+}
+
 .groups-search input {
     border: none;
     outline: none;
     margin-left: 8px;
     font-size: 0.95rem;
     width: 180px;
+    background-color: transparent;
+    color: #333;
 }
+
+.groups-search input::placeholder {
+    color: #94b6da;
+    font-weight: 400;
+}
+
+.privacy-filter {
+    background-color: #fff;
+    border: 1px solid #d0e4ff;
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    color: #1873CC;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%231873CC' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+.privacy-filter:hover {
+    border-color: #97C5FF;
+    box-shadow: 0 3px 8px rgba(24, 115, 204, 0.15);
+}
+
+.privacy-filter:focus {
+    outline: none;
+    border-color: #1873CC;
+    box-shadow: 0 0 0 3px rgba(24, 115, 204, 0.25);
+}
+
+.privacy-filter option {
+    color: #333;
+    background: #fff;
+}
+
 
 .groups-container {
     display: grid;

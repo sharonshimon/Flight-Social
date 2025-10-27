@@ -13,7 +13,6 @@ const Post = ({ post }) => {
   const [editContent, setEditContent] = useState("");
   const [submittingEdit, setSubmittingEdit] = useState(false);
   const [groupInfo, setGroupInfo] = useState(null);
-  console.log("Post group ID:", post._id, post.group);
 
   // fetch group info if post belongs to a group
   useEffect(() => {
@@ -132,7 +131,7 @@ const Post = ({ post }) => {
       setSubmittingEdit(false);
     }
   };
-  console.log("info", groupInfo);
+
   return (
     <div className="post">
       <div className="container">

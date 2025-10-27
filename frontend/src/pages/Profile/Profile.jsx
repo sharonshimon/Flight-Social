@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import postService from "../../services/postService";
 import axiosInstance from "../../services/axiosService";
 import { API_ENDPOINTS } from "../../config/api";
 import "./Profile.css";
@@ -22,34 +23,27 @@ export default function Profile() {
   const [postsLoading, setPostsLoading] = useState(false);
   const [postsError, setPostsError] = useState(null);
 
-  const [followersModal, setFollowersModal] = useState(null); // { type: 'followers' | 'following' }
+  const [followersModal, setFollowersModal] = useState(null);
 
   const storedUserId = localStorage.getItem("userId");
-  const isOwnProfile = userId === "me" || (storedUserId && storedUserId === userId);
+  const isOwnProfile = userId === "me" || storedUserId === userId;
 
-  // --- Refresh profile data ---
   const refreshFullProfile = async () => {
     try {
-      const storedId = localStorage.getItem("userId");
-      if (!storedId) return;
+      const idToFetch = userId === "me" ? storedUserId : userId;
+      if (!idToFetch) return;
 
+      setPostsLoading(true);
 
-      const resUser = await axiosInstance.get(API_ENDPOINTS.users.getById(storedId));
+      // --- Get user info ---
+      const resUser = await axiosInstance.get(API_ENDPOINTS.users.getById(idToFetch));
       const userInfo = resUser.data?.userInfo;
       if (!userInfo) return;
 
-      const resPosts = await axiosInstance.get(
-        API_ENDPOINTS.posts.getTimeline(userInfo.username)
-      );
-      const list = Array.isArray(resPosts.data)
-        ? resPosts.data
-        : Array.isArray(resPosts.data.data)
-          ? resPosts.data.data
-          : Array.isArray(resPosts.data.posts)
-            ? resPosts.data.posts
-            : [];
+      // --- Get posts by userId using the new service method ---
+      const userPosts = await postService.getPostsByUserId(userInfo._id);
 
-      const gridItems = list.map(p => ({
+      const gridItems = userPosts.map(p => ({
         id: p._id || p.postId || p.id,
         src: Array.isArray(p.media) && p.media.length ? p.media[0].url : p.img || p.src || "",
         desc: p.content || p.desc || "",
@@ -59,7 +53,9 @@ export default function Profile() {
 
       setProfilePosts(gridItems);
 
+      // --- Set profile data ---
       setProfileUser({
+        _id: userInfo._id,
         username: userInfo.username || "User",
         name: `${userInfo.firstName || ""} ${userInfo.lastName || ""}`.trim() || "User",
         avatar: userInfo.profilePicture || "",
@@ -70,9 +66,12 @@ export default function Profile() {
           following: Array.isArray(userInfo.followings) ? userInfo.followings.length : 0
         }
       });
+
     } catch (err) {
       console.error("Failed to refresh full profile:", err);
       setPostsError(err.response?.data?.message || err.message || "Failed to load posts");
+    } finally {
+      setPostsLoading(false);
     }
   };
 
@@ -135,10 +134,9 @@ export default function Profile() {
         />
       )}
 
-      {/*Followers/Following */}
       {followersModal && (
         <FollowersModal
-          userId={storedUserId}
+          userId={profileUser._id}
           type={followersModal.type}
           onClose={() => setFollowersModal(null)}
         />

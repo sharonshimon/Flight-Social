@@ -8,11 +8,11 @@ import {
   getTimelinePosts,
   getAllPosts,
   getPostsByTag,
+  getPostsByUserId,
   addComment,
   updateComment,
   deleteCommentFromPost
 } from "../services/postService.js";
-import * as postService from "../services/postService.js";
 import { verifyToken } from "../services/authService.js";
 
 // Create Post
@@ -120,7 +120,6 @@ export const getPostsByTagController = async (req, res) => {
   try {
     verifyToken(req);
     const tag = req.query.tag;
-
     let posts;
     if (!tag) {
       posts = await PostModel.find().sort({ createdAt: -1 });
@@ -138,6 +137,19 @@ export const getPostsByTagController = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get posts by userId
+export const getPostsByUserIdContoller = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    verifyToken(req);
+    const posts = await getPostsByUserId(userId);
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch posts" });
+  }
+};
+
 
 
 // Add Comment

@@ -9,6 +9,7 @@ const ExploreGroups = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState("");
+    const [privacyFilter, setPrivacyFilter] = useState("all"); // ✅ חדש
     const [creating, setCreating] = useState(false);
     const [form, setForm] = useState({
         name: "",
@@ -45,14 +46,17 @@ const ExploreGroups = () => {
             (r) => String(r.user._id || r.user) === String(user?._id)
         );
 
+    // filter groups based on search query and privacy filter
     const filteredGroups = useMemo(() => {
         const q = query.trim().toLowerCase();
-        if (!q) return groups;
-        return groups.filter(
-            (g) =>
-                g.name.toLowerCase().includes(q) || g.bio?.toLowerCase().includes(q)
-        );
-    }, [groups, query]);
+        return groups.filter((g) => {
+            const matchesName = g.name.toLowerCase().includes(q);
+            const matchesPrivacy =
+                privacyFilter === "all" ||
+                g.privacy.toLowerCase() === privacyFilter.toLowerCase();
+            return matchesName && matchesPrivacy;
+        });
+    }, [groups, query, privacyFilter]);
 
     const handleJoinGroup = async (groupId) => {
         try {
@@ -82,7 +86,6 @@ const ExploreGroups = () => {
         }
     };
 
-    // Change handler for image input
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -91,7 +94,6 @@ const ExploreGroups = () => {
         }
     };
 
-    // Form submission handler for creating a group
     const handleCreateGroup = async (e) => {
         e.preventDefault();
         try {
@@ -108,16 +110,13 @@ const ExploreGroups = () => {
             const res = await axiosInstance.post(
                 API_ENDPOINTS.groups.createGroup,
                 formData,
-                {
-                    headers: { "Content-Type": "multipart/form-data" },
-                }
+                { headers: { "Content-Type": "multipart/form-data" } }
             );
 
             if (res.data?.group) {
                 setGroups((prev) => [res.data.group, ...prev]);
             }
 
-            // Reset form and close modal
             setForm({ name: "", privacy: "Public", bio: "", coverImageUrl: null });
             setPreviewImage("");
             setCreating(false);
@@ -145,9 +144,19 @@ const ExploreGroups = () => {
                         <input
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Search groups..."
+                            placeholder="Search Groups..."
                         />
                     </div>
+
+                    <select
+                        value={privacyFilter}
+                        onChange={(e) => setPrivacyFilter(e.target.value)}
+                        className="privacy-filter"
+                    >
+                        <option value="all">All</option>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                    </select>
 
                     <button className="join-btn" onClick={() => setCreating(true)}>
                         + Create Group
@@ -157,7 +166,7 @@ const ExploreGroups = () => {
 
             <div className="groups-container">
                 {filteredGroups.length === 0 ? (
-                    <div>No groups found{query ? ` for “${query}”` : ""}.</div>
+                    <div>No groups found for this search.</div>
                 ) : (
                     filteredGroups.map((group) => (
                         <div key={group._id} className="group-card">
@@ -174,7 +183,10 @@ const ExploreGroups = () => {
 
                             <div className="group-actions">
                                 {isMember(group) ? (
-                                    <button className="leave-btn" onClick={() => handleLeaveGroup(group._id)}>
+                                    <button
+                                        className="leave-btn"
+                                        onClick={() => handleLeaveGroup(group._id)}
+                                    >
                                         Leave
                                     </button>
                                 ) : group.privacy === "private" && hasRequested(group) ? (
@@ -182,8 +194,13 @@ const ExploreGroups = () => {
                                         Request Sent
                                     </button>
                                 ) : (
-                                    <button className="join-btn" onClick={() => handleJoinGroup(group._id)}>
-                                        {group.privacy === "private" ? "Request to Join" : "Join Group"}
+                                    <button
+                                        className="join-btn"
+                                        onClick={() => handleJoinGroup(group._id)}
+                                    >
+                                        {group.privacy === "private"
+                                            ? "Request to Join"
+                                            : "Join Group"}
                                     </button>
                                 )}
                             </div>
@@ -194,7 +211,10 @@ const ExploreGroups = () => {
 
             {creating && (
                 <div className="groups-modal" onClick={() => setCreating(false)}>
-                    <div className="groups-dialog" onClick={(e) => e.stopPropagation()}>
+                    <div
+                        className="groups-dialog"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <h3>Create a Group</h3>
                         <form className="groups-form" onSubmit={handleCreateGroup}>
                             <label>
@@ -202,7 +222,9 @@ const ExploreGroups = () => {
                                 <input
                                     placeholder="e.g., Flight Buddies TLV"
                                     value={form.name}
-                                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                    onChange={(e) =>
+                                        setForm({ ...form, name: e.target.value })
+                                    }
                                     required
                                 />
                             </label>
@@ -211,7 +233,9 @@ const ExploreGroups = () => {
                                 Privacy
                                 <select
                                     value={form.privacy}
-                                    onChange={(e) => setForm({ ...form, privacy: e.target.value })}
+                                    onChange={(e) =>
+                                        setForm({ ...form, privacy: e.target.value })
+                                    }
                                 >
                                     <option>Public</option>
                                     <option>Private</option>
@@ -224,15 +248,25 @@ const ExploreGroups = () => {
                                     rows={3}
                                     placeholder="What is this group about?"
                                     value={form.bio}
-                                    onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                                    onChange={(e) =>
+                                        setForm({ ...form, bio: e.target.value })
+                                    }
                                 />
                             </label>
 
                             <label htmlFor="groupImage">Add Cover Image</label>
-                            <input type="file" accept="image/*" onChange={handleImageChange} />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
 
                             {previewImage && (
-                                <img src={previewImage} alt="Group preview" className="group-img" />
+                                <img
+                                    src={previewImage}
+                                    alt="Group preview"
+                                    className="group-img"
+                                />
                             )}
 
                             <div className="dialog-actions">
@@ -240,7 +274,12 @@ const ExploreGroups = () => {
                                     type="button"
                                     className="leave-btn"
                                     onClick={() => {
-                                        setForm({ name: "", privacy: "Public", bio: "", coverImageUrl: null });
+                                        setForm({
+                                            name: "",
+                                            privacy: "Public",
+                                            bio: "",
+                                            coverImageUrl: null,
+                                        });
                                         setPreviewImage("");
                                         setCreating(false);
                                     }}
@@ -258,4 +297,5 @@ const ExploreGroups = () => {
         </div>
     );
 };
+
 export default ExploreGroups;

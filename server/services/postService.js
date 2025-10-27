@@ -146,6 +146,15 @@ export const getPostsByTag = async (tag) => {
     }
 };
 
+export const getPostsByUserId = async (userId) => {
+    try {
+        const posts = await PostModel.find({ userId }).sort({ createdAt: -1 });
+        return posts;
+    } catch (err) {
+        console.error(`Failed to get posts for user ${userId}:`, err);
+        throw err;
+    }
+};
 // Like / Dislike 
 export const likeAndDislike = async (params, body) => {
     try {
