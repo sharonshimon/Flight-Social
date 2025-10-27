@@ -1,5 +1,4 @@
 import "./navbar.css";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -37,11 +36,7 @@ const Navbar = () => {
         <Link to="/feed" style={{ textDecoration: "none" }}>
           <span>Flight Social</span>
         </Link>
-        <Link to="/feed" aria-label="Home">
-          <HomeOutlinedIcon />
-        </Link>
-
-        {/* קומפוננטת החיפוש */}
+        {/* Search in navbar*/}
         <NavBarSearch />
       </div>
 
