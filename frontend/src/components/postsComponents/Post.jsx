@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import LikeButton from "./likeButton";
 import Comment from "./comment";
 import postService from "../../services/postService";
+import groupService from "../../services/groupService";
 import "./post.css";
 
 const Post = ({ post }) => {
@@ -12,6 +12,24 @@ const Post = ({ post }) => {
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState("");
   const [submittingEdit, setSubmittingEdit] = useState(false);
+  const [groupInfo, setGroupInfo] = useState(null);
+  console.log("Post group ID:", post._id, post.group);
+
+  // fetch group info if post belongs to a group
+  useEffect(() => {
+    const fetchGroup = async () => {
+      if (post.group && post.group !== "null" && post.group !== "") {
+        try {
+          const data = await groupService.getGroupById(post.group);
+          if (data) setGroupInfo(data);
+        } catch (err) {
+          console.error("Error fetching group info:", err);
+          setGroupInfo(null);
+        }
+      }
+    };
+    fetchGroup();
+  }, [post.group]);
 
   // utility to format time ago
   const formatTimeAgo = (createdAt) => {
@@ -31,7 +49,7 @@ const Post = ({ post }) => {
     return `${day}.${month}.${year}`;
   };
 
-  //current user from local storage
+  // current user from local storage
   const localUser = (() => {
     try {
       const u = localStorage.getItem("user");
@@ -69,10 +87,12 @@ const Post = ({ post }) => {
     poster.photoURL ||
     "";
 
-  const mediaUrl =
-    Array.isArray(post.media) && post.media.length
-      ? post.media[0].url
-      : post.img || null;
+  // Get all media items
+  const mediaItems = Array.isArray(post.media) && post.media.length
+    ? post.media
+    : post.img
+      ? [{ url: post.img }]
+      : [];
 
   const userIdForLink =
     typeof post.userId === "string"
@@ -112,7 +132,7 @@ const Post = ({ post }) => {
       setSubmittingEdit(false);
     }
   };
-
+  console.log("info", groupInfo);
   return (
     <div className="post">
       <div className="container">
@@ -132,26 +152,33 @@ const Post = ({ post }) => {
               />
             )}
             <div className="details">
-              {anonymous ? (
-                <span className="name">{displayName}</span>
-              ) : (
-                <Link
-                  to={`/profile/${userIdForLink}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
+              <div className="user-text-info">
+                {anonymous ? (
                   <span className="name">{displayName}</span>
-                </Link>
-              )}
-              <span className="date">{formatTimeAgo(post.createdAt)}</span>
+                ) : (
+                  <Link
+                    to={`/profile/${userIdForLink}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <span className="name">{displayName}</span>
+                  </Link>
+                )}
+                <span className="date">{formatTimeAgo(post.createdAt)}</span>
+              </div>
+
+              {groupInfo ? (
+                <div className="group-info">
+                  <span className="group-name">{groupInfo.name}</span>
+                  <span className={`group-privacy ${groupInfo.privacy || "public"}`}>
+                    {groupInfo.privacy === "private" ? "Private" : "Public"}
+                  </span>
+                </div>
+              ) : null}
             </div>
           </div>
 
-          <MoreHorizIcon />
           {isOwnPost && (
-            <div
-              className="post-actions"
-              style={{ display: "flex", gap: 8, alignItems: "center" }}
-            >
+            <div className="post-actions">
               <button className="btn btn-link" onClick={openEdit} title="Edit post">
                 Edit
               </button>
@@ -189,11 +216,11 @@ const Post = ({ post }) => {
                 rows={3}
                 style={{ width: "100%" }}
               />
-              <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                <button onClick={submitEdit} disabled={submittingEdit}>
-                  Save
-                </button>
+              <div className="edit-buttons">
                 <button onClick={cancelEdit}>Cancel</button>
+                <button onClick={submitEdit} disabled={submittingEdit}>
+                  {submittingEdit ? "Saving..." : "Save"}
+                </button>
               </div>
             </div>
           ) : (
@@ -208,23 +235,51 @@ const Post = ({ post }) => {
                         to={`/posts?tag=${encodeURIComponent(cleanTag)}`}
                         className="tag-link"
                       >
-                        {word}
+                        {word}{" "}
                       </Link>
                     );
                   }
                   return word + " ";
                 })}
               </p>
-              {mediaUrl && (
-                <img
-                  src={mediaUrl}
-                  alt=""
-                  style={{
-                    width: "100%",
-                    borderRadius: "10px",
-                    marginTop: "8px",
-                  }}
-                />
+              {mediaItems.length > 0 && (
+                <div className="media-gallery">
+                  {mediaItems.map((media, index) => {
+                    const isVideo = media.type === 'video' ||
+                      media.url?.match(/\.(mp4|webm|ogg|mov)$/i);
+
+                    if (isVideo) {
+                      return (
+                        <video
+                          key={index}
+                          controls
+                          style={{
+                            width: "100%",
+                            maxHeight: "400px",
+                            borderRadius: "10px",
+                            marginTop: index === 0 ? "8px" : "4px",
+                          }}
+                        >
+                          <source src={media.url} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      );
+                    }
+
+                    return (
+                      <img
+                        key={index}
+                        src={media.url}
+                        alt=""
+                        style={{
+                          width: "100%",
+                          borderRadius: "10px",
+                          marginTop: index === 0 ? "8px" : "4px",
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               )}
               {tags.length > 0 && (
                 <div className="tags">

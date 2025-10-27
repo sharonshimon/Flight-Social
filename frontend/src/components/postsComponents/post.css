@@ -1,4 +1,3 @@
-/* Post component styles with modern CSS3 features */
 @font-face {
   font-family: 'Open Sans';
   src: url('https://fonts.gstatic.com/s/opensans/v34/mem8YaGs126MiZpBA-UFVZ0e.ttf') format('truetype');
@@ -35,6 +34,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: 1;
 }
 
 .post .userInfo img {
@@ -45,17 +45,60 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.post .details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.post .user-text-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .post .details .name {
   font-weight: bold;
   color: #0074D9;
   text-shadow: 1px 2px 8px #b3e0ff, 0 1px 2px #333;
   font-size: 1.1rem;
+  line-height: 1.2;
 }
 
 .post .details .date {
-  font-size: 0.9rem;
-  margin-left: 20px;
+  font-size: 0.85rem;
   color: #888;
+}
+
+/* style of group info */
+.post .group-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 20px;
+  border: 1px solid #bae6fd;
+  margin-left: auto;
+}
+
+.post .group-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #0369a1;
+}
+
+.post .group-privacy {
+  font-size: 0.75rem;
+  color: #0284c7;
+  font-weight: 500;
+}
+
+.post .group-privacy::before {
+  content: '•';
+  margin: 0 4px;
+  color: #7dd3fc;
 }
 
 .post .content {
@@ -74,6 +117,33 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s;
+}
+
+/* Photo gallery */
+.post .media-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.post .media-gallery img,
+.post .media-gallery video {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.post .media-gallery img:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.post .media-gallery video {
+  background: #000;
 }
 
 .post .info {
@@ -108,7 +178,6 @@
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
-
 
 /* Comment section styles */
 .comments {
@@ -224,7 +293,7 @@
   margin-left: 8px;
 }
 
-/* עיצוב לתגיות החופשיות (#Coffee, #Trip וכו׳) */
+/* tags style */
 .tag-link {
   color: #0077ff;
   text-decoration: none;
@@ -236,7 +305,6 @@
   text-decoration: underline;
 }
 
-/* עיצוב לתגיות המובנות מהמערך */
 .tags {
   margin-top: 10px;
   display: flex;
@@ -251,10 +319,85 @@
   padding: 4px 10px;
   text-decoration: none;
   font-size: 0.9rem;
+  font-display: block;
   transition: all 0.2s ease;
 }
 
 .tag-bubble:hover {
   background-color: #dbeafe;
   color: #0056b3;
+}
+
+/* edit & delete btn */
+.post-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn.btn-link {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn.btn-link:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.post-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn.btn-link {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn.btn-link:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Edit & Delete + Cancel & Save  */
+.post .content .edit-buttons {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.post .content .edit-buttons button {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-family: 'Open Sans', Arial, sans-serif;
+}
+
+.post .content .edit-buttons button:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.post .content .edit-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

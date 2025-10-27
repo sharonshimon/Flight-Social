@@ -31,6 +31,7 @@ class GroupController {
   // Get all groups
   async getAllGroups(req, res) {
     try {
+      const userData = verifyToken(req);
       const groups = await groupService.getAllGroups();
       res.status(200).json({ success: true, groups });
     } catch (err) {
@@ -41,9 +42,12 @@ class GroupController {
   // Get group by ID
   async getGroupById(req, res) {
     try {
+      const userData = verifyToken(req);
       const group = await groupService.getGroupById(req.params.id);
       if (!group) return res.status(404).json({ success: false, message: "Group not found" });
       res.status(200).json({ success: true, group });
+      console.log("Fetched group:", group);
+
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
     }
@@ -169,6 +173,8 @@ class GroupController {
   // Get join requests
   async getJoinRequests(req, res) {
     try {
+      const userData = verifyToken(req);
+
       const group = await groupService.getGroupById(req.params.id);
 
       if (group.privacy !== "private") {
@@ -202,6 +208,7 @@ class GroupController {
   // Get group members
   async getMembers(req, res) {
     try {
+      const userData = verifyToken(req);
       const group = await groupService.getMembers(req.params.id);
       res.status(200).json({ success: true, members: group.members });
     } catch (err) {

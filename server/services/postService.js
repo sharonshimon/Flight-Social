@@ -16,12 +16,7 @@ export const createPost = async (body, files) => {
             }))
             : [];
 
-        let groupId = null;
-        if (body.group) {
-            const group = await GroupModel.findOne({ name: body.group });
-            if (group) groupId = group._id;
-        }
-
+        const groupId = body.group || null;
         // Ensure isAnonymous is boolean (FormData sends strings)
         const isAnon = (function (v) {
             if (v === true || v === false) return v;
@@ -39,6 +34,15 @@ export const createPost = async (body, files) => {
         });
 
         await newPost.save();
+
+        if (groupId) {
+            await GroupModel.findByIdAndUpdate(
+                groupId,
+                { $push: { posts: newPost._id } },
+                { new: true }
+            );
+        }
+
         return newPost;
     } catch (error) {
         throw error;

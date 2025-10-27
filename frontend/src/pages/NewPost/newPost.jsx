@@ -104,17 +104,17 @@ export default function NewPost() {
     }
   };
 
-  // fetch groups for select
   useEffect(() => {
     let cancelled = false;
     const loadGroups = async () => {
       try {
-        const res = await axiosInstance.get(API_ENDPOINTS.groups.getAll);
+        const res = await axiosInstance.get(API_ENDPOINTS.groups.getAllGroups);
         if (cancelled) return;
-        const data = res.data?.data || res.data;
-        setAvailableGroups(Array.isArray(data) ? data : []);
+        const groupsArray = res.data?.groups || [];
+        setAvailableGroups(groupsArray);
+        console.log('Groups loaded:', groupsArray);
       } catch (err) {
-        console.debug('NewPost: failed to load groups', err?.response?.data || err.message);
+        console.error('Failed to load groups', err?.response?.data || err.message);
       }
     };
     loadGroups();
@@ -133,27 +133,31 @@ export default function NewPost() {
 
         <div className="tags-container">
           <label>Tags:</label>
-          <select
-            multiple
-            className="tags-select"
-            value={selectedTags}
-            onChange={(e) =>
-              setSelectedTags(Array.from(e.target.selectedOptions).map((o) => o.value))
-            }
-          >
+          <div className="tags-options" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
             {[
               "Adventure", "CityTrip", "Nature", "Luxury", "Backpacking", "FoodAndDrink",
               "Cultural", "Family", "Couples", "SoloTravel", "Budget", "Wellness", "RoadTrip", "Festival",
               "Historical", "Beach", "Mountain", "Wildlife", "Cruise", "Skiing", "Hiking", "Camping",
               "Diving", "Surfing", "Cycling", "Photography", "Shopping", "Nightlife", "General", "Other"
-            ].map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
+            ].map(tag => (
+              <label key={tag} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <input
+                  type="checkbox"
+                  value={tag}
+                  checked={selectedTags.includes(tag)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedTags([...selectedTags, tag]);
+                    } else {
+                      setSelectedTags(selectedTags.filter(t => t !== tag));
+                    }
+                  }}
+                />
+                {tag}
+              </label>
             ))}
-          </select>
+          </div>
         </div>
-
 
         <div className="single-select-container">
           <label>Group (optional): </label>
@@ -163,8 +167,8 @@ export default function NewPost() {
             onChange={(e) => setSelectedGroup(e.target.value)}
           >
             <option value="">-- none --</option>
-            {availableGroups.map(g => (
-              <option key={g._id || g.id} value={g.name || g._id || g.id}>
+            {availableGroups.map((g) => (
+              <option key={g._id} value={g._id}>
                 {g.name}
               </option>
             ))}

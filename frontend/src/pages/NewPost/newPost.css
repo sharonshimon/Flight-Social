@@ -152,9 +152,9 @@
   color: #374151;
 }
 
-.np-label > input,
-.np-label > textarea,
-.np-label > select {
+.np-label>input,
+.np-label>textarea,
+.np-label>select {
   font-weight: 400;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
@@ -165,14 +165,14 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.np-label > input:focus,
-.np-label > textarea:focus,
-.np-label > select:focus {
+.np-label>input:focus,
+.np-label>textarea:focus,
+.np-label>select:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.np-label > textarea {
+.np-label>textarea {
   resize: vertical;
 }
 
@@ -261,7 +261,8 @@
 
 .tags-container label {
   font-weight: 600;
-  color: #374151; /* neutral gray */
+  color: #374151;
+  /* neutral gray */
   font-size: 14px;
 }
 
@@ -277,7 +278,7 @@
   color: #111827;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .tags-select[multiple] {
@@ -286,7 +287,8 @@
 
 .tags-select:focus {
   outline: none;
-  border-color: #2563eb; /* soft blue */
+  border-color: #2563eb;
+  /* soft blue */
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
@@ -303,7 +305,6 @@
   color: #fff;
 }
 
-
 /* --- Single Select Styling --- */
 .single-select-container {
   display: flex;
@@ -314,7 +315,8 @@
 
 .single-select-container label {
   font-weight: 600;
-  color: #374151; /* neutral gray */
+  color: #374151;
+  /* neutral gray */
   font-size: 14px;
 }
 
@@ -329,12 +331,13 @@
   color: #111827;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .single-select:focus {
   outline: none;
-  border-color: #2563eb; /* soft blue */
+  border-color: #2563eb;
+  /* soft blue */
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
