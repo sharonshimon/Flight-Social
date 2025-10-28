@@ -12,7 +12,10 @@
   align-items: center;
   justify-content: space-between;
 }
-.groups__top h2 { margin: 0; }
+
+.groups__top h2 {
+  margin: 0;
+}
 
 .groups__actions {
   display: flex;
@@ -21,18 +24,27 @@
 }
 
 .groups__search {
-  display: flex; align-items: center; gap: 8px;
-  background: #f3f4f6; border-radius: 10px; padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f3f4f6;
+  border-radius: 10px;
+  padding: 8px 10px;
 }
+
 .groups__search input {
-  border: none; outline: none; background: transparent; min-width: 220px;
+  border: none;
+  outline: none;
+  background: transparent;
+  min-width: 220px;
 }
 
 /* list */
 .groups__list {
   overflow: auto;
   display: grid;
-  grid-template-columns: 1fr;   /* one per line */
+  grid-template-columns: 1fr;
+  /* one per line */
   gap: 14px;
   align-content: start;
   min-height: 0;
@@ -41,7 +53,7 @@
 .card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
 }
 
 .group {
@@ -53,53 +65,123 @@
   padding: 14px;
   align-items: center;
 }
-.group:hover { box-shadow: 0 10px 30px rgba(0,0,0,.09); }
+
+.group:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .09);
+}
 
 .group__avatar {
-  width: 120px; height: 72px;
-  border-radius: 12px; object-fit: cover;
+  width: 120px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
 .group__preview {
   height: 300px;
   width: 500px;
 }
-.group__name { font-weight: 700; font-size: 16px; }
-.group__meta { color: #6b7280; font-size: 13px; display: flex; gap: 8px; margin-top: 2px; }
-.group__about {
-  color: #374151; font-size: 14px; margin-top: 6px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+
+.group__name {
+  font-weight: 700;
+  font-size: 16px;
 }
 
-.group__actions { display: flex; gap: 8px; }
-.btn {
-  border: 1px solid #d1d5db; background: #fff; border-radius: 10px;
-  padding: 8px 12px; cursor: pointer;
+.group__meta {
+  color: #6b7280;
+  font-size: 13px;
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
 }
-.btn--primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+.group__about {
+  color: #374151;
+  font-size: 14px;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.group__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
 
 /* modal */
 .groups__modal {
-  position: fixed; inset: 0; background: rgba(0,0,0,.4);
-  display: grid; place-items: center; z-index: 1000;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .4);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
 }
+
 .groups__dialog {
   width: min(560px, 95vw);
-  background: #fff; border-radius: 16px; padding: 18px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
 }
-.groups__dialog h3 { margin: 0 0 10px 0; }
 
-.groups__form { display: grid; gap: 12px; }
-.label { display: grid; gap: 6px; font-weight: 600; }
-.label > input, .label > select, .label > textarea {
-  font-weight: 400; border-radius: 12px; border: 1px solid #e5e7eb;
-  padding: 10px 12px; outline: none; background: #fff;
+.groups__dialog h3 {
+  margin: 0 0 10px 0;
 }
-.dialog__actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+
+.groups__form {
+  display: grid;
+  gap: 12px;
+}
+
+.label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.label>input,
+.label>select,
+.label>textarea {
+  font-weight: 400;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  outline: none;
+  background: #fff;
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
 
 /* responsive */
 @media (max-width: 760px) {
-  .group { grid-template-columns: 96px 1fr auto; }
-  .group__avatar { width: 96px; height: 64px; }
+  .group {
+    grid-template-columns: 96px 1fr auto;
+  }
+
+  .group__avatar {
+    width: 96px;
+    height: 64px;
+  }
 }

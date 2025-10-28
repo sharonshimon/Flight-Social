@@ -9,7 +9,7 @@ const ExploreGroups = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState("");
-    const [privacyFilter, setPrivacyFilter] = useState("all"); // ✅ חדש
+    const [privacyFilter, setPrivacyFilter] = useState("all");
     const [creating, setCreating] = useState(false);
     const [form, setForm] = useState({
         name: "",
@@ -18,17 +18,28 @@ const ExploreGroups = () => {
         coverImageUrl: null,
     });
     const [previewImage, setPreviewImage] = useState("");
+    const [showMyGroups, setShowMyGroups] = useState(false);
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem("user"));
         setUser(storedUser);
         fetchGroups();
-    }, []);
+    }, [showMyGroups]);
 
     const fetchGroups = async () => {
+        setLoading(true);
         try {
-            const res = await axiosInstance.get(API_ENDPOINTS.groups.getAllGroups);
-            setGroups(res.data.groups);
+            let res;
+            if (showMyGroups && user?._id) {
+                // fetch only user's groups
+                res = await axiosInstance.get(
+                    API_ENDPOINTS.groups.getGroupsByUserId(user._id)
+                );
+            } else {
+                // fetch all groups
+                res = await axiosInstance.get(API_ENDPOINTS.groups.getAllGroups);
+            }
+            setGroups(res.data.groups || []);
         } catch (err) {
             console.error("Failed to load groups:", err);
         } finally {
@@ -46,7 +57,6 @@ const ExploreGroups = () => {
             (r) => String(r.user._id || r.user) === String(user?._id)
         );
 
-    // filter groups based on search query and privacy filter
     const filteredGroups = useMemo(() => {
         const q = query.trim().toLowerCase();
         return groups.filter((g) => {
@@ -105,8 +115,6 @@ const ExploreGroups = () => {
                 formData.append("image", form.coverImageUrl);
             }
 
-            console.log("Creating group with:", [...formData.entries()]);
-
             const res = await axiosInstance.post(
                 API_ENDPOINTS.groups.createGroup,
                 formData,
@@ -131,9 +139,9 @@ const ExploreGroups = () => {
     return (
         <div className="explore-groups-page">
             <div className="groups-top">
-                <h2>🌍 Explore Groups</h2>
+                <h2 className="explore-title">🌍 Explore Groups</h2>
 
-                <div className="groups-actions">
+                <div className="groups-controls">
                     <div className="groups-search">
                         <svg width="18" height="18" viewBox="0 0 24 24">
                             <path
@@ -157,6 +165,20 @@ const ExploreGroups = () => {
                         <option value="public">Public</option>
                         <option value="private">Private</option>
                     </select>
+
+                    <div className="switch-container">
+                        <label className="switch">
+                            <input
+                                type="checkbox"
+                                checked={showMyGroups}
+                                onChange={() => setShowMyGroups(!showMyGroups)}
+                            />
+                            <span className="slider round"></span>
+                        </label>
+                        <span className="switch-label">
+                            {showMyGroups ? "My Groups" : "All Groups"}
+                        </span>
+                    </div>
 
                     <button className="join-btn" onClick={() => setCreating(true)}>
                         + Create Group

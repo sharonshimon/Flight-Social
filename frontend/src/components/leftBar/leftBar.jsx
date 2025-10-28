@@ -19,8 +19,6 @@ const LeftBar = () => {
     { icon: icons.Friends, name: "Flight Buddies", path: "/friends" },
     { icon: icons.Messages, name: "Messages", path: "/messages" },
     { icon: icons.Gallery, name: "New Post", path: "/NewPost" },
-    { icon: icons.Memories, name: "My Groups", path: "/myGroups" },
-    // { icon: icons.Memories, name: "Groups", path: "/groups" },
     { icon: icons.Courses, name: "Explore Groups", path: "/explore-groups" },
     { icon: icons.Memories, name: "Admin", path: "/admin" },
   ], [icons]);

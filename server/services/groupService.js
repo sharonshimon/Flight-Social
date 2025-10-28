@@ -63,27 +63,58 @@ class GroupService {
         if (alreadyRequested) throw new Error("Join request already sent");
 
         if (group.privacy === "public") {
+            // Add to group members
             group.members.push({ user: userId, role: "member" });
             await group.save();
+
+            // Add group to user’s memberInGroups list
+            await User.findByIdAndUpdate(
+                userId,
+                { $addToSet: { memberInGroups: groupId } }, // לא יוסיף פעמיים אם כבר קיים
+                { new: true }
+            );
+
             return { group, status: "joined" };
         }
 
-        // private group
+        // private group: add join request
         group.joinRequests.push({ user: userId });
         await group.save();
         return { group, status: "request_sent" };
-    };
+    }
 
     // Leave a group
     async leaveGroup(groupId, userId) {
         const group = await Group.findById(groupId);
         if (!group) throw new Error("Group not found");
 
+        // Remove user from group members
         group.members = group.members.filter(m => String(m.user || m._id) !== String(userId));
         await group.save();
+
+        // Remove group from user's list
+        await User.findByIdAndUpdate(
+            userId,
+            { $pull: { memberInGroups: groupId } },
+            { new: true }
+        );
+
         return group;
     }
 
+    // Get list of user's groups
+    async getGroupsByUserId(userId) {
+        console.log("getGroupsByUserId called with userId:", userId); // בדיקה
+
+        try {
+            if (!userId) throw new Error("User ID is required");
+            //const groups = await Group.find({ members: userId }).populate("members", "username");
+            const groups = await Group.find({ "members.user": userId }).populate("members.user", "username");
+            return groups;
+        } catch (error) {
+            throw new Error("Failed to fetch user groups: " + error.message);
+        }
+    };
 
     // Delete a group
     async deleteGroup(groupId) {
