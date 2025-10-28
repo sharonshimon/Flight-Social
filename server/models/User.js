@@ -69,6 +69,7 @@ const userSchema = new Schema({
     enum: ['Single', 'In a relationship', 'Married'],
     default: 'Single'
   },
+  memberInGroups: { type: [mongoose.Schema.Types.ObjectId], ref: "Group", default: [] },
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // These are the people following you.
   followings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // These are the people you follow.
   createdAt: { type: Date, default: Date.now }

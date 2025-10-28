@@ -1,7 +1,9 @@
 import axiosInstance from "./axiosService";
 import { API_ENDPOINTS } from "../config/api";
+import axios from "axios";
 
 const groupService = {
+
     // create group
     async createGroup({ name, bio, privacy, image }) {
         const formData = new FormData();
@@ -34,26 +36,39 @@ const groupService = {
     },
 
     // join group
-    async joinGroup(groupId) {
-        const res = await axiosInstance.post(API_ENDPOINTS.groups.joinGroup(groupId));
+    async joinGroup(groupId, userId) {
+        const res = await axiosInstance.post(
+            API_ENDPOINTS.groups.joinGroup(groupId),
+            { userId }
+        );
         return res.data;
     },
 
     // leave group
-    async leaveGroup(groupId) {
-        const res = await axiosInstance.post(API_ENDPOINTS.groups.leaveGroup(groupId));
+    async leaveGroup(groupId, userId) {
+        const res = await axiosInstance.post(
+            API_ENDPOINTS.groups.leaveGroup(groupId),
+            { userId }
+        );
         return res.data;
     },
 
+    // get list of user's groups
+    async getGroupsByUserId(userId) {
+        const response = await axiosInstance.get(API_ENDPOINTS.groups.getGroupsByUserId$(userId));
+        return response.data;
+    },
+
+
     // update group
     async updateGroup(groupId, data) {
-        const res = await axiosInstance.put(`${API_ENDPOINTS.groups.updateGroup}/${groupId}`, data);
+        const res = await axiosInstance.put(`${API_ENDPOINTS.groups.updateGroup} / ${groupId}`, data);
         return res.data.group;
     },
 
     // delete group
     async deleteGroup(groupId) {
-        const res = await axiosInstance.delete(`${API_ENDPOINTS.groups.deleteGroup}/${groupId}`);
+        const res = await axiosInstance.delete(`${API_ENDPOINTS.groups.deleteGroup} / ${groupId}`);
         return res.data;
     },
 };

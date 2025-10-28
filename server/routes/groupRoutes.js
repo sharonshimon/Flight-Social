@@ -28,6 +28,9 @@ router.post("/:id/join", groupController.joinGroup);
 // Leave a group
 router.post("/:id/leave", groupController.leaveGroup);
 
+// Get list of user's groups
+router.get("/user/:userId", groupController.getGroupsByUserId);
+
 // Toggle admin status for a member
 router.post("/:id/admin", groupController.updateAdmin);
 

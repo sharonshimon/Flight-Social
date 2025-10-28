@@ -12,7 +12,6 @@ export const updateUser = async (userId, updateData) => {
     return await UserModel.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
 };
 
-
 // Update profile picture
 export const updateProfilePicture = async (userId, newProfilePicture) => {
     return await UserModel.findByIdAndUpdate(userId, { $set: { profilePicture: newProfilePicture } }, { new: true });
@@ -81,7 +80,6 @@ export const getUserFriends = async (userId) => {
 export const getUserFollowers = async (userId) => {
     const user = await UserModel.findById(userId);
 
-    // אם אין followers, מחזיר מערך ריק
     if (!user.followers || user.followers.length === 0) return [];
 
     const followers = await Promise.all(

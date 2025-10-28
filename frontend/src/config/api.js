@@ -35,6 +35,7 @@ export const API_ENDPOINTS = {
     },
     groups: {
         getAllGroups: '/api/v1/groups',
+        getGroupsByUserId: (id) => `/api/v1/groups/user/${id}`,
         createGroup: '/api/v1/groups/create',
         getGroupById: (id) => `/api/v1/groups/${id}`,
         joinGroup: (id) => `/api/v1/groups/${id}/join`,
