@@ -38,8 +38,8 @@ router.get("/", getAllPostsController);
 // Timeline posts
 router.get("/get-timeline-posts/:username", getTimelinePostsController);
 
-// Get posts by tag
-router.get("/", getPostsByTagController);
+// Get posts by tag (use /byTag/:tag to avoid clashing with GET /)
+router.get("/byTag/:tag", getPostsByTagController);
 
 // Get posts by userId
 router.get("/:userId", getPostsByUserIdContoller);

@@ -187,7 +187,7 @@ export const formatComments = (post) => {
                 commentId: comment.commentId,
                 content: comment.content,
                 createdAt: comment.createdAt,
-                userId: comment.userId ? comment.userId._id || comment.userId : null, // חשוב להשאיר userId גם לאנונימי
+                userId: comment.userId ? (comment.userId._id || comment.userId) : null, // keep userId even for anonymous when available
                 username: "Anonymous",
                 profilePicture: null
             };
@@ -196,9 +196,10 @@ export const formatComments = (post) => {
                 commentId: comment.commentId,
                 content: comment.content,
                 createdAt: comment.createdAt,
-                userId: comment.userId._id || comment.userId,
-                username: comment.userId.username,
-                profilePicture: comment.userId.profilePicture || null
+                // defensive: comment.userId may be null (user deleted), handle gracefully
+                userId: comment.userId ? (comment.userId._id || comment.userId) : null,
+                username: comment.userId ? (comment.userId.username || 'Unknown') : 'Deleted user',
+                profilePicture: comment.userId ? (comment.userId.profilePicture || null) : null
             };
         }
     });
@@ -256,6 +257,54 @@ export const getAllPosts = async () => {
             .populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         return populatedPosts.map(formatComments);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Get posts with optional filters: tag, startDate, endDate, group, userId
+export const getFilteredPosts = async (filters = {}) => {
+    try {
+        const query = {};
+
+        // tag filter: either in tags array or as a hashtag in content
+        if (filters.tag) {
+            query.$or = [
+                { tags: filters.tag },
+                { content: { $regex: `#${filters.tag}`, $options: "i" } }
+            ];
+        }
+
+        // group filter
+        if (filters.group) {
+            query.group = filters.group;
+        }
+
+        // date range
+        if (filters.startDate || filters.endDate) {
+            query.createdAt = {};
+            if (filters.startDate) {
+                const sd = new Date(filters.startDate);
+                if (!isNaN(sd)) query.createdAt.$gte = sd;
+            }
+            if (filters.endDate) {
+                const ed = new Date(filters.endDate);
+                if (!isNaN(ed)) query.createdAt.$lte = ed;
+            }
+            // if createdAt ended up empty, delete it
+            if (Object.keys(query.createdAt).length === 0) delete query.createdAt;
+        }
+
+        // allow filtering by userId explicitly
+        if (filters.userId) {
+            query.userId = filters.userId;
+        }
+
+        const posts = await PostModel.find(query)
+            .sort({ createdAt: -1 })
+            .populate({ path: 'comments.userId', select: 'username profilePicture' });
+
+        return posts.map(formatComments);
     } catch (error) {
         throw error;
     }

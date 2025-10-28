@@ -1,44 +1,43 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { API_BASE_URL, API_ENDPOINTS } from '../../config/api';
 import "./MyGroups.css";
 
-const seedGroups = [
-  {
-    id: "g1",
-    name: "Flight Buddies TLV",
-    avatar: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=400&auto=format&fit=crop",
-    members: 128,
-    privacy: "Public",
-    about: "Casual meetups, routes, and photos around Tel Aviv."
-  },
-  {
-    id: "g2",
-    name: "IFR Learners",
-    avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=400&auto=format&fit=crop",
-    members: 87,
-    privacy: "Private",
-    about: "Study group for instrument rating. Weekly Zoom sessions."
-  },
-  {
-    id: "g3",
-    name: "Heli Ops Israel",
-    avatar: "https://images.unsplash.com/photo-1517817748493-49ec54a32485?q=80&w=400&auto=format&fit=crop",
-    members: 54,
-    privacy: "Public",
-    about: "Helicopter operations, maintenance tips, and safety."
-  },
-  {
-    id: "g4",
-    name: "Aviation Photography",
-    avatar: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400&auto=format&fit=crop",
-    members: 203,
-    privacy: "Public",
-    about: "Share your best air-to-air and ramp shots."
-  },
-]; //mock up
+// previously a static seed; we'll fetch groups from the backend instead
+const seedGroups = [];
 
 export default function MyGroups() {
   const [query, setQuery] = useState("");
   const [groups, setGroups] = useState(seedGroups);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchGroups = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.groups.getAllGroups}`);
+        if (!res.ok) throw new Error('Failed to load groups');
+        const body = await res.json();
+        // server returns groups in body.data or body
+        const raw = body.data || body || [];
+        const mapped = (raw || []).map((g) => ({
+          id: g._id,
+          name: g.name,
+          avatar: g.coverImageUrl || g.avatar || 'https://via.placeholder.com/120x120.png?text=Group',
+          members: Array.isArray(g.members) ? g.members.length : (g.membersCount || 0),
+          privacy: (g.privacy || 'public').toString().charAt(0).toUpperCase() + (g.privacy || 'public').toString().slice(1),
+          about: g.bio || g.description || ''
+        }));
+        if (mounted) setGroups(mapped);
+      } catch (err) {
+        console.error('Load groups error', err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    fetchGroups();
+    return () => { mounted = false; };
+  }, []);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -104,6 +103,7 @@ export default function MyGroups() {
         </div>
       </div>
       <div className="groups__list">
+        {loading && <div className="groups__loading">Loading groups…</div>}
         {filtered.map((g) => (
           <GroupRow
             key={g.id}

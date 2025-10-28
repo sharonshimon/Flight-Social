@@ -1,11 +1,12 @@
 import "./navbar.css";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import NotificationsMenu from "./NotificationsMenu";
 import NavBarSearch from "./NavBarSearch";
 const Navbar = () => {
   const [openNotif, setOpenNotif] = useState(false);
+  const navigate = useNavigate();
 
   // user info
   let currentUser = null;
@@ -58,6 +59,23 @@ const Navbar = () => {
           <img src={currentUser.profilePic} alt={`${currentUser.name} avatar`} />
           <span>{currentUser.name}</span>
         </Link>
+        <button
+          className="logout-btn"
+          title="Log out"
+          onClick={() => {
+            try {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              localStorage.removeItem('userId');
+            } catch (e) {}
+            // redirect to login
+            try { navigate('/login'); } catch (e) { window.location.href = '/login'; }
+            // reload so app state resets
+            try { window.location.reload(); } catch (e) {}
+          }}
+        >
+          Logout
+        </button>
       </div>
     </div>
   );

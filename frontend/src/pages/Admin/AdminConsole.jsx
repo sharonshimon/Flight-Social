@@ -197,6 +197,61 @@ export default function AdminConsole() {
     }
   }
 
+  // --- Admin: Create / Edit / Delete groups ---
+  const [editingGroup, setEditingGroup] = useState(null); // null | {} for new | group object
+
+  function openNewGroup() {
+    setEditingGroup({ name: '', bio: '', privacy: 'public' });
+  }
+
+  function openEditGroup(g) {
+    setEditingGroup({ ...g });
+  }
+
+  function deleteGroup(id) {
+    if (!confirm('Delete group?')) return;
+    setError(null);
+    try {
+      const jq = $.ajax(ajaxOptions('DELETE', API_BASE + '/groups/' + id));
+      if (jq && jq.done) {
+        jq.done(() => { loadGroups(); }).fail((xhr) => setError('Delete failed: ' + (xhr.responseText || xhr.statusText)));
+      } else {
+        Promise.resolve(jq).then(() => loadGroups()).catch((err) => setError('Delete failed: ' + String(err)));
+      }
+    } catch (e) {
+      setError('Delete failed: ' + (e && e.message ? e.message : String(e)));
+    }
+  }
+
+  async function saveGroup(e) {
+    e.preventDefault();
+    if (!editingGroup) return;
+    setError(null);
+    try {
+      if (editingGroup._id) {
+        // update
+        const url = API_BASE + '/groups/' + editingGroup._id;
+        const jq = $.ajax(ajaxOptions('PUT', url, editingGroup));
+        if (jq && jq.done) {
+          jq.done(() => { setEditingGroup(null); loadGroups(); }).fail((xhr) => setError('Update failed: ' + (xhr.responseText || xhr.statusText)));
+        } else {
+          await Promise.resolve(jq); setEditingGroup(null); loadGroups();
+        }
+      } else {
+        // create
+        const url = API_BASE + '/groups/create';
+        const jq = $.ajax(ajaxOptions('POST', url, editingGroup));
+        if (jq && jq.done) {
+          jq.done(() => { setEditingGroup(null); loadGroups(); }).fail((xhr) => setError('Create failed: ' + (xhr.responseText || xhr.statusText)));
+        } else {
+          await Promise.resolve(jq); setEditingGroup(null); loadGroups();
+        }
+      }
+    } catch (err) {
+      setError('Save group failed: ' + (err && err.message ? err.message : String(err)));
+    }
+  }
+
   // log users state updates for debugging
   React.useEffect(() => {
     console.log('users state updated (useEffect):', users);
@@ -266,7 +321,10 @@ export default function AdminConsole() {
 
       <section>
         <h3>Groups</h3>
-        <button onClick={loadGroups}>Reload</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <button onClick={loadGroups}>Reload</button>
+          <button onClick={openNewGroup} style={{ background: '#3bbf6f', color: '#fff' }}>Add Group</button>
+        </div>
         {loadingGroups && <span style={{ marginLeft: 8 }}>Loading groups...</span>}
         <table className="admin-table">
           <thead><tr><th>Name</th><th>Privacy</th><th>Members</th></tr></thead>
@@ -276,13 +334,39 @@ export default function AdminConsole() {
                 <td>{g.name}</td>
                 <td>{g.privacy}</td>
                 <td>{(g.members && g.members.length) || 0}</td>
+                <td>
+                  <button style={{ marginRight: 8 }} onClick={() => openEditGroup(g)}>Edit</button>
+                  <button className="btn-danger" onClick={() => deleteGroup(g._id || g.id)}>Delete</button>
+                </td>
               </tr>
             )) : (
-              <tr><td colSpan={3} style={{ color: '#666' }}>No groups or unexpected response format</td></tr>
+              <tr><td colSpan={4} style={{ color: '#666' }}>No groups or unexpected response format</td></tr>
             )}
           </tbody>
         </table>
       </section>
+
+      {/* Create / Edit Group Modal */}
+      {editingGroup && (
+        <div style={{ position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setEditingGroup(null)}>
+          <form onSubmit={saveGroup} style={{ background: '#fff', padding: 20, borderRadius: 8, minWidth: 420 }} onClick={e => e.stopPropagation()}>
+            <h3>{editingGroup._id ? 'Edit Group' : 'New Group'}</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label>Name <input required value={editingGroup.name} onChange={e => setEditingGroup(prev => ({ ...prev, name: e.target.value }))} /></label>
+              <label>Bio <textarea value={editingGroup.bio} onChange={e => setEditingGroup(prev => ({ ...prev, bio: e.target.value }))} /></label>
+              <label>Privacy <select value={editingGroup.privacy} onChange={e => setEditingGroup(prev => ({ ...prev, privacy: e.target.value }))}>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+                <option value="secret">Secret</option>
+              </select></label>
+            </div>
+            <div style={{ marginTop: 12, textAlign: 'right' }}>
+              <button type="button" onClick={() => setEditingGroup(null)} style={{ marginRight: 8 }}>Cancel</button>
+              <button type="submit" style={{ background: '#2563eb', color: '#fff' }}>{editingGroup._id ? 'Save' : 'Create'}</button>
+            </div>
+          </form>
+        </div>
+      )}
       {error && (
         <div style={{ marginTop: 16, padding: 12, background: '#ffecec', color: '#a33', borderRadius: 8 }}>
           <strong>Error:</strong> {error}

@@ -4,6 +4,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import ChatWindow from "../../components/Chat/ChatWindow";
 import { API_BASE_URL, API_ENDPOINTS } from "../../config/api";
+import defaultAvatar from '../../assets/photoplaceholder.jpg';
 
 export default function Messages() {
   const [query, setQuery] = useState("");
@@ -18,6 +19,9 @@ export default function Messages() {
       return null;
     }
   }, []);
+
+  // normalized current username (trimmed) for comparisons if needed
+  const currentUsername = currentUser?.username?.toString().trim() || '';
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,15 +39,28 @@ export default function Messages() {
         if (!res.ok) throw new Error('Failed to load conversations');
         const body = await res.json();
         // body.data is expected to be an array of { _id: peerId, lastMessage, lastAt }
-        const items = (body.data || []).map((it) => ({
-          id: it._id,
-          name: it.peerDisplayName || it.peerUsername || it._id,
-          avatar: it.peerAvatar || '',
-          lastAt: it.lastAt,
-          lastMessage: it.lastMessage,
-        }));
-        setConvos(items);
-        if (items.length) setActiveConvo(items[0]);
+        // map and dedupe conversations by id to avoid duplicate keys
+        const mapped = (body.data || []).map((it) => {
+          const rawName = it.peerDisplayName || it.peerUsername || it._id || '';
+          const name = typeof rawName === 'string' ? rawName.trim() : String(rawName);
+          return {
+            id: it._id,
+            name,
+            avatar: it.peerAvatar || '',
+            lastAt: it.lastAt,
+            lastMessage: it.lastMessage,
+          };
+        });
+        const unique = [];
+        const seen = new Set();
+        for (const it of mapped) {
+          if (!it.id) continue; // skip invalid
+          if (seen.has(it.id)) continue;
+          seen.add(it.id);
+          unique.push(it);
+        }
+        setConvos(unique);
+        if (unique.length) setActiveConvo(unique[0]);
       } catch (err) {
         console.error('Load convos error', err);
       } finally {
@@ -61,30 +78,58 @@ export default function Messages() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     if (!token) return alert('Please login to start a conversation');
+    if (!newPeer || !newPeer.trim()) return alert('Please enter a peer username or id');
     try {
+      // normalize and validate newPeer
+      const peerVal = newPeer.trim();
+      // if the user entered a 24-char hex id (mongodb id), send as peerId, otherwise as peerUsername
+      const isObjectId = /^[0-9a-fA-F]{24}$/.test(peerVal);
+      // server expects either { peerId } or { peerUsername } and a messageType field
+      const payload = isObjectId
+        ? { peerId: peerVal, content: newMsg, messageType: 'text' }
+        : { peerUsername: peerVal, content: newMsg, messageType: 'text' };
       const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.chat.start}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ peerUsername: newPeer, content: newMsg })
+        body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error('Failed to start conversation');
-      const body = await res.json();
-      // refresh convos
-      const newConvo = { id: body.data.receiverId || body.data.receiverId, name: newPeer || body.data.receiverId, avatar: '' };
-      setConvos((c) => [newConvo, ...c]);
+      // capture response body for detailed error reporting
+      let body = null;
+      try {
+        body = await res.json();
+      } catch (parseErr) {
+        console.warn('startConversation: failed to parse JSON response', parseErr);
+      }
+
+      if (!res.ok) {
+        console.error('startConversation: server responded with error', res.status, body);
+        const msg = (body && (body.message || body.error || JSON.stringify(body))) || `HTTP ${res.status}`;
+        throw new Error(msg);
+      }
+
+      // server returns the created message object (not wrapped in `data`)
+    const receiverId = body?.receiverId || body?.receiverIdStr || peerVal;
+    const convoName = (body?.peerUsername || body?.peerDisplayName || peerVal || receiverId || '').toString().trim();
+    const newConvo = { id: receiverId, name: convoName || receiverId, avatar: '' };
+  // prepend new convo and remove any existing entry with same id to avoid duplicate keys
+  setConvos((prev) => [newConvo, ...prev.filter((x) => x.id !== newConvo.id)]);
       setActiveConvo(newConvo);
       setNewPeer('');
       setNewMsg('');
     } catch (err) {
       console.error('startConversation failed', err);
-      alert('Could not start conversation');
+      alert('Could not start conversation: ' + (err.message || 'Unknown error'));
     }
   };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return convos;
-    return convos.filter((c) => (c.name || c.id).toLowerCase().includes(q) || (c.lastMessage || '').toLowerCase().includes(q));
+    return convos.filter((c) => {
+      const name = (c.name || c.id || '').toString().trim().toLowerCase();
+      const last = (c.lastMessage || '').toLowerCase();
+      return name.includes(q) || last.includes(q);
+    });
   }, [convos, query]);
 
   const handleSelect = (c) => {
@@ -108,7 +153,7 @@ export default function Messages() {
               onClick={() => handleSelect(c)}
               aria-current={c.id === activeConvo?.id ? "page" : undefined}
             >
-              <img className="convo__avatar" src={c.avatar || '/favicon.ico'} alt={`${c.name || c.id} avatar`} />
+              <img className="convo__avatar" src={c.avatar || defaultAvatar} alt={`${c.name || c.id} avatar`} />
               <div className="convo__main">
                 <div className="convo__row">
                   <span className="convo__name">{c.name || c.id}</span>

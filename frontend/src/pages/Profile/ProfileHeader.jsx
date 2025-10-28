@@ -1,7 +1,7 @@
 import React from "react";
 import { Edit, Share2 } from "lucide-react";
 
-export default function ProfileHeader({ user, onEditClick, onShareClick, onFollowersClick, onFollowingClick }) {
+export default function ProfileHeader({ user, onEditClick, onShareClick, onFollowersClick, onFollowingClick, isFollowing, onFollowToggle }) {
   return (
     <div className="ig-header">
       <img className="ig-avatar" src={user.avatar} alt={`${user.username} avatar`} />
@@ -26,9 +26,15 @@ export default function ProfileHeader({ user, onEditClick, onShareClick, onFollo
         </div>
 
         <div className="ig-buttons">
-          <button className="ig-btn" onClick={onEditClick}>
-            <Edit size={18} className="ig-btn-icon" /> Edit Profile
-          </button>
+          {onFollowToggle ? (
+            <button className={`ig-btn ig-follow-btn`} onClick={onFollowToggle}>
+              {isFollowing ? 'Following' : 'Follow'}
+            </button>
+          ) : (
+            <button className="ig-btn" onClick={onEditClick}>
+              <Edit size={18} className="ig-btn-icon" /> Edit Profile
+            </button>
+          )}
           <button className="ig-btn" onClick={onShareClick}>
             <Share2 size={18} className="ig-btn-icon" /> Share Profile
           </button>

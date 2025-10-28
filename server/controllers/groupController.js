@@ -31,9 +31,10 @@ class GroupController {
   // Get all groups
   async getAllGroups(req, res) {
     try {
-      const userData = verifyToken(req);
+      // public listing — no authentication required
       const groups = await groupService.getAllGroups();
-      res.status(200).json({ success: true, groups });
+      // return in `data` for consistency with other endpoints
+      res.status(200).json({ success: true, data: groups });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
     }
@@ -104,7 +105,14 @@ class GroupController {
   async joinGroup(req, res) {
     try {
       const { id } = req.params; // groupId
-      const { userId } = req.body;
+      // Prefer authenticated user from token; fall back to body.userId if present
+      let userId = req.body?.userId;
+      try {
+        const userData = verifyToken(req);
+        if (userData?.id) userId = userData.id;
+      } catch (e) {
+        // ignore token errors; if no userId provided, join will fail below
+      }
 
       const { group, status } = await groupService.joinGroup(id, userId);
       return res.status(200).json({ group, status });
@@ -118,7 +126,13 @@ class GroupController {
   async leaveGroup(req, res) {
     try {
       const { id } = req.params; // groupId
-      const { userId } = req.body;
+      let userId = req.body?.userId;
+      try {
+        const userData = verifyToken(req);
+        if (userData?.id) userId = userData.id;
+      } catch (e) {
+        // ignore
+      }
 
       const group = await groupService.leaveGroup(id, userId);
       return res.status(200).json({ group });
