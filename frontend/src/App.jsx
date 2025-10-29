@@ -13,6 +13,8 @@ import NewPost from "./pages/NewPost/newPost";
 import ExploreGroups from "./pages/Groups/ExploreGroups";
 import Groups from "./pages/Groups/GroupPage";
 import AdminConsole from "./pages/Admin/AdminConsole";
+import StatsDashboard from "./pages/Stats/StatsDashboard";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -37,6 +39,8 @@ export default function App() {
           <Route path="/groups" element={<Groups />} />
           <Route path="/admin" element={<AdminConsole />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/statistics" element={<StatsDashboard />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

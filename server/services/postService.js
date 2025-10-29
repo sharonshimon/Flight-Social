@@ -146,6 +146,7 @@ export const getPostsByTag = async (tag) => {
     }
 };
 
+// Get user's posts
 export const getPostsByUserId = async (userId) => {
     try {
         const posts = await PostModel.find({ userId }).sort({ createdAt: -1 });
@@ -155,6 +156,7 @@ export const getPostsByUserId = async (userId) => {
         throw err;
     }
 };
+
 // Like / Dislike 
 export const likeAndDislike = async (params, body) => {
     try {
@@ -178,30 +180,33 @@ export const likeAndDislike = async (params, body) => {
     }
 };
 
-// Format Post with Comments 
+// Format Post with Comments
 export const formatComments = (post) => {
-    const comments = post.comments.map(comment => {
-        //placeholder for user
-        if (comment.isAnonymous) {
-            return {
-                commentId: comment.commentId,
-                content: comment.content,
-                createdAt: comment.createdAt,
-                userId: comment.userId ? comment.userId._id || comment.userId : null, // חשוב להשאיר userId גם לאנונימי
-                username: "Anonymous",
-                profilePicture: null
-            };
-        } else {
-            return {
-                commentId: comment.commentId,
-                content: comment.content,
-                createdAt: comment.createdAt,
-                userId: comment.userId._id || comment.userId,
-                username: comment.userId.username,
-                profilePicture: comment.userId.profilePicture || null
-            };
-        }
-    });
+    if (!post) return null;
+    const comments = (post.comments || [])
+        .filter(c => c)
+        .map(comment => {
+            const user = comment.userId || {};
+            if (comment.isAnonymous) {
+                return {
+                    commentId: comment.commentId,
+                    content: comment.content,
+                    createdAt: comment.createdAt,
+                    userId: user._id || null,
+                    username: "Anonymous",
+                    profilePicture: null
+                };
+            } else {
+                return {
+                    commentId: comment.commentId,
+                    content: comment.content,
+                    createdAt: comment.createdAt,
+                    userId: user._id || user,
+                    username: user.username || "Unknown",
+                    profilePicture: user.profilePicture || null
+                };
+            }
+        });
 
     return { ...post.toObject(), comments };
 };
@@ -252,12 +257,16 @@ export const getTimelinePosts = async (params) => {
 export const getAllPosts = async () => {
     try {
         const posts = await PostModel.aggregate([{ $sample: { size: 40 } }]);
-        const populatedPosts = await PostModel.find({ _id: { $in: posts.map(p => p._id) } })
+        const validPosts = posts.filter(p => p && p._id);
+        if (!validPosts.length) return [];
+        const populatedPosts = await PostModel.find({ _id: { $in: validPosts.map(p => p._id) } })
             .populate({ path: 'comments.userId', select: 'username profilePicture' });
 
         return populatedPosts.map(formatComments);
+
     } catch (error) {
-        throw error;
+        console.error("Error in getAllPosts:", error);
+        throw new Error("Posts fetch failed");
     }
 };
 

@@ -2,12 +2,14 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
+    "d3": "^7.9.0",
     "lucide-react": "^0.546.0",
     "mongoose": "^8.18.0",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "react-router-dom": "^7.9.1",
     "socket.io-client": "^4.8.1",
+    "topojson": "^3.0.2",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

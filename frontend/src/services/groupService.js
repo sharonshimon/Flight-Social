@@ -55,22 +55,22 @@ const groupService = {
 
     // get list of user's groups
     async getGroupsByUserId(userId) {
-        const response = await axiosInstance.get(API_ENDPOINTS.groups.getGroupsByUserId$(userId));
+        const response = await axiosInstance.get(API_ENDPOINTS.groups.getGroupsByUserId(userId));
         return response.data;
     },
 
-
     // update group
     async updateGroup(groupId, data) {
-        const res = await axiosInstance.put(`${API_ENDPOINTS.groups.updateGroup} / ${groupId}`, data);
+        const res = await axiosInstance.put(API_ENDPOINTS.groups.updateGroup(groupId), data);
         return res.data.group;
     },
 
     // delete group
     async deleteGroup(groupId) {
-        const res = await axiosInstance.delete(`${API_ENDPOINTS.groups.deleteGroup} / ${groupId}`);
+        const res = await axiosInstance.delete(API_ENDPOINTS.groups.deleteGroup(groupId));
         return res.data;
     },
+
 };
 
 export default groupService;

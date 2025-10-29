@@ -13,6 +13,7 @@ const LeftBar = () => {
     Gallery: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/image.svg",
     Messages: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/chat.svg",
     Courses: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/airplane.svg",
+    Statistics: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/bar-chart-line.svg",
   }), []);
 
   const mainMenuItems = useMemo(() => [
@@ -21,6 +22,7 @@ const LeftBar = () => {
     { icon: icons.Gallery, name: "New Post", path: "/NewPost" },
     { icon: icons.Courses, name: "Explore Groups", path: "/explore-groups" },
     { icon: icons.Memories, name: "Admin", path: "/admin" },
+    { icon: icons.Statistics, name: "Statistics", path: "/statistics" }
   ], [icons]);
   let currentUser = null;
   try {

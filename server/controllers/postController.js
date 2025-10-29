@@ -119,7 +119,9 @@ export const getAllPostsController = async (req, res) => {
 export const getPostsByTagController = async (req, res) => {
   try {
     verifyToken(req);
-    const tag = req.query.tag;
+    //const tag = req.query.tag;
+    const tag = req.params.tag;
+
     let posts;
     if (!tag) {
       posts = await PostModel.find().sort({ createdAt: -1 });
@@ -150,8 +152,6 @@ export const getPostsByUserIdContoller = async (req, res) => {
   }
 };
 
-
-
 // Add Comment
 export const addCommentController = async (req, res) => {
   try {
@@ -161,16 +161,6 @@ export const addCommentController = async (req, res) => {
     res.status(400).json({ message: "Failed to add comment", error: error.message });
   }
 };
-
-// Add Comment Controller
-// export const addCommentController = async (req, res) => {
-//   try {
-//     const post = await addComment(req.params, req.body);
-//     res.status(200).json(post);
-//   } catch (error) {
-//     res.status(400).json({ message: "Failed to add comment", error: error.message });
-//   }
-// };
 
 // Update Comment
 export const updateCommentController = async (req, res) => {
