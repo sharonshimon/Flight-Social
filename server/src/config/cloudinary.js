@@ -5,14 +5,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// הגדרת Cloudinary לפי .env
+// storgae data in env
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.CLOUD_API_KEY,
     api_secret: process.env.CLOUD_API_SECRET,
 });
 
-// אחסון דינמי לפי סוג קובץ או סוג תוכן (פרופיל, פוסט, תגובה וכו')
+// data files
 const storage = new CloudinaryStorage({
     cloudinary,
     params: async (req, file) => {
@@ -34,12 +34,12 @@ const storage = new CloudinaryStorage({
                     : ["jpg", "jpeg", "png", "gif", "webp"],
             transformation: isVideo
                 ? []
-                : [{ width: 1080, crop: "limit" }], // אפשר לשנות לרוחב גדול יותר לתמונות פוסטים
+                : [{ width: 1080, crop: "limit" }],
         };
     },
 });
 
-// יצירת ה-parser של Multer
+// parser of multer
 const parser = multer({ storage });
 
 export { cloudinary, parser };

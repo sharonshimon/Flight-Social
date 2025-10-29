@@ -48,7 +48,6 @@ export default function ProfileModal({ photo, onClose, post, canEdit = false }) 
     setDesc(post.desc || "");
   };
 
-  // פונקציה לעיבוד תגיות בתיאור
   const renderDescriptionWithTags = (text) => {
     if (!text) return null;
     return text.split(/\s+/).map((word, index) => {

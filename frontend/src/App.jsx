@@ -12,6 +12,8 @@ import Register from "./pages/Register/Register";
 import NewPost from "./pages/NewPost/newPost";
 import ExploreGroups from "./pages/Groups/ExploreGroups";
 import Groups from "./pages/Groups/GroupPage";
+import MyGroups from "./pages/Groups/myGroups"
+import GroupPage from "./pages/Groups/GroupPage";
 import AdminConsole from "./pages/Admin/AdminConsole";
 import StatsDashboard from "./pages/Stats/StatsDashboard";
 
@@ -37,6 +39,9 @@ export default function App() {
           <Route path="/newPost" element={<NewPost />} />
           <Route path="/explore-groups" element={<ExploreGroups />} />
           <Route path="/groups" element={<Groups />} />
+          <Route path="/myGroups" element={<MyGroups />} />
+          <Route path="/groups/:id" element={<Groups />} />
+          <Route path="/groupPage/:id" element={<GroupPage />} />
           <Route path="/admin" element={<AdminConsole />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/statistics" element={<StatsDashboard />} />

@@ -1,6 +1,8 @@
+
 import React, { useEffect, useState, useMemo } from "react";
 import axiosInstance from "../../services/axiosService";
 import { API_ENDPOINTS } from "../../config/api";
+import { useNavigate } from "react-router-dom";
 import defaultGroupImg from "../../assets/photoplaceholder.jpg";
 import "./ExploreGroups.css";
 
@@ -18,6 +20,12 @@ const ExploreGroups = () => {
     });
     const [previewImage, setPreviewImage] = useState("");
     const [showMyGroups, setShowMyGroups] = useState(false);
+
+    const navigate = useNavigate();
+
+    const goToGroupPage = (groupId) => {
+        navigate(`/groupPage/${groupId}`);
+    };
 
     // fetchGroups uses user directly from localStorage
     const fetchGroups = async () => {
@@ -39,6 +47,7 @@ const ExploreGroups = () => {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchGroups();
@@ -69,31 +78,37 @@ const ExploreGroups = () => {
 
     const handleJoinGroup = async (groupId) => {
         try {
-            const res = await axiosInstance.post(
-                API_ENDPOINTS.groups.joinGroup(groupId),
-                { userId: user._id }
-            );
-            const { group } = res.data;
-            setGroups((prev) => prev.map((g) => (g._id === group._id ? group : g)));
+            const res = await axiosInstance.post(API_ENDPOINTS.groups.joinGroup(groupId));
+            // Axios response: status number + data object
+            if (res.status === 200) {
+                const { group } = res.data;
+                setGroups((prev) =>
+                    prev.map((g) => (g._id === group._id ? group : g))
+                );
+            }
         } catch (err) {
-            console.error("Failed to join group:", err);
+            console.error("Failed to join group:", err.response?.data || err);
+            alert(err.response?.data?.message || "Failed to join group");
         }
     };
 
+
     const handleLeaveGroup = async (groupId) => {
         try {
-            const res = await axiosInstance.post(
-                API_ENDPOINTS.groups.leaveGroup(groupId),
-                { userId: user._id }
-            );
-            const updatedGroup = res.data.group;
-            setGroups((prev) =>
-                prev.map((g) => (g._id === updatedGroup._id ? updatedGroup : g))
-            );
+            const res = await axiosInstance.post(API_ENDPOINTS.groups.leaveGroup(groupId));
+            if (res.status === 200) {
+                const updatedGroup = res.data.group;
+                setGroups((prev) =>
+                    prev.map((g) => (g._id === updatedGroup._id ? updatedGroup : g))
+                );
+            }
         } catch (err) {
-            console.error("Failed to leave group:", err);
+            console.error("Failed to leave group:", err.response?.data || err);
+            alert(err.response?.data?.message || "Failed to leave group");
         }
     };
+
+
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -195,8 +210,12 @@ const ExploreGroups = () => {
                                 src={group.coverImageUrl || defaultGroupImg}
                                 alt={group.name}
                                 className="group-img"
+                                onClick={() => goToGroupPage(group._id)}
+                                style={{ cursor: "pointer" }}
                             />
-                            <h3>{group.name}</h3>
+                            <h3 onClick={() => goToGroupPage(group._id)} style={{ cursor: "pointer" }}>
+                                {group.name}
+                            </h3>
                             <p className="group-bio">{group.bio || "No description"}</p>
                             <p className="members-count">
                                 {group.members?.length || 0} members • {group.privacy}
@@ -219,13 +238,12 @@ const ExploreGroups = () => {
                                         className="join-btn"
                                         onClick={() => handleJoinGroup(group._id)}
                                     >
-                                        {group.privacy === "private"
-                                            ? "Request to Join"
-                                            : "Join Group"}
+                                        {group.privacy === "private" ? "Request to Join" : "Join Group"}
                                     </button>
                                 )}
                             </div>
                         </div>
+
                     ))
                 )}
             </div>

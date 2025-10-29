@@ -115,7 +115,7 @@ export default function GroupPage() {
             setPostContent('');
             setPostFiles([]);
             // optionally notify other components (Posts listens for this)
-            try { window.dispatchEvent(new CustomEvent('post-created', { detail: postObj })); } catch (e) {}
+            try { window.dispatchEvent(new CustomEvent('post-created', { detail: postObj })); } catch (e) { }
         } catch (err) {
             console.error('Create group post failed', err?.response?.data || err.message);
             alert(err?.response?.data?.message || err.message || 'Failed to create post');
@@ -131,7 +131,7 @@ export default function GroupPage() {
     return (
         <div className="group-page">
             <div className="group-card">
-                
+
                 <div className="group-header">
                     <img
                         className="group-cover"
@@ -157,7 +157,8 @@ export default function GroupPage() {
 
                         <div className="group-actions">
                             {isMember(group) ? (
-                                <button className="join-btn" onClick={async (e) => { e.stopPropagation(); /* implement leave */
+                                <button className="join-btn" onClick={async (e) => {
+                                    e.stopPropagation(); /* implement leave */
                                     try {
                                         const resp = await groupService.leaveGroup(id);
                                         const updated = resp.group || resp;

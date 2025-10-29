@@ -26,9 +26,15 @@ const groupService = {
     // get all groups
     async getAllGroups() {
         const res = await axiosInstance.get(API_ENDPOINTS.groups.getAllGroups);
-        return res.data.groups || res.data?.data || [];
 
+        const dataArray = Array.isArray(res.data) ? res.data : res.data?.data || [];
+
+        return {
+            groups: dataArray, // res.data.groups
+            raw: dataArray     //Array
+        };
     },
+
 
     // get group by ID
     async getGroupById(groupId) {
@@ -36,28 +42,26 @@ const groupService = {
         return res.data.group;
     },
 
-    // join group
-    async joinGroup(groupId, userId) {
-        const res = await axiosInstance.post(
-            API_ENDPOINTS.groups.joinGroup(groupId),
-            { userId }
-        );
+    async joinGroup(groupId) {
+        const res = await axiosInstance.post(API_ENDPOINTS.groups.joinGroup(groupId));
         return res.data;
     },
 
-    // leave group
-    async leaveGroup(groupId, userId) {
-        const res = await axiosInstance.post(
-            API_ENDPOINTS.groups.leaveGroup(groupId),
-            { userId }
-        );
+    async leaveGroup(groupId) {
+        const res = await axiosInstance.post(API_ENDPOINTS.groups.leaveGroup(groupId));
         return res.data;
     },
 
     // get list of user's groups
     async getGroupsByUserId(userId) {
-        const response = await axiosInstance.get(API_ENDPOINTS.groups.getGroupsByUserId(userId));
-        return response.data;
+        const res = await axiosInstance.get(API_ENDPOINTS.groups.getGroupsByUserId(userId));
+
+        const dataArray = Array.isArray(res.data) ? res.data : res.data?.data || [];
+
+        return {
+            groups: dataArray, //res.data.groups
+            raw: dataArray     // array
+        };
     },
 
     // update group
