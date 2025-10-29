@@ -22,12 +22,29 @@ export default function Profile() {
   const [profilePosts, setProfilePosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [postsError, setPostsError] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
 
   const [followersModal, setFollowersModal] = useState(null);
-  const [isFollowing, setIsFollowing] = useState(false);
 
   const storedUserId = localStorage.getItem("userId");
   const isOwnProfile = userId === "me" || storedUserId === userId;
+
+
+  useEffect(() => {
+    const checkIfFollowing = async () => {
+      try {
+        const res = await axiosInstance.get(API_ENDPOINTS.users.getFriends(storedUserId));
+        const friendsIds = res.data.friends.map(f => f._id);
+        setIsFollowing(friendsIds.includes(profileUser?._id));
+      } catch (err) {
+        console.error("Failed to check following:", err);
+      }
+    };
+    if (storedUserId && profileUser?._id) checkIfFollowing();
+  }, [storedUserId, profileUser?._id]);
+
 
   const refreshFullProfile = async () => {
     try {
@@ -68,11 +85,11 @@ export default function Profile() {
         }
       });
 
-      // determine if current user follows this profile
-      try {
-        const myId = localStorage.getItem('userId');
-        setIsFollowing(Array.isArray(userInfo.followers) && myId ? userInfo.followers.some(f => String(f) === String(myId)) : false);
-      } catch (e) { setIsFollowing(false); }
+      if (userInfo.followers?.includes(storedUserId)) {
+        setIsFollowing(true);
+      } else {
+        setIsFollowing(false);
+      }
 
     } catch (err) {
       console.error("Failed to refresh full profile:", err);
@@ -91,30 +108,27 @@ export default function Profile() {
     else alert("You do not have permission to edit this profile");
   };
 
-  const toggleFollow = async () => {
-    try {
-      const myId = localStorage.getItem('userId');
-      if (!myId) return alert('You must be logged in to follow users');
-      if (!profileUser || !profileUser._id) return;
-      if (isFollowing) {
-        await axiosInstance.put(API_ENDPOINTS.users.unfollow(profileUser._id));
-      } else {
-        await axiosInstance.put(API_ENDPOINTS.users.follow(profileUser._id));
-      }
-      // refresh counts and state
-      await refreshFullProfile();
-    } catch (err) {
-      console.error('Follow/unfollow failed', err);
-      alert(err.response?.data?.message || err.message || 'Action failed');
-    }
-  };
-
   const onShareClick = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
       alert("Profile link copied to clipboard");
     } catch {
       alert("Unable to copy the profile link");
+    }
+  };
+
+  const handleFollowToggle = async () => {
+    try {
+      const endpoint = isFollowing
+        ? API_ENDPOINTS.users.unfollow(profileUser._id)
+        : API_ENDPOINTS.users.follow(profileUser._id);
+
+      const response = await axiosInstance.put(endpoint);
+      if (response.status === 200) {
+        setIsFollowing(!isFollowing);
+      }
+    } catch (error) {
+      console.error('Failed to follow/unfollow:', error);
     }
   };
 
@@ -126,10 +140,10 @@ export default function Profile() {
         user={profileUser}
         onEditClick={onEditClick}
         onShareClick={onShareClick}
-        isFollowing={isFollowing}
-        onFollowToggle={toggleFollow}
         onFollowersClick={() => setFollowersModal({ type: "followers" })}
         onFollowingClick={() => setFollowersModal({ type: "following" })}
+        onFollowToggle={!isOwnProfile ? handleFollowToggle : undefined}
+        isFollowing={isFollowing}
       />
 
       <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
