@@ -129,7 +129,6 @@ export const getAllPostsController = async (req, res) => {
 export const getPostsByTagController = async (req, res) => {
   try {
     verifyToken(req);
-    //const tag = req.query.tag;
     const tag = req.params.tag;
 
     let posts;
