@@ -256,13 +256,7 @@ class GroupController {
   // Get all groups
   async getAllGroups(req, res) {
     try {
-<<<<<<< HEAD
-      // public listing — no authentication required
-=======
-      verifyToken(req);
->>>>>>> 04ea0b7562190bf64045e41f6c95d0ed46dd4f16
       const groups = await groupService.getAllGroups();
-      // return in `data` for consistency with other endpoints
       res.status(200).json({ success: true, data: groups });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
