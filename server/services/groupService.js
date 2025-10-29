@@ -46,75 +46,50 @@ class GroupService {
         return Group.findByIdAndUpdate(groupId, updateData, { new: true, runValidators: true });
     }
 
-    // Join a group
-    async joinGroup(groupId, userId) {
-        const group = await Group.findById(groupId)
-            .populate("members.user", "_id username")
-            .populate("joinRequests.user", "_id username");
+    // joinGroup
+    async joinGroup(req, res) {
+        try {
+            const groupId = req.params.groupId;
+            const userId = req.user._id;
 
-        if (!group) throw new Error("Group not found");
+            const group = await GroupModel.findById(groupId);
+            if (!group) return res.status(404).json({ message: "Group not found" });
 
-        // check if already a member (members may be stored as ObjectId or { user: ObjectId })
-        const isMember = group.members.some(m => {
-            const memberId = m?.user?._id || m?.user || m?._id || m;
-            return String(memberId) === String(userId);
-        });
-        if (isMember) throw new Error("User is already a member");
+            if (group.members.includes(userId)) {
+                return res.status(400).json({ message: "User already a member" });
+            }
 
-        // check if already requested
-        const alreadyRequested = group.joinRequests.some(r => {
-            const reqId = r?.user?._id || r?.user || r;
-            return String(reqId) === String(userId);
-        });
-        if (alreadyRequested) throw new Error("Join request already sent");
-
-        if (group.privacy === "public") {
-            // Add to group members
-            group.members.push({ user: userId, role: "member" });
+            group.members.push(userId);
             await group.save();
 
-            // Add group to user’s memberInGroups list
-            await User.findByIdAndUpdate(
-                userId,
-                { $addToSet: { memberInGroups: groupId } }, // לא יוסיף פעמיים אם כבר קיים
-                { new: true }
-            );
-
-            return { group, status: "joined" };
+            res.json({ group });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: "Server error" });
         }
+    };
 
-        // private group: add join request
-        group.joinRequests.push({ user: userId });
-        await group.save();
-        return { group, status: "request_sent" };
-    }
+    // leaveGroup
+    async leaveGroup(req, res) {
+        try {
+            const groupId = req.params.groupId;
+            const userId = req.user._id;
 
-    // Leave a group
-    async leaveGroup(groupId, userId) {
-        const group = await Group.findById(groupId);
-        if (!group) throw new Error("Group not found");
-        group.members = group.members.filter(m => {
-            const memberId = m?.user?._id || m?.user || m?._id || m;
-            return String(memberId) !== String(userId);
-        });
-        // Remove user from group members
-        group.members = group.members.filter(m => String(m.user || m._id) !== String(userId));
-        await group.save();
+            const group = await GroupModel.findById(groupId);
+            if (!group) return res.status(404).json({ message: "Group not found" });
 
-        // Remove group from user's list
-        await User.findByIdAndUpdate(
-            userId,
-            { $pull: { memberInGroups: groupId } },
-            { new: true }
-        );
+            group.members = group.members.filter((id) => id.toString() !== userId.toString());
+            await group.save();
 
-        return group;
-    }
+            res.json({ group });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: "Server error" });
+        }
+    };
 
     // Get list of user's groups
     async getGroupsByUserId(userId) {
-        console.log("getGroupsByUserId called with userId:", userId); // בדיקה
-
         try {
             if (!userId) throw new Error("User ID is required");
             //const groups = await Group.find({ members: userId }).populate("members", "username");

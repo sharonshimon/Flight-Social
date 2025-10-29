@@ -50,14 +50,14 @@ const StatsDashboard = () => {
             </section>
 
             <section>
-                <h2>💗 Average Likes by Group</h2>
-                <AvgLikesByGroup data={avgLikesByGroup} />
-            </section>
-
-            <section>
                 <h2>📅 Posts by Month</h2>
                 <PostsByMonth data={postsByMonth} />
             </section>
+
+            {/* <section>
+                <h2>💗 Average Likes by Group</h2>
+                <AvgLikesByGroup data={avgLikesByGroup} />
+            </section> */}
         </div>
     );
 };

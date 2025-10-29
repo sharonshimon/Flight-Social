@@ -5,18 +5,16 @@ import groupService from "./groupService";
 import postService from "./postService";
 
 const statsService = {
-    // Number of posts by country (group name = country)
     getPostsByCountry: async () => {
-        const groups = await groupService.getAllGroups();
+        const { raw: groups } = await groupService.getAllGroups();
         return groups.map(g => ({
             country: g.name,
             postCount: g.posts?.length || 0
         }));
     },
 
-    // Average likes per post in each group
     getAvgLikesByGroup: async () => {
-        const groups = await groupService.getAllGroups();
+        const { raw: groups } = await groupService.getAllGroups();
 
         return groups.map(g => {
             const posts = g.posts || [];
@@ -30,7 +28,6 @@ const statsService = {
         });
     },
 
-    // Number of posts per month (all groups combined)
     getPostsByMonth: async () => {
         const response = await postService.getAllPosts();
         const posts = response.data || [];
@@ -45,8 +42,7 @@ const statsService = {
 
         return Object.entries(counts).map(([month, count]) => ({ month, count }));
     },
-
-}
+};
 
 
 export default statsService;
