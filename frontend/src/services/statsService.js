@@ -32,8 +32,8 @@ const statsService = {
 
     // Number of posts per month (all groups combined)
     getPostsByMonth: async () => {
-        const response = await postService.getAllPosts(); // response.data
-        const posts = response.data || []; // אם אין data, array ריק
+        const response = await postService.getAllPosts();
+        const posts = response.data || [];
         const counts = {};
 
         posts.forEach(post => {

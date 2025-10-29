@@ -68,19 +68,13 @@ export default function NewPost() {
 
     setSubmitting(true);
     setSubmitError(null);
-
     try {
-      // Backend route: POST /api/v1/posts/create-post
-      const url = `${API_ENDPOINTS.posts.create.replace(/\/$/, '')}/create-post`;
-      // debug
-      const token = localStorage.getItem('token');
-      console.debug('NewPost.submit -> URL:', url, 'token present:', !!token);
-      // Do NOT set Content-Type manually for multipart/form-data; browser will add the correct boundary
-      const res = await axiosInstance.post(url, formData);
+      setSubmitting(true);
+      setSubmitError(null);
+
+      const res = await axiosInstance.post(API_ENDPOINTS.posts.createPost, formData);
 
       console.log('Post created:', res.data);
-      // log the created post object if present
-      console.debug('NewPost created post detail:', res.data?.data || res.data);
 
       // Reset form
       setCaption("");
@@ -90,18 +84,16 @@ export default function NewPost() {
       previews.forEach((u) => URL.revokeObjectURL(u));
       setPreviews([]);
 
-      // Optionally navigate to feed or show success
       alert(res.data?.message || 'Post created successfully');
-      // notify other parts of the app that a new post was created
-      try { window.dispatchEvent(new CustomEvent('post-created', { detail: res.data?.data })); } catch (e) { console.debug('dispatch event failed', e); }
-      // navigate to feed so user can see the new post
       navigate('/feed');
+
     } catch (err) {
       console.error('Create post error:', err.response?.data || err.message);
       setSubmitError(err.response?.data?.message || err.message || 'Failed to create post');
     } finally {
       setSubmitting(false);
     }
+
   };
 
   useEffect(() => {
@@ -110,7 +102,10 @@ export default function NewPost() {
       try {
         const res = await axiosInstance.get(API_ENDPOINTS.groups.getAllGroups);
         if (cancelled) return;
-        const groupsArray = res.data?.groups || [];
+        // const groupsArray = res.data?.groups || [];
+        // setAvailableGroups(groupsArray);
+        // console.log('Groups loaded:', groupsArray);
+        const groupsArray = res.data?.data || [];
         setAvailableGroups(groupsArray);
         console.log('Groups loaded:', groupsArray);
       } catch (err) {

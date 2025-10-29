@@ -6,7 +6,6 @@ import "./ExploreGroups.css";
 
 const ExploreGroups = () => {
     const [groups, setGroups] = useState([]);
-    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState("");
     const [privacyFilter, setPrivacyFilter] = useState("all");
@@ -20,32 +19,32 @@ const ExploreGroups = () => {
     const [previewImage, setPreviewImage] = useState("");
     const [showMyGroups, setShowMyGroups] = useState(false);
 
-    useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        setUser(storedUser);
-        fetchGroups();
-    }, [showMyGroups]);
-
+    // fetchGroups uses user directly from localStorage
     const fetchGroups = async () => {
         setLoading(true);
         try {
+            const storedUser = JSON.parse(localStorage.getItem("user"));
             let res;
-            if (showMyGroups && user?._id) {
-                // fetch only user's groups
+            if (showMyGroups && storedUser?._id) {
                 res = await axiosInstance.get(
-                    API_ENDPOINTS.groups.getGroupsByUserId(user._id)
+                    API_ENDPOINTS.groups.getGroupsByUserId(storedUser._id)
                 );
             } else {
-                // fetch all groups
                 res = await axiosInstance.get(API_ENDPOINTS.groups.getAllGroups);
             }
-            setGroups(res.data.groups || []);
+            setGroups(res.data.groups || res.data?.data || []);
         } catch (err) {
             console.error("Failed to load groups:", err);
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchGroups();
+    }, [showMyGroups]);
+
+    const user = useMemo(() => JSON.parse(localStorage.getItem("user")), []);
 
     const isMember = (group) =>
         group.members?.some(

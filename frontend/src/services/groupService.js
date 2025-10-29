@@ -26,7 +26,8 @@ const groupService = {
     // get all groups
     async getAllGroups() {
         const res = await axiosInstance.get(API_ENDPOINTS.groups.getAllGroups);
-        return res.data.groups;
+        return res.data.groups || res.data?.data || [];
+
     },
 
     // get group by ID

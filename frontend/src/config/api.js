@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
     },
     posts: {
         getAll: '/api/v1/posts',
-        create: '/api/v1/posts/create-post',
+        createPost: '/api/v1/posts/create-post',
         delete: (id) => `/api/v1/posts/delete-post/${id}`,
         updatePost: (id) => `/api/v1/posts/update-post/${id}`,
         like: (id) => `/api/v1/posts/like-post/${id}`,
@@ -35,8 +35,8 @@ export const API_ENDPOINTS = {
     },
     groups: {
         getAllGroups: '/api/v1/groups',
-        getGroupsByUserId: (id) => `/api/v1/groups/user/${id}`,
         createGroup: '/api/v1/groups/create',
+        getGroupsByUserId: (id) => `/api/v1/groups/user/${id}`,
         getGroupById: (id) => `/api/v1/groups/${id}`,
         joinGroup: (id) => `/api/v1/groups/${id}/join`,
         leaveGroup: (id) => `/api/v1/groups/${id}/leave`,

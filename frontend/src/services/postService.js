@@ -10,7 +10,7 @@ const postService = {
     },
 
     createPost: async (postData) => {
-        const response = await axiosInstance.post(API_ENDPOINTS.posts.create, postData);
+        const response = await axiosInstance.post(API_ENDPOINTS.posts.createPost, postData);
         return response.data;
     },
 
