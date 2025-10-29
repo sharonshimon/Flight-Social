@@ -37,7 +37,6 @@ export default function App() {
           <Route path="/newPost" element={<NewPost />} />
           <Route path="/explore-groups" element={<ExploreGroups />} />
           <Route path="/groups" element={<Groups />} />
-          <Route path="/myGroups" element={<MyGroups />} />
           <Route path="/admin" element={<AdminConsole />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/statistics" element={<StatsDashboard />} />
