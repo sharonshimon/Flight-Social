@@ -24,6 +24,7 @@ export default function Profile() {
   const [postsError, setPostsError] = useState(null);
 
   const [followersModal, setFollowersModal] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const storedUserId = localStorage.getItem("userId");
   const isOwnProfile = userId === "me" || storedUserId === userId;
@@ -67,6 +68,12 @@ export default function Profile() {
         }
       });
 
+      // determine if current user follows this profile
+      try {
+        const myId = localStorage.getItem('userId');
+        setIsFollowing(Array.isArray(userInfo.followers) && myId ? userInfo.followers.some(f => String(f) === String(myId)) : false);
+      } catch (e) { setIsFollowing(false); }
+
     } catch (err) {
       console.error("Failed to refresh full profile:", err);
       setPostsError(err.response?.data?.message || err.message || "Failed to load posts");
@@ -82,6 +89,24 @@ export default function Profile() {
   const onEditClick = () => {
     if (isOwnProfile) navigate("/edit-profile");
     else alert("You do not have permission to edit this profile");
+  };
+
+  const toggleFollow = async () => {
+    try {
+      const myId = localStorage.getItem('userId');
+      if (!myId) return alert('You must be logged in to follow users');
+      if (!profileUser || !profileUser._id) return;
+      if (isFollowing) {
+        await axiosInstance.put(API_ENDPOINTS.users.unfollow(profileUser._id));
+      } else {
+        await axiosInstance.put(API_ENDPOINTS.users.follow(profileUser._id));
+      }
+      // refresh counts and state
+      await refreshFullProfile();
+    } catch (err) {
+      console.error('Follow/unfollow failed', err);
+      alert(err.response?.data?.message || err.message || 'Action failed');
+    }
   };
 
   const onShareClick = async () => {
@@ -101,6 +126,8 @@ export default function Profile() {
         user={profileUser}
         onEditClick={onEditClick}
         onShareClick={onShareClick}
+        isFollowing={isFollowing}
+        onFollowToggle={toggleFollow}
         onFollowersClick={() => setFollowersModal({ type: "followers" })}
         onFollowingClick={() => setFollowersModal({ type: "following" })}
       />

@@ -64,6 +64,13 @@ body {
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
+.ig-follow-btn {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+.ig-follow-btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+
 .ig-btn:hover {
   background-color: #f3f4f6;
   transform: translateY(-1px);

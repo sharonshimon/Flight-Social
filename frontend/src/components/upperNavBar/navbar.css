@@ -91,6 +91,18 @@
   transition: box-shadow 0.3s, background 0.3s;
 }
 
+.logout-btn {
+  margin-left: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: #111827;
+  cursor: pointer;
+  font-weight: 600;
+}
+.logout-btn:hover { background: #f3f4f6; }
+
 .navbar .user img {
   width: 32px;
   height: 32px;

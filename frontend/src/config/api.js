@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
     },
     posts: {
         getAll: '/api/v1/posts',
-        create: '/api/v1/posts',
+        create: '/api/v1/posts/create-post',
         delete: (id) => `/api/v1/posts/delete-post/${id}`,
         updatePost: (id) => `/api/v1/posts/update-post/${id}`,
         like: (id) => `/api/v1/posts/like-post/${id}`,

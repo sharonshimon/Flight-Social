@@ -33,9 +33,15 @@ export default function ChatWindow({ currentUser, peerId }) {
         const token = localStorage.getItem('token');
         const me = JSON.parse(localStorage.getItem('user') || 'null');
         const myId = me?._id || me?.id || me?.userId;
-        const endpoint = (API_ENDPOINTS.chat?.messages || '/api/v1/chat/messages/:userId/:peerId')
-          .replace(':userId', myId)
-          .replace(':peerId', peerId);
+        // Ensure we have both ids before building endpoint
+        if (!myId) {
+          console.warn('ChatWindow: missing current user id, skipping history fetch');
+          return;
+        }
+        const endpointTemplate = API_ENDPOINTS.chat?.messages || '/api/v1/chat/messages/:userId/:peerId';
+        const endpoint = typeof endpointTemplate === 'function'
+          ? endpointTemplate(myId, peerId)
+          : endpointTemplate.replace(':userId', myId).replace(':peerId', peerId);
         const res = await fetch(`${API_BASE_URL}${endpoint}`, {
           headers: { Authorization: `Bearer ${token}` }
         });

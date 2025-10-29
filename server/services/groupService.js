@@ -54,12 +54,18 @@ class GroupService {
 
         if (!group) throw new Error("Group not found");
 
-        // check if already a member
-        const isMember = group.members.some(m => String(m.user._id || m.user) === String(userId));
+        // check if already a member (members may be stored as ObjectId or { user: ObjectId })
+        const isMember = group.members.some(m => {
+            const memberId = m?.user?._id || m?.user || m?._id || m;
+            return String(memberId) === String(userId);
+        });
         if (isMember) throw new Error("User is already a member");
 
         // check if already requested
-        const alreadyRequested = group.joinRequests.some(r => String(r.user._id || r.user) === String(userId));
+        const alreadyRequested = group.joinRequests.some(r => {
+            const reqId = r?.user?._id || r?.user || r;
+            return String(reqId) === String(userId);
+        });
         if (alreadyRequested) throw new Error("Join request already sent");
 
         if (group.privacy === "public") {
@@ -88,8 +94,15 @@ class GroupService {
         const group = await Group.findById(groupId);
         if (!group) throw new Error("Group not found");
 
+<<<<<<< HEAD
+        group.members = group.members.filter(m => {
+            const memberId = m?.user?._id || m?.user || m?._id || m;
+            return String(memberId) !== String(userId);
+        });
+=======
         // Remove user from group members
         group.members = group.members.filter(m => String(m.user || m._id) !== String(userId));
+>>>>>>> 04ea0b7562190bf64045e41f6c95d0ed46dd4f16
         await group.save();
 
         // Remove group from user's list

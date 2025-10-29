@@ -7,6 +7,7 @@ import {
   getPostWithComments,
   getTimelinePosts,
   getAllPosts,
+  getFilteredPosts,
   getPostsByTag,
   getPostsByUserId,
   addComment,
@@ -107,8 +108,17 @@ export const getTimelinePostsController = async (req, res) => {
 // Get All Posts
 export const getAllPostsController = async (req, res) => {
   try {
+    // allow authenticated access and optional filtering via query params
     verifyToken(req);
-    const posts = await getAllPosts();
+    const { startDate, endDate, tag, group, userId } = req.query;
+    const filters = {};
+    if (startDate) filters.startDate = startDate;
+    if (endDate) filters.endDate = endDate;
+    if (tag) filters.tag = tag;
+    if (group) filters.group = group;
+    if (userId) filters.userId = userId;
+
+    const posts = await getFilteredPosts(filters);
     res.status(200).json({ data: posts, message: "Posts fetched successfully" });
   } catch (err) {
     res.status(400).json({ data: null, message: "Posts fetch failed", error: err.message });
@@ -124,17 +134,13 @@ export const getPostsByTagController = async (req, res) => {
 
     let posts;
     if (!tag) {
-      posts = await PostModel.find().sort({ createdAt: -1 });
+      // if no tag provided, return all posts (delegates to filtered posts)
+      posts = await getFilteredPosts({});
     } else {
-      posts = await PostModel.find({
-        $or: [
-          { tags: tag },
-          { content: { $regex: `#${tag}`, $options: "i" } }
-        ]
-      }).sort({ createdAt: -1 });
+      posts = await getPostsByTag(tag);
     }
 
-    res.status(200).json(posts);
+    res.status(200).json({ data: posts, message: 'Posts by tag fetched successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

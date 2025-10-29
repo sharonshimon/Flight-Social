@@ -256,9 +256,14 @@ class GroupController {
   // Get all groups
   async getAllGroups(req, res) {
     try {
+<<<<<<< HEAD
+      // public listing — no authentication required
+=======
       verifyToken(req);
+>>>>>>> 04ea0b7562190bf64045e41f6c95d0ed46dd4f16
       const groups = await groupService.getAllGroups();
-      res.status(200).json({ success: true, groups });
+      // return in `data` for consistency with other endpoints
+      res.status(200).json({ success: true, data: groups });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
     }
@@ -352,7 +357,14 @@ class GroupController {
   async joinGroup(req, res) {
     try {
       const { id } = req.params; // groupId
-      const { userId } = req.body;
+      // Prefer authenticated user from token; fall back to body.userId if present
+      let userId = req.body?.userId;
+      try {
+        const userData = verifyToken(req);
+        if (userData?.id) userId = userData.id;
+      } catch (e) {
+        // ignore token errors; if no userId provided, join will fail below
+      }
 
       if (!userId) {
         return res.status(400).json({ message: "userId is required" });
@@ -370,7 +382,13 @@ class GroupController {
   async leaveGroup(req, res) {
     try {
       const { id } = req.params; // groupId
-      const { userId } = req.body;
+      let userId = req.body?.userId;
+      try {
+        const userData = verifyToken(req);
+        if (userData?.id) userId = userData.id;
+      } catch (e) {
+        // ignore
+      }
 
       if (!userId) {
         return res.status(400).json({ message: "userId is required" });

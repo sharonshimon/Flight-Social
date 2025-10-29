@@ -1,3 +1,52 @@
+<<<<<<< HEAD
+import React, { useMemo, useState, useEffect } from "react";
+import { API_BASE_URL, API_ENDPOINTS } from '../../config/api';
+import "./MyGroups.css";
+
+// previously a static seed; we'll fetch groups from the backend instead
+const seedGroups = [];
+
+export default function MyGroups() {
+  const [query, setQuery] = useState("");
+  const [groups, setGroups] = useState(seedGroups);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchGroups = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.groups.getAllGroups}`);
+        if (!res.ok) throw new Error('Failed to load groups');
+        const body = await res.json();
+        // server returns groups in body.data or body
+        const raw = body.data || body || [];
+        const mapped = (raw || []).map((g) => ({
+          id: g._id,
+          name: g.name,
+          avatar: g.coverImageUrl || g.avatar || 'https://via.placeholder.com/120x120.png?text=Group',
+          members: Array.isArray(g.members) ? g.members.length : (g.membersCount || 0),
+          privacy: (g.privacy || 'public').toString().charAt(0).toUpperCase() + (g.privacy || 'public').toString().slice(1),
+          about: g.bio || g.description || ''
+        }));
+        if (mounted) setGroups(mapped);
+      } catch (err) {
+        console.error('Load groups error', err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    fetchGroups();
+    return () => { mounted = false; };
+  }, []);
+  const [creating, setCreating] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    privacy: "Public",
+    about: "",
+    groupPicture: ""
+  });
+=======
 // import React, { useMemo, useState } from "react";
 // import "./MyGroups.css";
 
@@ -46,6 +95,7 @@
 //     about: "",
 //     groupPicture: ""
 //   });
+>>>>>>> 04ea0b7562190bf64045e41f6c95d0ed46dd4f16
 
 //   const filtered = useMemo(() => {
 //     const q = query.trim().toLowerCase();
@@ -95,6 +145,26 @@
 //             />
 //           </div>
 
+<<<<<<< HEAD
+          <button
+            className="btn btn--primary"
+            onClick={() => setCreating(true)}
+          >
+            + Create Group
+          </button>
+        </div>
+      </div>
+      <div className="groups__list">
+        {loading && <div className="groups__loading">Loading groups…</div>}
+        {filtered.map((g) => (
+          <GroupRow
+            key={g.id}
+            group={g}
+            onOpen={() => console.log("open group", g.id)}
+            onLeave={() => alert(`(mock) Left "${g.name}"`)}
+          />
+        ))}
+=======
 //           <button
 //             className="btn btn--primary"
 //             onClick={() => setCreating(true)}
@@ -112,6 +182,7 @@
 //             onLeave={() => alert(`(mock) Left "${g.name}"`)}
 //           />
 //         ))}
+>>>>>>> 04ea0b7562190bf64045e41f6c95d0ed46dd4f16
 
 //         {filtered.length === 0 && (
 //           <div className="groups__empty">
