@@ -93,16 +93,12 @@ class GroupService {
     async leaveGroup(groupId, userId) {
         const group = await Group.findById(groupId);
         if (!group) throw new Error("Group not found");
-
-<<<<<<< HEAD
         group.members = group.members.filter(m => {
             const memberId = m?.user?._id || m?.user || m?._id || m;
             return String(memberId) !== String(userId);
         });
-=======
         // Remove user from group members
         group.members = group.members.filter(m => String(m.user || m._id) !== String(userId));
->>>>>>> 04ea0b7562190bf64045e41f6c95d0ed46dd4f16
         await group.save();
 
         // Remove group from user's list
