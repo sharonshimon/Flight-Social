@@ -73,14 +73,12 @@
 
 /* style of group info */
 .post .group-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border-radius: 20px;
-  border: 1px solid #bae6fd;
-  margin-left: auto;
+    color: white;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-weight: bold;
 }
 
 .post .group-name {
