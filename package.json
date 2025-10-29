@@ -10,6 +10,7 @@
     "react-router-dom": "^7.9.1",
     "socket.io-client": "^4.8.1",
     "topojson": "^3.0.2",
+    "topojson-client": "^3.1.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
