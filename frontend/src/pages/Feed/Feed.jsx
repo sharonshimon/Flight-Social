@@ -6,8 +6,8 @@ import Canvas from "../../components/Canvas/Canvas";
 export default function Feed() {
   return (
     <>
-      <Canvas />
       <Posts count={10} />
+      <Canvas />
     </>
   );
 }

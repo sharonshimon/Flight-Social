@@ -1,11 +1,119 @@
+/* --- Posts Layout --- */
 .posts {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  margin-top: 32px;
-  margin-bottom: 32px;
-  font-family: 'Open Sans', Arial, sans-serif;
-  transition: background 0.5s;
+  gap: 28px;
+  margin: 32px auto;
+  font-family: "Inter", "Open Sans", Arial, sans-serif;
+  transition: background 0.4s ease;
+}
+
+/* --- Filters Section --- */
+.posts-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(240, 249, 255, 0.7);
+  border: 1px solid rgba(2, 132, 199, 0.15);
+  border-radius: 12px;
+  padding: 10px 14px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.05);
+  margin: 12px auto 24px auto;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.posts-filters:hover {
+  box-shadow: 0 4px 14px rgba(2, 6, 23, 0.1);
+  transform: translateY(-1px);
+}
+
+.posts-filters label {
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.posts-filters input[type="date"] {
+  padding: 6px 8px;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  border-radius: 6px;
+  background-color: #fff;
+  color: #0f172a;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.posts-filters input[type="date"]:focus {
+  border-color: #0284c7;
+}
+
+/* --- Buttons --- */
+.posts-filters button {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+}
+
+.posts-filters button:hover {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  transform: translateY(-1px);
+}
+
+.posts-filters button:last-child {
+  background: linear-gradient(135deg, #64748b, #94a3b8);
+  box-shadow: 0 2px 6px rgba(71, 85, 105, 0.25);
+}
+
+.posts-filters button:last-child:hover {
+  background: linear-gradient(135deg, #94a3b8, #cbd5e1);
+}
+
+/* --- Empty or Loading States --- */
+.posts:empty,
+.posts:has(.loading),
+.posts:has(.error) {
+  justify-content: center;
+  color: #475569;
+  font-size: 15px;
+  text-align: center;
+  padding: 30px 0;
+}
+
+.posts .loading,
+.posts .error {
+  font-size: 15px;
+  font-weight: 500;
+  color: #0f172a;
+  opacity: 0.8;
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .posts-filters {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .posts-filters label {
+    width: 100%;
+  }
+
+  .posts-filters input[type="date"],
+  .posts-filters button {
+    width: 100%;
+  }
 }

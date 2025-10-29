@@ -1,59 +1,113 @@
+/* --- Canvas Card --- */
 .canvas-card {
-  background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
-  border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
-  padding: 14px;
-  margin: 12px 0;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
+  padding: 18px;
+  margin: 16px 0;
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
 }
+
+.canvas-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.12);
+}
+
+/* --- Header Section --- */
 .canvas-flight .canvas-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
+
 .canvas-header h4 {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .plane-emoji {
-  font-size: 16px;
+  font-size: 18px;
 }
-.canvas-actions .btn-clear,
-.canvas-actions .btn-stamp {
-  background: #0369a1;
+
+/* --- Action Buttons --- */
+.canvas-actions {
+  display: flex;
+  align-items: center;
+}
+
+.canvas-actions button {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 6px 10px;
-  cursor: pointer;
-  margin-left: 8px;
+  border-radius: 10px;
+  padding: 6px 14px;
   font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease;
+  margin-left: 8px;
+  box-shadow: 0 3px 6px rgba(2, 132, 199, 0.2);
 }
+
+.canvas-actions button:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+}
+
+.canvas-actions .btn-clear {
+  background: linear-gradient(135deg, #475569, #64748b);
+  box-shadow: 0 3px 6px rgba(71, 85, 105, 0.2);
+}
+
+.canvas-actions .btn-clear:hover {
+  background: linear-gradient(135deg, #64748b, #94a3b8);
+}
+
 .canvas-actions .btn-stamp.active {
-  background: #06b6d4;
+  background: linear-gradient(135deg, #06b6d4, #22d3ee);
 }
+
+/* --- Canvas Area --- */
 .canvas-wrap {
   width: 100%;
-  height: 180px;
-  border-radius: 8px;
+  height: 200px;
+  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid rgba(2,6,23,0.04);
+  border: 1px solid rgba(2, 6, 23, 0.06);
+  background: #f9fafb;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
 .sketch-canvas {
   width: 100%;
   height: 100%;
-  touch-action: none;
   display: block;
   cursor: crosshair;
+  touch-action: none;
+  transition: background 0.3s ease;
 }
+
+.sketch-canvas:hover {
+  background: #f0f9ff;
+}
+
 .sketch-canvas.stamp-mode {
   cursor: pointer;
+  background: #ecfeff;
 }
+
+/* --- Hint Text --- */
 .canvas-hint {
-  margin: 8px 0 0 0;
-  font-size: 12px;
+  margin-top: 10px;
+  font-size: 13px;
   color: #475569;
+  font-style: italic;
+  text-align: center;
 }
